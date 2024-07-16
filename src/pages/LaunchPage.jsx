@@ -7,6 +7,7 @@ import Buy from "../components/Buy"
 import { useTokenBalance, useEthers } from '@usedapp/core'
 import { ethers } from 'ethers'
 import Trade from '../components/Trade'
+import CommentSection from '../components/CommentSection'
 
 
 export default function LaunchPage () {
@@ -15,6 +16,9 @@ export default function LaunchPage () {
     const [props, setProps] = useState([])
     const [d,setD] = useState()
     const [tokenAddr, setTokenAddr] = useState("")
+    const [uniqueBuys, setUniqueBuys] = useState([])
+    const [uniqueSells, setUniqueSells] = useState([])
+
 
     const {account } = useEthers()
 
@@ -25,10 +29,15 @@ export default function LaunchPage () {
                 const data = response.data[0]
                 console.log("launch page data",data)
                 setProps(data)
+
+                const uBuys = data.buys.filter((buy, index, self) => index === self.findIndex((t) => (t.maker === buy.maker && t.timestamp === buy.timestamp)))
+                const uSells = data.sells.filter((sell, index, self) => index === self.findIndex((t) => (t.maker === sell.maker && t.timestamp === sell.timestamp)))
+                setUniqueBuys(uBuys)
+                setUniqueSells(uSells)
+
                 const d = JSON.parse(data.description)
                 setD(d)
-                console.log("data", data)
-                console.log("des", d)
+               
             }catch(e){
                 console.log("error", e)
             }
@@ -106,9 +115,13 @@ export default function LaunchPage () {
             <div className='text-sm text-wrap truncate connectbox w-1/3 border-2 border-black px-1 mb-4 mx-2 h-24 bg-base-4'>
                 {d.des.slice(0,205)}...
             </div>
+            <CommentSection tokenAddress={tokenAddr}/>
         </div>
         }
     </div>
         
     )
 }
+
+
+
