@@ -2,7 +2,8 @@ import '../../globals.css'
 import icon from '../assets/loading3.svg'
 import noimage from '../assets/noimage.svg'
 import Progressbar from './Progressbar';
-
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 
@@ -10,6 +11,14 @@ export default function LaunchCard ({data}) {
 
     const imgWidth = 30
     const imgHeight = 30
+
+    const navigate = useNavigate()
+
+    const handleClick = () => {
+        const tokenAddress = data.tokenAddress
+        console.log("tokenAddress", tokenAddress)
+        navigate(`/launch?token=${tokenAddress}`)
+    }
 
     const info = {
         name:"tyson the killer",
@@ -28,36 +37,36 @@ export default function LaunchCard ({data}) {
     
 
     return(
-    <div className="flex flex-col connectbox border-4 border-black w-[300px] h-[250px] bg-base-7">
+    <div onClick={handleClick} className="flex flex-col connectbox border-4 border-black w-[300px] h-[250px] bg-base-7">
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
-                <div className="relative w-[120px] h-[100px] border-4 border-black presalebox mx-2 my-4">
-                   {/*} <Image src={d.logo} layout="fill" objectFit="cover" alt={noimage}/>*/}
+                <div className="relative w-[120px] h-[100px] border-4 bg-base-4 border-black mx-2 my-4 content-center">
+                    <img src={d.logo} layout="fill" objectFit="cover" alt={noimage}/>
                 </div>
                 <div className="flex flex-col pl-2 pt-2 w-full">
                     <div className={`font-basic font-bold text-md text-black`}>{data.name}</div>
     
                     <div className="flex flex-col items-start justify-start">
-                        <div className={`  flex text-xs text-black font-bold pt-2 items-center`}>
+                        <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
                             progress {info.progress}%
                         </div>
                         <Progressbar percentage={info.progress} />
                     </div>
                     <div className= "flex flex-row justify-start gap-2 pt-1">
                         <div className="text-xs">
-                            {/*<Link href={d.website}>
+                            <Link to={d.website}>
                                 [web]
-                                </Link>*/}
+                            </Link>
                         </div>
                         <div className="text-xs">
-                            {/*<Link href={d.twitter}>
+                            <Link to={d.twitter}>
                                 [x]
-                            </Link>*/}
+                            </Link>
                         </div>
                         <div className="text-xs">
-                            {/*<Link href={d.telegram}>
+                            <Link to={d.telegram}>
                                 [telegram]
-                        </Link>*/}
+                        </Link>
                         </div>
                     </div>
                     <div className={` mt-2 text-xs text-black`}>
@@ -66,7 +75,7 @@ export default function LaunchCard ({data}) {
 
                 </div>
                 <div className="flex flex-col items-start pt-2 pr-2">
-                    {/*<Image className="animate-pulse" src={icon} width={imgWidth} height={imgHeight} />*/}
+                    <img className="animate-pulse" src={icon} width={imgWidth} height={imgHeight} />
                 </div>
             </div>
         </div>

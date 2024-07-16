@@ -9,7 +9,6 @@ import Modal from "../components/Modal"
 
 
 export default function Page () {
-    const router = useRouter()
 
     const {account, chainId} = useEthers()
 
@@ -110,7 +109,7 @@ export default function Page () {
                 const buyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0
                 const txValue= buyAmount > 0 ? (buyAmount.mul(5).div(1000)).add(fee) : fee
                 {account && chainId &&
-                    send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: fee})
+                    send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
                 }
 
                 console.log("formData try", formData)
@@ -130,21 +129,21 @@ export default function Page () {
 
 
     return(
-        <div className="flex flex-col items-center justify-center min-h-screen bg-base-1 pb-20">
+        <div className="flex flex-col font-medium items-center justify-center min-h-screen bg-base-1 pb-20">
             <Modal className="z-10" tx={state} isOpen={isOpen} closeModal={() => closeModal()}/>
 
-            <div className={`${headerfont.className} pb-8 pt-20 text-3xl z-0`}>
+            <div className={`font-base pb-8 pt-20 text-3xl z-0`}>
                 almost there...
             </div>
             <form className={`connectbox border-4 border-black bg-base-4 py-2 pl-10 pr-20 h-auto content-center sm:max-2xl:w-[550px] z-0`}
                 name="launch"
                 onSubmit={handleSubmit}
             >
-                <div className={`${headerfont.className} pb-8 pt-2 text-xl`}>
+                <div className={`font-base pb-8 pt-2 text-xl`}>
                     input your token params
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`${connectfont.className}`} htmlFor="name">name</label>
+                <label className={`font-basic`} htmlFor="name">name</label>
 
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="Coin"
@@ -156,10 +155,10 @@ export default function Page () {
                     >
 
                     </input>
-                {errors && errors.name && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.name}</span>}
+                {errors && errors.name && <span className={`font-basic text-base-8 text-xs`}>{errors.name}</span>}
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`${connectfont.className}`} htmlFor="ticker">ticker</label>
+                <label className={`font-basic`} htmlFor="ticker">ticker</label>
 
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="COIN"
@@ -172,12 +171,12 @@ export default function Page () {
                     >
                    
                     </input>
-                    {errors && errors.ticker?.empty && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.ticker.empty}</span>}
-                    {errors && errors.ticker?.length && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.ticker.length}</span>}
+                    {errors && errors.ticker?.empty && <span className={`font-basic text-base-8 text-xs`}>{errors.ticker.empty}</span>}
+                    {errors && errors.ticker?.length && <span className={`font-basic text-base-8 text-xs`}>{errors.ticker.length}</span>}
 
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`${connectfont.className}`} htmlFor="description">description</label>
+                <label className={`font-basic`} htmlFor="description">description</label>
 
                     <textarea className=" flex border-2 border-black px-1 text-sm min-h-24 h-auto w-auto"
                         placeholder="token description"
@@ -191,12 +190,12 @@ export default function Page () {
                     >
 
                     </textarea>
-                    {errors && errors.description && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.description}</span>}
+                    {errors && errors.description && <span className={`font-basic text-base-8 text-xs`}>{errors.description}</span>}
 
 
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                    <label className={`${connectfont.className}`} htmlFor="website">website <span className={`${connectfont.className} text-xs`}>(optional)</span></label>
+                    <label className={`font-basic`} htmlFor="website">website <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="https://yourwebsite.com"
                         type="text"
@@ -208,11 +207,11 @@ export default function Page () {
                     >
 
                     </input>
-                    {errors && errors.website && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.website}</span>}
+                    {errors && errors.website && <span className={`font-basic text-base-8 text-xs`}>{errors.website}</span>}
 
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`${connectfont.className}`} htmlFor="twitter">twitter <span className={`${connectfont.className} text-xs`}>(optional)</span></label>
+                <label className={`font-basic`} htmlFor="twitter">twitter <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="https://x.com/YourX"
                         type="text"
@@ -224,11 +223,11 @@ export default function Page () {
                         >
 
                     </input>
-                    {errors && errors.twitter && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.twitter}</span>}
+                    {errors && errors.twitter && <span className={`font-basic text-base-8 text-xs`}>{errors.twitter}</span>}
 
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`${connectfont.className}`} htmlFor="telegram">telegram <span className={`${connectfont.className} text-xs`}>(optional)</span></label>
+                <label className={`font-basic`} htmlFor="telegram">telegram <span className={`font-basic text-xs`}>(optional)</span></label>
 
                     <input className="border-2 border-black px-1 text-sm"
                             placeholder="https://t.me/YourTG"
@@ -241,11 +240,11 @@ export default function Page () {
                     >
 
                     </input>
-                    {errors && errors.telegram && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.telegram}</span>}
+                    {errors && errors.telegram && <span className={`font-basic text-base-8 text-xs`}>{errors.telegram}</span>}
 
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`${connectfont.className}`} htmlFor="image">logo <span className={`${connectfont.className} text-xs`}>(optional)</span></label>
+                <label className={`font-basic`} htmlFor="image">logo <span className={`font-basic text-xs`}>(optional)</span></label>
 
                     <input className="border-2 border-black px-1 text-sm"
                             placeholder="https://yourimageurl.com"
@@ -258,11 +257,11 @@ export default function Page () {
                     
                     >
                     </input>
-                    {errors && errors.image && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.image}</span>}
+                    {errors && errors.image && <span className={`font-basic text-base-8 text-xs`}>{errors.image}</span>}
 
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`${connectfont.className}`} htmlFor="buyAmount">buy amount[ETH] <span className={`${connectfont.className} text-xs`}>(optional)</span></label>
+                <label className={`font-basic`} htmlFor="buyAmount">buy amount[ETH] <span className={`font-basic text-xs`}>(optional)</span></label>
 
                     <input className="border-2 border-black px-1 text-sm"
                             placeholder="0.001"
@@ -275,27 +274,27 @@ export default function Page () {
                     
                     >
                     </input>
-                    {errors && errors.buyAmount?.number && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.buyAmount.number}</span>}
-                    {errors && errors.buyAmount?.negative && <span className={`${connectfont.className} text-base-8 text-xs`}>{errors.buyAmount.negative}</span>}
+                    {errors && errors.buyAmount?.number && <span className={`font-basic text-base-8 text-xs`}>{errors.buyAmount.number}</span>}
+                    {errors && errors.buyAmount?.negative && <span className={`font-basic text-base-8 text-xs`}>{errors.buyAmount.negative}</span>}
 
                 </div>
                 
                 {(state.status === "None" || state.status === 'Success' || state.status === 'Fail') &&
                     <div className="flex flex-row justify-end gap-8 py-4">
                        {/*<Image className="animate-bounce" src="/sendit.svg" width={imgWidth} height={imgHeight} alt="arrow"/>*/}
-                        <button type="submit" className={`${connectfont.className} connectbox border-4 border-black bg-base-7 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer`}> launch </button>
+                        <button type="submit" className={`font-basic connectbox border-4 border-black bg-base-7 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer`}> launch </button>
                     </div>
                 }
                 {(state.status === 'Mining' || state.status === 'Pending Signature') && 
                     <div className="flex flex-row justify-end gap-8 py-4">
-                        <button className={`${connectfont.className} connectbox border-4 border-black bg-base-2 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer animate-pulse`} disabled> launching... </button>
+                        <button className={`font-basic connectbox border-4 border-black bg-base-2 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer animate-pulse`} disabled> launching... </button>
                     </div>
 
                 }
 
                 
             </form>
-            <div className={`${headerfont.className} pt-4`}> launch price 0.001 ETH</div>
+            <div className={`font-base pt-4`}> launch price 0.001 ETH</div>
 
 
         </div>

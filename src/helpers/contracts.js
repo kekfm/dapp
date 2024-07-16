@@ -1,6 +1,8 @@
 import {supportedChainIds} from './chains'
 import {ethers} from 'ethers'
 import factoryABI from '../abis/factoryABI.json'
+import tokenABI from '../abis/tokenABI.json'
+
 
 
 export const contracts = {
@@ -48,6 +50,11 @@ export const contracts = {
     feeAddress:
         {
             97:"0x9695b8652a3046a5390BCF5e2Ca9C4b8C8437aa5"
-        }
+        },
+    token:{
+            interface:{
+                97: new ethers.utils.Interface(tokenABI)
+            }
+    }
     
 }

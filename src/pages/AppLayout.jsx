@@ -11,7 +11,7 @@ function AppLayout() {
         flexGrow: '1',
         padding: '10px',
         width: '100%',
-        maxWidth: '800px',
+        maxWidth: '1200px',
         margin: '5px auto',
       }}>
         <Outlet />

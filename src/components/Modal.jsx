@@ -6,6 +6,7 @@ import { Contract, ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
 import {useFeeInfo, useCreateToken} from "../helpers/factoryHooks.jsx"
 import {formatter} from "../helpers/formatter"
+import { Link } from 'react-router-dom';
 
 
 
@@ -39,7 +40,7 @@ export default function Modal ({tx, isOpen, closeModal}) {
               Check your launch here
             </div>
             <button className={` bg-base-2 border-4 border-black py-2 px-8 mt-2 mb-2 w-full text-center hover:-translate-y-2 transition-all duration-300 ease-in-out`}>
-              <Link href={`/launch/${tokenAddress}`}>
+              <Link to={`/launch/${tokenAddress}`}>
                 Check
               </Link>
             </button>

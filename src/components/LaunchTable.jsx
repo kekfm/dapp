@@ -2,10 +2,14 @@ import '../../globals.css';
 import LaunchCard from './LaunchCard';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom'
+
 
 export default function LaunchTable() {
     const [files, setFiles] = useState([]);
     const [error, setError] = useState(null);
+
+   
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,12 +20,16 @@ export default function LaunchTable() {
                 });
 
                 const data = response.data;
-                console.log("data", data)
 
-                if (Array.isArray(data)) {
-                    setFiles(data);
+                const uniqueData = data.filter((item, index, self) => index === self.findIndex((t) => (
+                    t.tokenAddress === item.tokenAddress
+                )))
+               
+
+                if (Array.isArray(uniqueData)) {
+                    setFiles(uniqueData);
                 } else {
-                    console.error('Expected data to be an array, but received:', data);
+                    console.error('Expected data to be an array, but received:', uniqueData);
                     setError('Invalid data format received.');
                 }
             } catch (error) {
@@ -38,7 +46,7 @@ export default function LaunchTable() {
     return (
         <div className="flex flex-row grid md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 flex-wrap gap-10 connectbox border-4 border-black bg-base-4 mt-40 p-10">
             {files.map((item, index) => (
-                <LaunchCard key={index} data={item} />
+                    <LaunchCard  key={index} data={item} />
             ))}
         </div>
     );
