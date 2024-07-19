@@ -24,7 +24,9 @@ export default function LaunchTable() {
                 const uniqueData = data.filter((item, index, self) => index === self.findIndex((t) => (
                     t.tokenAddress === item.tokenAddress
                 )))
+
                
+
 
                 if (Array.isArray(uniqueData)) {
                     setFiles(uniqueData);
@@ -32,6 +34,9 @@ export default function LaunchTable() {
                     console.error('Expected data to be an array, but received:', uniqueData);
                     setError('Invalid data format received.');
                 }
+
+
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError('Error fetching data.');
@@ -46,8 +51,10 @@ export default function LaunchTable() {
     return (
         <div className="flex flex-row grid md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 flex-wrap gap-10 connectbox border-4 border-black bg-base-4 mt-40 p-10">
             {files.map((item, index) => (
-                    <LaunchCard  key={index} data={item} />
+                    <LaunchCard key={index} data={item} />
             ))}
         </div>
     );
 }
+
+

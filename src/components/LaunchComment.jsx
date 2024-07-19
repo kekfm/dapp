@@ -3,6 +3,8 @@ import { useEthers } from "@usedapp/core"
 import { useState } from "react"
 import axios from "axios"
 import DOMPurify from "dompurify"
+import CommentSuccessModal from "./CommentSuccessModal"
+import CommentFailModal from "./CommentFailModal"
 
 
 
@@ -12,6 +14,7 @@ export default function LaunchComment ({tokenAddress}) {
 
         const [commentText, setCommentText] = useState("")
         const [errors, setErrors] = useState({})
+        const [commentStatus, setCommentStatus] = useState(0)
 
         const handleChange = (e) => {
             const {value} = e.target
@@ -53,13 +56,27 @@ export default function LaunchComment ({tokenAddress}) {
         }
 
         const sendForm = async (commentData) => {
+            setCommentStatus(3)
             const response = await axios.post(`http://103.26.10.88/api/postComment/${tokenAddress}`, commentData, {withCredentials: true})
             console.log("response", response)
+            if(response.status == 201){ 
+                setCommentStatus(1)
+                setCommentText("")
+            }
+            if(response.status == 500){
+                setCommentStatus(2)
+            }
+        }
+
+        const closeModal = () => {
+            setCommentStatus(0)
         }
 
 
     return(
         <div className="connectbox bg-base-3 m-2 border-4 border-black">
+            <CommentSuccessModal closeModal={closeModal} commentStatus={commentStatus}/>
+            <CommentFailModal closeModal={closeModal} commentStatus={commentStatus} />
             <form
                 name="commentform"
                 onSubmit={handleSubmit}
@@ -83,12 +100,23 @@ export default function LaunchComment ({tokenAddress}) {
                     {errors && errors.long && <span className="text-base-8 mx-4">{errors.long}</span>}
                     {errors && errors.account && <span className="text-base-8 mx-4">{errors.account}</span>}
                 <div>
-                    <button 
-                        className="connectbox border-4 border-black bg-base-6 px-2 mx-4 my-2"
-                        type="submit"
-                        >
-                            post
+                    { (commentStatus == 0 || commentStatus == 1 || commentStatus == 2) &&
+                        <button 
+                            className="connectbox border-4 border-black bg-base-6 px-2 mx-4 my-2"
+                            type="submit"
+                            >
+                                post
                         </button>
+                    }
+                    { commentStatus == 3 &&
+                        <button 
+                            className="connectbox border-4 border-black bg-base-2 px-2 mx-4 my-2 animate-pulse"
+                            type="submit"
+                            >
+                                posting
+                        </button>
+                    }
+                        
                 </div>
                
 

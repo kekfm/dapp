@@ -4,6 +4,8 @@ import noimage from '../assets/noimage.svg'
 import Progressbar from './Progressbar';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { ethers } from 'ethers';
 
 
 
@@ -14,11 +16,15 @@ export default function LaunchCard ({data}) {
 
     const navigate = useNavigate()
 
+    const [percentage,setPercentage] = useState(0)
+
     const handleClick = () => {
         const tokenAddress = data.tokenAddress
         console.log("tokenAddress", tokenAddress)
         navigate(`/launch?token=${tokenAddress}`)
     }
+    const d = JSON.parse(data.description)
+
 
     const info = {
         name:"tyson the killer",
@@ -32,8 +38,26 @@ export default function LaunchCard ({data}) {
         dev:"0x062dc81A61b8C5fBA95c0c5d158fA6D41e0061Eb"
     }
 
-    const d = JSON.parse(data.description)
 
+
+    useEffect(() => {
+    
+        const {buys, sells} = data
+        const transactions = [...buys, ...sells]
+        const filtered = transactions.filter((item, index, self) => index === self.findIndex((t) => (
+            t.maker === item.maker && t.timestamp === item.timestamp)
+        ))
+        filtered.sort((a,b) => (b.timestamp - a.timestamp))
+        const latest = filtered[0]
+        console.log("latest", latest)
+        
+        if(latest){
+            const soldTokens = (100000 - Number(ethers.utils.formatEther(latest.contractTokenBalance)))
+            const percentage = soldTokens / 75000 * 100
+            setPercentage(percentage)
+        }
+
+    },[])
     
 
     return(
@@ -41,16 +65,16 @@ export default function LaunchCard ({data}) {
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
                 <div className="relative w-[120px] h-[100px] border-4 bg-base-4 border-black mx-2 my-4 content-center">
-                    <img src={d.logo} layout="fill" objectFit="cover" alt={noimage}/>
+                    <img src={d.logo} layout="fill" objectfit="cover" alt={noimage}/>
                 </div>
                 <div className="flex flex-col pl-2 pt-2 w-full">
                     <div className={`font-basic font-bold text-md text-black`}>{data.name}</div>
     
                     <div className="flex flex-col items-start justify-start">
                         <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
-                            progress {info.progress}%
+                            progress {percentage.toFixed(1)}%
                         </div>
-                        <Progressbar percentage={info.progress} />
+                        <Progressbar percentage={percentage} />
                     </div>
                     <div className= "flex flex-row justify-start gap-2 pt-1">
                         <div className="text-xs">

@@ -10,10 +10,10 @@ import {formatter} from "../helpers/formatter"
 
 
 
-export default function BuyModal ({isOpen, closeModal}) {
+export default function CommentSuccessModal ({closeModal, commentStatus}) {
 
     
-    if (!isOpen) return null
+    if (commentStatus == 0 || commentStatus == 2 || commentStatus == 3) return null
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -26,7 +26,7 @@ export default function BuyModal ({isOpen, closeModal}) {
               success!
             </div>
             <div className={`font-basic text-xl pb-4 pt-2 text-center`}>
-              your buy was successful, my chad!
+              thanks for spitting some truth!
             </div>
           </div>
         </div>
