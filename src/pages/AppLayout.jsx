@@ -1,21 +1,26 @@
 import { Outlet} from 'react-router-dom'
 import  Navbar  from '../components/Navbar'
+import Footer from '../components/Footer'
 
 
 function AppLayout() {
 
   return (
     <div className="bg-base-1">
-      <Navbar />
+      <div className="w-100">
+        <Navbar />
+
+      </div>
       <main style={{
-        flexGrow: '1',
         padding: '10px',
         width: '100%',
-        maxWidth: '1200px',
+        maxWidth: '100%',
         margin: '5px auto',
       }}>
         <Outlet />
       </main>
+      <Footer />
+
     </div>
   )
 }

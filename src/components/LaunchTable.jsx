@@ -49,10 +49,12 @@ export default function LaunchTable() {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="flex flex-row grid md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 flex-wrap gap-10 connectbox border-4 border-black bg-base-4 mt-40 p-10">
-            {files.map((item, index) => (
-                    <LaunchCard key={index} data={item} />
-            ))}
+        <div className="flex justify-center items-center min-h-screen ">
+            <div className="flex flex-row flex-wrap gap-10 sm:connectbox sm:border-4 sm:border-black sm:bg-base-2 sm:p-10 justify-center  sm:w-11/12 sm:max-w-[1400px] sm:overflow-x-auto">
+                {files.map((item, index) => (
+                    <LaunchCard key={index} tag={index} data={item} />
+                ))}
+            </div>
         </div>
     );
 }

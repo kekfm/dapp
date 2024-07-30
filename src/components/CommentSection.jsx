@@ -7,14 +7,19 @@ import Comments from "./Comments"
 export default function CommentSection ({tokenAddress, props}) {
 
     return(
-        <div className="flex flex-col font-basic items-center">
-            <div className=" font-semibold text-xl">
+        <div className="flex flex-col font-basic w-full">
+            <div className="font-semibold text-xl text-start ">
                 discussion
             </div>
-            {props && props.comments.length > 0 && 
-                props.comments.map((item, index) => (<Comments key={index} item={item}/>))
-            }
-            <LaunchComment tokenAddress={tokenAddress} />
+            <div className="">
+                {props && props.comments.length > 0 && 
+                    props.comments.map((item, index) => (<Comments key={index} item={item}/>))
+                }
+            </div>
+            
+            <div className="w-full pr-4">
+                <LaunchComment tokenAddress={tokenAddress} />
+            </div>
         </div>
     )
 

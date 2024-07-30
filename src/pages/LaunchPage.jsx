@@ -3,6 +3,7 @@ import { useState, useEffect} from 'react'
 import axios from 'axios'
 import "../../globals.css"
 import noimage from "../assets/noimage.svg"
+import tokenpage from "../assets/tokenpage.svg"
 import Buy from "../components/Buy"
 import { useTokenBalance, useEthers } from '@usedapp/core'
 import { ethers } from 'ethers'
@@ -27,7 +28,9 @@ export default function LaunchPage () {
     const [transactions, setTransactions] = useState([])
 
 
+
     const {account } = useEthers()
+    const navigate = useNavigate()
 
     useEffect(()=>{
         const fetchData = async (tokenAddress) =>{
@@ -93,87 +96,103 @@ export default function LaunchPage () {
 
     const tokenBalance = useTokenBalance(tokenAddr, account)
    
-
+    const goToDev = () => {
+        navigate(`/me?account=${props.owner}`)
+    }
 
 return(
-    <div className="flex justify-center py-20">
-    {props && d && 
-        <div className="flex flex-col connectbox border-4 border-black w-3/4 h-full bg-base-2">
-            <div className= "flex flex-row justify-between">
-                <div className="flex flex-row justify-between">
-                    <div className="relative max-w-[300px] max-h-[400px] border-4 bg-base-4 border-black mx-2 my-4 content-center">
-                        {<img src={d.logo} layout="fill" objectfit="cover" alt={noimage}/>}
-                    </div>
-                    <div className="flex flex-col pl-2 pt-2 w-full">
-                        <div className={`font-basic font-bold text-md text-black`}>{props.name}</div>
-        
-                        <div className="flex flex-col items-start justify-start">
-                            <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
-                                progress {percentage.toFixed(1)}%
+    <div className="flex flex-col items-center py-20">
+        <div className="flex justify-center pb-4">
+            <img src={tokenpage} className="max-w-[280px]"></img>
+        </div>
+        {props && d && 
+        <div className="flex flex-col sm:connectbox sm:border-4 sm:border-black sm:w-11/12 max-w-[1200px] w-full h-full sm:bg-base-2 justify-center ">
+            <div className="flex flex-col grid md:grid-cols-2 md:flex-row justify-center mb-10 md:gap-10 lg:gap-20 max-md:items-center">
+                <div className="flex flex-col lg:flex-row justify-center mt-10 lg:mt-10 sm:p-4 ">
+                    <div className="flex-col">
+                        <div className="flex flex-col lg:flex-row">
+                            <div className="max-w-[300px] lg:max-w-[300px] h-auto px-2 pt-4">
+                                { d && d.logo && <img src={d.logo} alt="no image" className="aspect-square object-contain border-4 border-black bg-black connectbox"/>}
+                                { d && !d.logo && <img src={noimage} alt="no image" className="aspect-square object-contain border-4 border-black bg-black connectbox"/>}
                             </div>
-                            {<Progressbar percentage={percentage} />}
+                            <div className="flex flex-col pl-2 pt-2 w-full ">
+                                <div className={`font-basic font-bold text-md text-black`}>
+                                    {props.name} (${props.symbol})
+                                </div>
+                                <div className="flex flex-col items-start justify-start">
+                                    <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
+                                        progress {percentage.toFixed(1)}%
+                                    </div>
+                                        <Progressbar percentage={percentage} />
+                                </div>
+                                <div className= "flex flex-row justify-start gap-2 pt-1">
+                                    <div className="text-xs">
+                                        <Link to={d.website}>
+                                            [web]
+                                        </Link>
+                                    </div>
+                                    <div className="text-xs">
+                                        <Link to={d.twitter}>
+                                            [x]
+                                        </Link>
+                                    </div>
+                                    <div className="text-xs">
+                                        <Link to={d.telegram}>
+                                            [telegram]
+                                    </Link>
+                                    </div>
+                                </div>
+                                <div className={`mt-2 text-xs text-black `} onClick={goToDev}>
+                                    created by <span className='text-base-6'>{props.owner.slice(0,4)}...{props.owner.slice(props.owner.length -4, props.owner.length)}</span>
+                                </div>
+                                <div className="flex flex-row gap-2 text-xs pt-2">
+                                    <div>
+                                        buys: {uniqueBuys.length}
+                                    </div>
+                                    <div>
+                                        sells: {uniqueSells.length}
+                                    </div>
+                                </div>
+                                <div className="text-xs pt-2">
+                                    dev jeeted? {jeet}
+                                </div>
+                            </div>
                         </div>
-                        <div className= "flex flex-row justify-start gap-2 pt-1">
-                            <div className="text-xs">
-                                <Link to={d.website}>
-                                    [web]
-                                </Link>
-                            </div>
-                            <div className="text-xs">
-                                <Link to={d.twitter}>
-                                    [x]
-                                </Link>
-                            </div>
-                            <div className="text-xs">
-                                <Link to={d.telegram}>
-                                    [telegram]
-                            </Link>
-                            </div>
+                        <div className='flex text-sm connectbox max-w-[300px] lg:max-w-[500px] h-28 border-2 border-black mt-6 px-1 mb-4 bg-base-4 mx-2 overflow-auto'>
+                            {d.des}
                         </div>
-                        <div className={` mt-2 text-xs text-black`}>
-                            created by <span className='text-base-6'>{props.owner.slice(0,4)}...{props.owner.slice(props.owner.length -4, props.owner.length)}</span>
-                        </div>
-                        <div className="flex flex-row gap-2 text-xs pt-2">
-                            <div>
-                                buys: {uniqueBuys.length}
-                            </div>
-                            <div>
-                                sells: {uniqueSells.length}
-                            </div>
-                        </div>
-                        <div className="text-xs pt-2">
-                            dev jeeted? {jeet}
-                        </div>
-    
                     </div>
                     
                 </div>
-                <div className="flex flex-col"> 
-                    <div> 
+                <div className="flex flex-col max-sm:w-full "> 
+                    <div className="flex font-basic font-semibold text-xl text-start pr-4 mr-2 mt-10 pt-6 pb-4 w-full max-md:justify-center"> 
                         <Trade tokenAddress={props.tokenAddress} tokenTicker={props.symbol} tokenBalance={tokenBalance}/>
                     </div>
 
                     {tokenBalance ? 
-                        <div className=" text-sm border-4 border-black font-basic font-semibold connectbox bg-base-8 mx-4 p-1"> 
-                            your balance: {ethers.utils.formatEther(tokenBalance)} ${props.symbol}
+                        <div className="flex justify-start">
+                            <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-8 p-1 mr-2 max-md:ml-4 max-sm:w-[250px] max-w-[300px]"> 
+                                your balance: {ethers.utils.formatEther(tokenBalance)} ${props.symbol}
+                            </div>
                         </div>
+                        
                         :
-                        <div className=" text-sm border-4 border-black font-basic connectbox bg-base-8 mx-4 p-1"> 
-                            your balance: 0 ${props.symbol}
+                        <div className="flex justify-start">
+                            <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-8 p-1 mr-2 max-md:ml-4 max-sm:w-[250px] max-w-[300px]">
+                                your balance: 0 ${props.symbol}
+                            </div>
                         </div>
                         
                     }
 
                 </div>
             </div>
-            <div className='text-sm text-wrap truncate connectbox w-1/3 border-2 border-black px-1 mb-4 mx-2 h-24 bg-base-4'>
-                {d.des.slice(0,205)}...
-            </div>
-            <div className="flex flex-row grid grid-cols-2">
-                <div>
+            
+            <div className="flex flex-col md:flex-row max-md:items-center justify-center pb-10 border-t-4 border-b-4 border-black bg-base-11 gap-4">
+                <div className="flex pt-4 pl-4 md:w-1/2 justify-center w-full">
                     <CommentSection tokenAddress={tokenAddr} props={props}/>
                 </div>
-                <div>
+                <div className="flex pt-4 pl-4 pr-4 md:w-1/2 justify-center w-full">
                     <Holders data={latestTx}/>
                 </div>
             </div>

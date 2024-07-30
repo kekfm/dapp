@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 
 
 
-export default function LaunchCard ({data}) {
+export default function LaunchCard ({tag, data}) {
 
     const imgWidth = 30
     const imgHeight = 30
@@ -17,6 +17,7 @@ export default function LaunchCard ({data}) {
     const navigate = useNavigate()
 
     const [percentage,setPercentage] = useState(0)
+    const [color, setColor] = useState("")
 
     const handleClick = () => {
         const tokenAddress = data.tokenAddress
@@ -26,19 +27,7 @@ export default function LaunchCard ({data}) {
     const d = JSON.parse(data.description)
 
 
-    const info = {
-        name:"tyson the killer",
-        ticker:"myke",
-        description:"mike is a token that is awesome and that does contain a lot of ferocity and bite really awesome guy super man just not describable how great he is, he will kick jakes ass for sure. everbody has a plan and then they get punched in the mouth. 7 times seven equal punching your teeths out sucker",
-        twitter:"https://www.x.com",
-        telegram:"https://www.t.me",
-        url:"https://www.kickz.com",
-        image:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Mike_Tyson_2019_by_Glenn_Francis.jpg/480px-Mike_Tyson_2019_by_Glenn_Francis.jpg",
-        progress:"10",
-        dev:"0x062dc81A61b8C5fBA95c0c5d158fA6D41e0061Eb"
-    }
-
-
+   
 
     useEffect(() => {
     
@@ -57,21 +46,37 @@ export default function LaunchCard ({data}) {
             setPercentage(percentage)
         }
 
-    },[])
+        if((tag / 3) % 1 === 0){
+            setColor('#bafca2')
+        }
+
+        else if((tag / 2) % 1 === 0 && (tag / 3) % 1 !== 0){
+            setColor('#7df9ff')
+        }
+        else{
+            setColor('#ffb2ef')
+        }
+
+    },[data, tag])
     
 
     return(
-    <div onClick={handleClick} className="flex flex-col connectbox border-4 border-black w-[300px] h-[250px] bg-base-7">
+    <div onClick={handleClick} className={`flex flex-col connectbox border-4 border-black w-[280px] h-[200px]`} style={{backgroundColor:`${color}`}}>
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
-                <div className="relative w-[120px] h-[100px] border-4 bg-base-4 border-black mx-2 my-4 content-center">
-                    <img src={d.logo} layout="fill" objectfit="cover" alt={noimage}/>
+                <div className="relative w-[120px] h-[100px] border-4 bg-base-4 border-black mx-2 my-4 content-center overflow-hidden">
+                    {d && d.logo &&
+                        <img src={d.logo} layout="fill" className="w-full h-full object-contain" alt="logo"/>
+                    }
+                    {d && !d.logo &&
+                        <img src={noimage} layout="fill" className="w-full h-full object-contain" alt="logo"/>
+                    }
                 </div>
-                <div className="flex flex-col pl-2 pt-2 w-full">
+                <div className="flex flex-col pl-2 pt-2 overflow-hidden" >
                     <div className={`font-basic font-bold text-md text-black`}>{data.name}</div>
     
-                    <div className="flex flex-col items-start justify-start">
-                        <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
+                    <div className="flex flex-col items-start justify-start w-[120px]">
+                        <div className={`font-basic flex text-xs text-black font-bold items-center`}>
                             progress {percentage.toFixed(1)}%
                         </div>
                         <Progressbar percentage={percentage} />
@@ -88,7 +93,7 @@ export default function LaunchCard ({data}) {
                             </Link>
                         </div>
                         <div className="text-xs">
-                            <Link to={d.telegram}>
+                        <Link to={d.telegram}>
                                 [telegram]
                         </Link>
                         </div>
@@ -98,12 +103,10 @@ export default function LaunchCard ({data}) {
                     </div>
 
                 </div>
-                <div className="flex flex-col items-start pt-2 pr-2">
-                    <img className="animate-pulse" src={icon} width={imgWidth} height={imgHeight} />
-                </div>
+                
             </div>
         </div>
-        <div className='text-xs text-wrap truncate connectbox border-2 border-black px-1 py-1 mx-2 h-24 bg-base-4'>
+        <div className='font-basic font-bold text-xs text-wrap truncate px-1 py-1 mx-2 h-12'>
             {d.des.slice(0,205)}...
         </div>
     </div>

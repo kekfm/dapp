@@ -104,7 +104,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
     }
 
     return(
-        <div className="connectbox border-4 border-black bg-base-5 w-[300px] m-4 p-4">
+        <div className="connectbox border-4 border-black bg-base-5 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
             <BuyModal className="z-10" isOpen={buyModalOpen} closeModal={handleBuyModal}/>
             <form
                 name="buy"
@@ -188,7 +188,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
 
 
                 }
-                {(state.status == "Pending Signature" || state.status == "Mining") &&
+                {(state.status == "PendingSignature" || state.status == "Mining") &&
                     <button className="animate-pulse  border-2 border-black bg-base-2 font-base px-4 mt-2">
                         loading
                     </button>

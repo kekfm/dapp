@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import axios from "axios"
 import LaunchCard from "../components/LaunchCard"
+import devpage from "../assets/devpage.svg"
 
 
 export default function Account (){
@@ -33,30 +34,25 @@ export default function Account (){
 
     return(
 
-        <div className="flex flex-col pt-10 items-center">
+        <div className="flex flex-col pt-10 items-center mb-10">
             <div className="flex flex-col items-center">
-                <div className="font-basic font-extrabold text-2xl">
-                    account
+                <div className="font-basic font-extrabold text-2xl mb-4">
+                    <img src={devpage}></img>
                 </div>
-                <div className="connectbox border-4 border-black bg-base-5 px-4 py-2 font-basic font-extrabold text-xl">
-                    {account}
+                <div className="connectbox border-4 border-black bg-base-5 px-4 py-2 font-basic font-semibold text-sm md:text-xl max-w-[300px]">
+                    {account.slice(0,10)}...{account.slice(account.length-8,account.length)}
                 </div>
             </div>
-            <div className=" flex flex-col bg-base-5 connectbox border-2 border-black gap-4 items-center w-full mt-20">
-                
-                <div className="font-basic font-extrabold text-2xl">
+            <div className="flex flex-col bg-base-5 connectbox border-4 border-black gap-4 items-center w-full mt-20 overflow-x-auto pb-10">
+                <div className="font-basic font-extrabold text-2xl pt-2">
                     devs past launches
                 </div>
-                <div className="flex flex-row flex-wrap justify-center gap-4">
+                <div className="flex flex-row flex-wrap justify-center gap-4 pb-4 overflow-x-auto">
                     {devData &&
                         devData.map((item,index) => (<LaunchCard key={index} data={item} />))
                     } 
                 </div>
-                <div>
-                    dev rating:
-                </div>
-            </div>
-            
+            </div> 
         </div>
     )
 }

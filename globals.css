@@ -25,7 +25,7 @@
 
 .logosfont{
       color:#fffb47;
-      -webkit-text-stroke-width: 2px;
+      -webkit-text-stroke-width: 1px;
       -webkit-text-stroke-color: black;
 }
 
@@ -39,5 +39,40 @@
 .progressfont{
    -webkit-text-stroke-width: 1px;
    -webkit-text-stroke-color: black;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-content {
+  display: inline-block;
+  padding-left: 100%; /* Start the text off the right side of the element */
+  animation: marquee 60s linear infinite; /* Adjust the duration as needed */
+}
+
+@keyframes grow-shrink {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.2);
+  }
+}
+
+.grow-shrink {
+  @apply transition-transform duration-500;
+  animation: grow-shrink 2s infinite;
 }
 

@@ -74,17 +74,17 @@ export default function LaunchComment ({tokenAddress}) {
 
 
     return(
-        <div className="connectbox bg-base-3 m-2 border-4 border-black">
+        <div className="flex flex-col connectbox bg-base-3 border-4 border-black w-full">
             <CommentSuccessModal closeModal={closeModal} commentStatus={commentStatus}/>
             <CommentFailModal closeModal={closeModal} commentStatus={commentStatus} />
             <form
                 name="commentform"
                 onSubmit={handleSubmit}
             >
-                <div className="mx-4">
+                <div className="mx-4 font-basic font-bold">
                     <label htmlFor="comment"> your comment</label>
                 </div>
-                <div>
+                <div className="flex w-full">
                     <textarea
                         placeholder="put your wisdom here"
                         type="text"
@@ -92,7 +92,7 @@ export default function LaunchComment ({tokenAddress}) {
                         name="comment"
                         onChange={handleChange}
                         value={commentText}
-                        className="connectbox mx-4 mt-4 border-4 border-black"
+                        className="connectbox mx-4 mt-2 border-4 border-black w-full md:h-24"
                     >
                     </textarea>
                 </div>

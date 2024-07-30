@@ -22,8 +22,11 @@ export default {
           11:'#C4A1FF',
           12:'#2FFF2F', //green as fuck
           13:'#7df9ff', //baby blue
-          14:'#daf5f0', //light blue
+          14:'#fdf9ff', //light blue
           15:'#a7dbd8', //not so light blue
+          16:'#FF7A5C', //orange/red
+          17:'#bafca2', //very light green
+          18:'#ffb2ef', //light rose
 
         }
       },
@@ -38,6 +41,15 @@ export default {
         'bold': 700,
         'extrabold': 800,
         'black': 900,
+      },
+      animation: {
+        'grow-shrink': 'grow-shrink 2s infinite ease-in-out',
+      },
+      keyframes: {
+        'grow-shrink': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.5)' },
+        },
       },
     },
   },

@@ -33,7 +33,7 @@ export default function Chart({ data }) {
                     top: 0.1,
                     bottom: 0.1,
                 },
-                borderVisible: false,
+                borderVisible: true,
                 mode: 2, // Logarithmic scale
 
             },

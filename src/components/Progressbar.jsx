@@ -17,7 +17,7 @@ export default function Progressbar ({percentage}) {
     }, [percentage]);
 
     return (
-        <div className="progress-container border-2 mt-1 border-black bg-base-4 h-3 w-full">
+        <div className="progress-container border-2 mt-1 border-black bg-base-4 h-3 w-2/4 max-w-[200px]">
             <div className={`progress-bar bg-base-12 border-1 border-black h-full ${progressWidth}`}></div>
         </div>
     )

@@ -4,7 +4,11 @@ import { useEthers} from "@usedapp/core";
 import { Contract, ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
 import {useFeeInfo, useCreateToken} from "../helpers/factoryHooks.jsx"
-import Modal from "../components/Modal"
+import SuccessModal from "../components/SuccessModal"
+import FailModal from "../components/FailModal"
+import bump from "../assets/sendit.svg"
+import launch from "../assets/launch.svg"
+
 
 
 
@@ -12,13 +16,9 @@ export default function Page () {
 
     const {account, chainId} = useEthers()
 
-    console.log("chainID", chainId)
     
     const {state, send, events, resetState} = useCreateToken('deployNewToken', chainId, {transactionName: 'create'})
     const fee = useFeeInfo(chainId)
-
-    console.log("fee", fee ? ethers.utils.formatEther(fee) : 0)
-    console.log("state.status", state ? state.status : 0)
 
     const imgWidth = 120
     const imgHeight = 60
@@ -37,12 +37,22 @@ export default function Page () {
     })
     const [errors, setErrors] = useState({})
     const [isOpen, setIsOpen] = useState(false)
+    const [failOpen, setFailOpen] = useState(false)
+
 
     useEffect(() => {
+        console.log("state.status", state.status)
+
         if(state.status == "Success"){
             setIsOpen(true)
-
         }
+        if(state.status == "Exception" || state.status == "Fail"){
+            setFailOpen()
+        }
+        if(state.status == "Exception" || state.status == "Fail"){
+            resetState()
+        }
+
     },[state.status])
 
     const closeModal = () =>{
@@ -50,12 +60,15 @@ export default function Page () {
         router.push('/')
     }
 
+    const closeFailModal = () =>{
+        setFailOpen(false)
+    }
+
 
     const handleChange = (e) => {
         const {name, value} = e.target
         setFormData({...formData, [name]: value})
 
-        console.log("formData",formData)
     }
 
     const validateForm = () => {
@@ -74,7 +87,7 @@ export default function Page () {
         if(formData.website && !isValidURL(formData.website)){newErrors.website = "has to be a valid url"}
         if(formData.twitter && !isValidURL(formData.twitter)){newErrors.twitter = "has to be a valid url"}
         if(formData.telegram && !isValidURL(formData.telegram)){newErrors.telegram = "has to be a valid url"}
-        if(formData.image && !isValidURL(formData.image)){newErrors.image = "has to be a valid url"}
+        if(formData.image && !isValidImageURL(formData.image)){newErrors.image = "has to end with .png or .jpg"}
 
         if(formData.buyAmount && isNaN(formData.buyAmount)){buyAmountErrors.number = "has to be a number"}
         if(formData.buyAmount && formData.buyAmount < 0){buyAmountErrors.negative = "cannot be a negative amount"}
@@ -94,7 +107,11 @@ export default function Page () {
           '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
           '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
         return !!pattern.test(str);
-      }
+    }
+
+      function isValidImageURL(str) {
+        return /\.(png|jpg)$/i.test(str);
+    }
 
     const handleSubmit = (e) =>{
         e.preventDefault()
@@ -107,12 +124,11 @@ export default function Page () {
                 const tokenInfo = `{"des": "${formData.description || ""}", "twitter": "${formData.twitter || ""}", "telegram": "${formData.telegram || ""}", "website": "${formData.website || ""}", "logo": "${formData.image || ""}"}`
                 const feeAddress = contracts.feeAddress[chainId]
                 const buyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0
-                const txValue= buyAmount > 0 ? (buyAmount.mul(5).div(1000)).add(fee) : fee
+                const txValue = buyAmount > 0 ? (buyAmount.add(buyAmount.mul(5).div(1000))).add(fee) : fee
                 {account && chainId &&
                     send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
                 }
-
-                console.log("formData try", formData)
+                
             }
             catch(error){
                 console.error("error on launch", error)
@@ -129,17 +145,17 @@ export default function Page () {
 
 
     return(
-        <div className="flex flex-col font-medium items-center justify-center min-h-screen bg-base-1 pb-20">
-            <Modal className="z-10" tx={state} isOpen={isOpen} closeModal={() => closeModal()}/>
-
-            <div className={`font-base pb-8 pt-20 text-3xl z-0`}>
-                almost there...
+        <div className="flex flex-col font-basic font-medium items-center justify-center min-h-screen bg-base-1 pb-20 ">
+            <SuccessModal className="z-10" tx={state} isOpen={isOpen} closeModal={() => closeModal()}/>
+            <FailModal className="z-10" isOpen={failOpen} closeModal={() => closeFailModal()}/>
+            <div className={`pb-8 pt-20`}>
+                <img src={launch}></img>
             </div>
-            <form className={`connectbox border-4 border-black bg-base-4 py-2 pl-10 pr-20 h-auto content-center sm:max-2xl:w-[550px] z-0`}
+            <form className={`connectbox border-4 border-black bg-base-4 py-2 pl-4 sm:pl-10 pr-4 sm:pr-20 h-auto content-center w-5/6 max-w-[700px] z-0`}
                 name="launch"
                 onSubmit={handleSubmit}
             >
-                <div className={`font-base pb-8 pt-2 text-xl`}>
+                <div className={`font-bold pb-8 pt-2 text-xl`}>
                     input your token params
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
@@ -176,9 +192,9 @@ export default function Page () {
 
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`font-basic`} htmlFor="description">description</label>
+                    <label className={`font-basic`} htmlFor="description">description</label>
 
-                    <textarea className=" flex border-2 border-black px-1 text-sm min-h-24 h-auto w-auto"
+                    <textarea className="flex border-2 border-black px-1 text-sm min-h-24 h-auto w-auto"
                         placeholder="token description"
                         type="text"
                         id="description"
@@ -247,7 +263,7 @@ export default function Page () {
                 <label className={`font-basic`} htmlFor="image">logo <span className={`font-basic text-xs`}>(optional)</span></label>
 
                     <input className="border-2 border-black px-1 text-sm"
-                            placeholder="https://yourimageurl.com"
+                            placeholder=".png or .jpg"
                             type="text"
                             id="image"
                             name="image"
@@ -270,6 +286,7 @@ export default function Page () {
                             name="buyAmount"
                             onChange={handleChange}
                             value={formData.buyAmount}
+                            step="any"
 
                     
                     >
@@ -281,20 +298,19 @@ export default function Page () {
                 
                 {(state.status === "None" || state.status === 'Success' || state.status === 'Fail') &&
                     <div className="flex flex-row justify-end gap-8 py-4">
-                       {/*<Image className="animate-bounce" src="/sendit.svg" width={imgWidth} height={imgHeight} alt="arrow"/>*/}
+
+                        <img className="animate-bounce max-sm:hidden" src={bump} width={imgWidth} height={imgHeight} alt="arrow"></img>
                         <button type="submit" className={`font-basic connectbox border-4 border-black bg-base-7 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer`}> launch </button>
                     </div>
                 }
-                {(state.status === 'Mining' || state.status === 'Pending Signature') && 
+                {(state.status === 'Mining' || state.status === 'PendingSignature') && 
                     <div className="flex flex-row justify-end gap-8 py-4">
                         <button className={`font-basic connectbox border-4 border-black bg-base-2 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer animate-pulse`} disabled> launching... </button>
                     </div>
 
                 }
-
-                
             </form>
-            <div className={`font-base pt-4`}> launch price 0.001 ETH</div>
+            <div className={`font-bold pt-4`}> launch price: nothang</div>
 
 
         </div>
