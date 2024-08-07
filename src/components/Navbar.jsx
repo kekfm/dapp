@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import burger from "../assets/burger.svg";
 import { useEthers } from '@usedapp/core';
+import Recent from './Recent';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -36,10 +37,13 @@ export default function Navbar() {
     return (
         <div className="font-basic font-semibold flex flex-row justify-between pt-8 bg-base-1">
             <Link to="/">
-                <div className="text-4xl connectbox ml-8 px-6 py-2 border-4 border-black bg-base-4">
-                    kek.gm
+                <div className="text-4xl connectbox ml-8 px-10 py-2 border-4 border-black bg-base-4 ">
+                    kek
                 </div>
             </Link>
+            <div className="max-lg:hidden">
+                <Recent />
+            </div>
             <div className="flex flex-row gap-2 justify-between mr-2 max-sm:hidden">
                 {account &&
                     <NavAccount handleOpen={handleOpen} isOpen={isOpen} />

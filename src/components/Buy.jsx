@@ -45,8 +45,6 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
 
                 if (validateForm()){
                     send(parsedTokens, parsedETH, {value: txValue})
-                    console.log("parsedETH",parsedETH)
-                    console.log("parsedMinTokens",parsedTokens)
                 }
                 
             }catch(e){console.log("error buying", e)}
@@ -71,7 +69,8 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
     }
 
     useEffect(()=>{
-        if(state.status == "Success"){
+        console.log("state.status", state.status)
+        if(state.status === "Success"){
             setBuyModalOpen(true)
         }
     },[state.status])
@@ -92,7 +91,6 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
         if(value > 0){
             const parsed = ethers.utils.parseEther(stringValue)
             setParsedETH(parsed)
-            console.log("parsed", ethers.utils.formatEther(parsed))
         }
 
     }
@@ -104,8 +102,8 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
     }
 
     return(
-        <div className="connectbox border-4 border-black bg-base-5 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
-            <BuyModal className="z-10" isOpen={buyModalOpen} closeModal={handleBuyModal}/>
+        <div className="connectbox border-4 border-black bg-base-2 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
+            <BuyModal className="z-100" isOpen={buyModalOpen} closeModal={handleBuyModal}/>
             <form
                 name="buy"
                 onSubmit={handleBuySubmitBuy}
@@ -128,14 +126,12 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
                                 onChange={handleSlippage}
                                 className="flex font-basic font-medium text-xs border border-black w-10 pl-1"
                                 step="any"
-                                >
-                                
+                            >
                             </input>
                             {errors && errors.slippageUnderflow && <span className="text-xs font-basic text-base-8">{errors.slippageUnderflow}</span> }
                             {errors && errors.slippageOverflow && <span className="text-xs font-basic text-base-8">{errors.slippageOverflow}</span> }
 
                         </div>
-                        
                     </div>
                 </div>
                 
@@ -173,14 +169,14 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
                             >
                                 you get 
                             </div>
-                            <div className="border-2 border-black bg-base-1  p-2 b">
+                            <div className="border-2 border-black bg-base-1 p-2 b">
                                 {tokenAmount ? ethers.utils.formatEther(tokenAmount.toString()) + "$" + tokenTicker : "0 $" + tokenTicker}
                             </div>
                         </div>
                     </div>
                 </div>
-                {(state.status == "None" || state.status == "Success" || state.status == "Fail" || state.status =="Exception") &&
-                    <button className=" border-2 border-black bg-base-1 font-base px-4 mt-2"
+                {(state.status == "None" || state.status == "Success" || state.status == "Fail" || state.status == "Exception") &&
+                    <button className=" border-2 border-black connectbox bg-base-1 font-basic text-md px-4 mt-2"
                         type="submit"
                         >
                             buy
@@ -189,8 +185,8 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy}) {
 
                 }
                 {(state.status == "PendingSignature" || state.status == "Mining") &&
-                    <button className="animate-pulse  border-2 border-black bg-base-2 font-base px-4 mt-2">
-                        loading
+                    <button className="animate-pulse border-2 border-black bg-base-11 font-basic px-4 mt-2">
+                        buying...
                     </button>
                 }
                

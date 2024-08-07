@@ -9,7 +9,7 @@ export default function Provider({children}){
         supportedChainIds: supportedChainIds,
         readOnlyChainId: BSCTestnet.chainId,
         readOnlyUrls:{
-            [BSCTestnet.chainId]: 'https://endpoints.omniatech.io/v1/bsc/testnet/public'
+            [BSCTestnet.chainId]: 'https://bsc-testnet-rpc.publicnode.com'
 
         },
         networks:[BSCTestnet]

@@ -74,7 +74,7 @@ export default function LaunchComment ({tokenAddress}) {
 
 
     return(
-        <div className="flex flex-col connectbox bg-base-3 border-4 border-black w-full">
+        <div className="flex flex-col connectbox bg-base-2 border-4 border-black w-full">
             <CommentSuccessModal closeModal={closeModal} commentStatus={commentStatus}/>
             <CommentFailModal closeModal={closeModal} commentStatus={commentStatus} />
             <form
@@ -102,7 +102,7 @@ export default function LaunchComment ({tokenAddress}) {
                 <div>
                     { (commentStatus == 0 || commentStatus == 1 || commentStatus == 2) &&
                         <button 
-                            className="connectbox border-4 border-black bg-base-6 px-2 mx-4 my-2"
+                            className="connectbox border-4 border-black bg-base-1  font-basic px-2 mx-4 my-2"
                             type="submit"
                             >
                                 post
@@ -110,10 +110,10 @@ export default function LaunchComment ({tokenAddress}) {
                     }
                     { commentStatus == 3 &&
                         <button 
-                            className="connectbox border-4 border-black bg-base-2 px-2 mx-4 my-2 animate-pulse"
+                            className="connectbox border-4 border-black bg-base-11 px-2 mx-4 my-2 animate-pulse"
                             type="submit"
                             >
-                                posting
+                                posting...
                         </button>
                     }
                         

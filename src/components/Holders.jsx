@@ -6,13 +6,13 @@ import { ethers } from "ethers"
 
 export default function Holders ({data}) {
     return(
-        <div className="sm:flex sm:flex-col  items-center w-full">
-            <div className="flex flex-col w-full">
-                <div className="font-semibold text-xl">
+        <div className="flex flex-col md:items-start ">
+            <div className="flex flex-col">
+                <div className="font-basic font-bold text-xl">
                     holders
                 </div>
-                <div className="flex connectbox bg-white font-basic border-4 border-black w-full p-2 overflow-x-auto">
-                    <table className="w-full md:text-xl">
+                <div className="flex connectbox bg-white font-basic border-4 border-black max-w-[400px] p-2 ">
+                    <table className=" w-full md:text-xl overflow-x-auto">
                         <thead>
                             <tr className="">
                                 <th className="text-left text-sm px-4 py-2">address</th>

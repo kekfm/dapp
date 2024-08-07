@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         base: {
+          //1:"#f4d738",
           1:'#ff69b4', //pink bg
           2:'#fffb47', //logo font color
           3:'#f4d738', //presale area background
@@ -27,6 +28,7 @@ export default {
           16:'#FF7A5C', //orange/red
           17:'#bafca2', //very light green
           18:'#ffb2ef', //light rose
+          19:'#fdfd96',
 
         }
       },

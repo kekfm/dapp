@@ -13,8 +13,6 @@ import { Link } from 'react-router-dom';
 
 export default function FailModal ({isOpen, closeModal}) {
 
-    const [tokenAddress, setTokenAddress] = useState(undefined)
-
     if (!isOpen) return null
 
     return (

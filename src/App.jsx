@@ -12,7 +12,7 @@ function App() {
       <div className="w-full pt-4">
         <Marquee />
       </div>
-      <div className="pt-20">
+      <div className="pt-4">
         <Hero />
       </div>
       <div className="pt-20">

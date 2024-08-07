@@ -39,11 +39,11 @@ export default function SuccessModal ({tx, isOpen, closeModal}) {
             <div className={` text-xl pb-4 text-center`}>
               Check your launch here
             </div>
-            <button className={`bg-base-2 border-4 border-black py-2 px-8 mt-2 mb-2 w-full text-center hover:-translate-y-2 transition-all duration-300 ease-in-out`}>
               <Link to={`/launch?token=${tokenAddress}`}>
-                Check
+                <button className={`bg-base-2 border-4 border-black py-2 px-8 mt-2 mb-2 w-full text-center hover:-translate-y-2 transition-all duration-300 ease-in-out`}>
+                  Check
+                </button>
               </Link>
-            </button>
           </div>
         </div>
       );

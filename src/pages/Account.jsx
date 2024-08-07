@@ -20,8 +20,13 @@ export default function Account (){
             try {
                 const response = await axios.get(`http://103.26.10.88/api/getDev/${devAddress}`)
                 const data = response.data
-                setDevData(data)
-                console.log("dev data", data)
+
+                const filtered =  data.filter((item, index, self) => index === self.findIndex((t) => (
+                    item.timestamp === t.timestamp
+                )))
+
+                setDevData(filtered)
+                console.log("dev data", filtered)
             }
            catch(e){console.log("error fetching dev data", e)}
 
@@ -47,7 +52,7 @@ export default function Account (){
                 <div className="font-basic font-extrabold text-2xl pt-2">
                     devs past launches
                 </div>
-                <div className="flex flex-row flex-wrap justify-center gap-4 pb-4 overflow-x-auto">
+                <div className="flex flex-row flex-wrap justify-center gap-8 p-4 overflow-x-auto">
                     {devData &&
                         devData.map((item,index) => (<LaunchCard key={index} data={item} />))
                     } 

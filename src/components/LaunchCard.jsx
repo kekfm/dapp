@@ -19,18 +19,29 @@ export default function LaunchCard ({tag, data}) {
     const [percentage,setPercentage] = useState(0)
     const [color, setColor] = useState("")
 
-    const handleClick = () => {
-        const tokenAddress = data.tokenAddress
-        console.log("tokenAddress", tokenAddress)
-        navigate(`/launch?token=${tokenAddress}`)
+    const handleClick = (e) => {
+        if(e.target.name === "box" || e.target.closest('[name="box"]')){
+            const tokenAddress = data.tokenAddress
+            console.log("tokenAddress", tokenAddress)
+            navigate(`/launch?token=${tokenAddress}`)
+        }
     }
     const d = JSON.parse(data.description)
 
+    const handleSocials = (e, url) => {
+        e.stopPropagation()
+        window.open(url, '_blank')        
+    }
 
-   
+    const handleDev = (e) => {
+        e.stopPropagation()
+        if(e.target.name==="dev" || e.target.closest('[name="dev"]'))
+        navigate(`/me?account=${data.owner}`)
+        console.log("data.owner", data.owner)
+    }
+    
 
     useEffect(() => {
-    
         const {buys, sells} = data
         const transactions = [...buys, ...sells]
         const filtered = transactions.filter((item, index, self) => index === self.findIndex((t) => (
@@ -60,20 +71,21 @@ export default function LaunchCard ({tag, data}) {
     },[data, tag])
     
 
+
     return(
-    <div onClick={handleClick} className={`flex flex-col connectbox border-4 border-black w-[280px] h-[200px]`} style={{backgroundColor:`${color}`}}>
+    <div onClick={handleClick} name="box" className={`flex flex-col connectbox border-4 border-black w-[280px] h-[200px] bg-base-19 opacity-90 hover:opacity-100 hover:bg-base-7 hover:scale-110 hover:cursor-pointer`} >
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
-                <div className="relative w-[120px] h-[100px] border-4 bg-base-4 border-black mx-2 my-4 content-center overflow-hidden">
+                <div className=" w-[100px] h-[100px] border-4 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
                     {d && d.logo &&
-                        <img src={d.logo} layout="fill" className="w-full h-full object-contain" alt="logo"/>
+                        <img src={d.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo"/>
                     }
                     {d && !d.logo &&
-                        <img src={noimage} layout="fill" className="w-full h-full object-contain" alt="logo"/>
+                        <img src={noimage} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo"/>
                     }
                 </div>
                 <div className="flex flex-col pl-2 pt-2 overflow-hidden" >
-                    <div className={`font-basic font-bold text-md text-black`}>{data.name}</div>
+                    <div className={`font-basic font-bold text-md`}>{data.name}</div>
     
                     <div className="flex flex-col items-start justify-start w-[120px]">
                         <div className={`font-basic flex text-xs text-black font-bold items-center`}>
@@ -82,24 +94,25 @@ export default function LaunchCard ({tag, data}) {
                         <Progressbar percentage={percentage} />
                     </div>
                     <div className= "flex flex-row justify-start gap-2 pt-1">
-                        <div className="text-xs">
-                            <Link to={d.website}>
+                        {d && d.website &&
+                            <div name="web" className="text-xs z-100" onClick={(e) => handleSocials(e, d.website)}>
                                 [web]
-                            </Link>
-                        </div>
-                        <div className="text-xs">
-                            <Link to={d.twitter}>
+                            </div>
+                        }
+                        {d && d.twitter &&
+                            <div name="twitter" className="text-xs z-100" onClick={(e) => handleSocials(e, d.twitter)}>
                                 [x]
-                            </Link>
-                        </div>
-                        <div className="text-xs">
-                        <Link to={d.telegram}>
+                            </div>
+                        }
+                        {d && d.telegram &&
+                            <div name="telegram" className="text-xs z-100" onClick={(e) => handleSocials(e, d.telegram)}>
                                 [telegram]
-                        </Link>
-                        </div>
+                            </div>
+                        }
+                        
                     </div>
-                    <div className={` mt-2 text-xs text-black`}>
-                        created by <span className='text-base-2'>{data.owner.slice(0,4)}...{data.owner.slice(data.owner.length -4, data.owner.length)}</span>
+                    <div className={`mt-2 text-xs text-black`} name="dev" onClick={handleDev}>
+                        created by <span className='text-base-8 font-semibold'>{data.owner.slice(0,4)}...{data.owner.slice(data.owner.length -4, data.owner.length)}</span>
                     </div>
 
                 </div>

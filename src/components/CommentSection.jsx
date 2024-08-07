@@ -7,7 +7,7 @@ import Comments from "./Comments"
 export default function CommentSection ({tokenAddress, props}) {
 
     return(
-        <div className="flex flex-col font-basic w-full">
+        <div className="flex flex-col font-basic max-w-[500px] w-full ">
             <div className="font-semibold text-xl text-start ">
                 discussion
             </div>

@@ -10,11 +10,11 @@ export default function ChartSection ({data, buys, sells}) {
 
 
     return(
-        <div className="flex flex-col xl:flex-row md:grid-cols-2 pt-4 md:pt-0 gap-2"> 
-            <div className="flex justify-center max-sm:hidden xl:w-1/2">
+        <div className="flex flex-col gap-4"> 
+            <div className="flex max-[760px]:hidden">
                 <Chart data={data}/> 
             </div>
-            <div className="xl:w-1/2">
+            <div className="">
                 <TradeTable buys={buys} sells={sells}/>
             </div>
         </div>

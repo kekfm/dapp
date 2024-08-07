@@ -76,3 +76,22 @@
   animation: grow-shrink 2s infinite;
 }
 
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+/* Create the wiggle class */
+.wiggle {
+  animation: wiggle 0.5s ease infinite;
+}

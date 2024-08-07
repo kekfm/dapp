@@ -42,7 +42,7 @@ export default function Chart({ data }) {
 
         const chart = createChart(chartContainerRef.current, chartOptions);
         const lineSeries = chart.addLineSeries({
-            color: '#f4d738',
+            color: '#fffb47',
             lineWidth: 6,
         });
         
@@ -96,12 +96,12 @@ export default function Chart({ data }) {
 
 
     return (
-        <div className="flex flex-col justify-center m-4">
-            <div className="font-basic text-xl font-semibold">
+        <div className="flex flex-col justify-start">
+            <div className="font-basic text-xl font-bold">
                 chart
             </div>
-            <div className="connectbox border-4 border-black bg-base-4 p-4">
-                <div ref={chartContainerRef} style={{ width: '500px', height: '300px' }}></div>
+            <div className="flex connectbox border-4 border-black bg-white p-4">
+                <div ref={chartContainerRef} style={{ width: '700px', height: '300px' }}></div>
             </div>
         </div>
     );

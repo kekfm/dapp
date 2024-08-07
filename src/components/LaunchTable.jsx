@@ -3,6 +3,7 @@ import LaunchCard from './LaunchCard';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import launches from "../assets/launches.svg"
 
 
 export default function LaunchTable() {
@@ -49,11 +50,16 @@ export default function LaunchTable() {
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="flex justify-center items-center min-h-screen ">
-            <div className="flex flex-row flex-wrap gap-10 sm:connectbox sm:border-4 sm:border-black sm:bg-base-2 sm:p-10 justify-center  sm:w-11/12 sm:max-w-[1400px] sm:overflow-x-auto">
-                {files.map((item, index) => (
-                    <LaunchCard key={index} tag={index} data={item} />
-                ))}
+        <div className="flex flex-col justify-center w-full">
+             <div className="flex justify-center">
+                <img src={launches} className="flex pb-4 w-[250px]"></img>
+            </div>
+            <div className="flex flex-col items-center min-h-screen ">
+                <div className="flex flex-row flex-wrap gap-10 sm:bg-base- sm:p-10 justify-center sm:w-11/12 sm:max-w-[1400px] sm:overflow-x-auto">
+                    {files.map((item, index) => (
+                        <LaunchCard key={index} tag={index} data={item} />
+                    ))}
+                </div>
             </div>
         </div>
     );

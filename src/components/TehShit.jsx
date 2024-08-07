@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../../globals.css"
 import noimage from "../assets/noimage.svg"
+import chain from "../assets/chain.svg"
 import arrows from "../assets/arrews.svg"
-import realshit from "../assets/realshit.svg"
+import realshit from "../assets/tehshit2.svg"
 import crown from "../assets/crown.svg"
 import Progressbar from "./Progressbar";
 import { ethers } from "ethers";
@@ -78,23 +79,23 @@ export default function TehShit(){
     }
 
     return(
-        <div className="flex flex-col font-basic max-w-72 items-center" >
+        <div className="relative flex flex-col font-basic max-w-72 items-center pb-10" >
             {/*<div className="text-3xl font-bold text-center connectbox border-4 border-black mb-3">
                 this is teh shit!
             </div>*/}
-            <div className="max-w-[250px]">
-                <img className="max-w-[250px]" src={realshit}></img>
+            <div className="max-w-[280px]">
+                <img className="max-w-[280px]" src={realshit}></img>
             </div>
             <div className=" flex items-center justify-center w-[100px] h-[66px] animate-bounce ">
                 <img src={arrows} className="max-h-[66px] max-w-[100px] object-cover"></img>
             </div>
-            <div className="flex flex-row connectbox border-4 border-black p-2 gap-2 bg-base-11 relative hover:cursor-pointer max-w-[250px]" onClick={() => handleClick()}>
-                <div className="border-2 border-black p-2">
+            <div className="flex flex-row connectbox border-4 border-black p-2 gap-2 bg-base-11 relative hover:cursor-pointer hover:scale-110 max-w-[250px] hover:cursor-pointer  hover:border-base-2" onClick={() => handleClick()}>
+                <div className="flex rounded-full w-[80px] h-[80px] border-4 border-black overflow-hidden">
                     {d && d.logo &&
-                        <img src={d.logo} alt="logo" className="max-w-20" ></img>
+                        <img src={d.logo} alt="logo" layout="fill" className="w-full h-full object-cover rounded-full" ></img>
                     }
                     {d && !d.logo &&
-                        <img src={noimage} alt="logo" className="max-w-20 h-auto" ></img>
+                        <img src={noimage} alt="logo" layout="fill" className="w-full h-full object-cover rounded-full" ></img>
                     }
                 </div>
                 <div className="flex-col">
@@ -104,30 +105,7 @@ export default function TehShit(){
                     <div className="font-basic text-xs pt-1">
                         <span >ticker:</span> <span className="font-bold">${tehShit.symbol}</span> 
                     </div>
-                    <div className= "flex flex-row justify-start gap-2 pt-1">
-                        {d && d.website &&
-                            <div className="text-xs">
-                                <Link to={d.website}>
-                                    [web]
-                                </Link>
-                            </div>
-                        }
-                        {d && d.twitter &&
-                            <div className="text-xs">
-                                <Link to={d.twitter}>
-                                    [x]
-                                </Link>
-                            </div>
-                        }
-                        {d && d.telegram &&
-                            <div className="text-xs">
-                                <Link to={d.telegram}>
-                                    [telegram]
-                                </Link>
-                            </div>
-                        }   
-                        </div>
-
+                        
                     <div className="font-basic text-xs">
                         progress <span className="font-basic font-bold text-xs">{percentage.toFixed(1)}%</span>
                     </div>
@@ -146,7 +124,9 @@ export default function TehShit(){
                 <div className="absolute -top-6 -right-8 ">
                     <img src={crown} className="w-16 "></img>
                 </div>
-                
+            </div>
+            <div className="absolute top-72 z-100 " onClick={handleClick}>
+                <img src={chain} className="w-[220px] "></img>
             </div>
         </div>
     )
