@@ -26,30 +26,30 @@ export default function TehShit(){
         const fetchData = async () => {
             try{
                 
-                const response = await axios.get("http://103.26.10.88/api/getShit",{withCredentials: true})
+                const response = await axios.get("https://kek.fm/api/getShit",{withCredentials: true})
                 const shit = response.data
                 shit.sort((a,b) => b.timestamp - a.timestamp)
-                console.log("shit",shit)
+                //console.log("shit",shit)
 
                 if(shit){
                     const latestShit = shit[0].tokenAddress
-                    console.log("latestshit",latestShit)
-                    const res = await axios.get(`http://103.26.10.88/api/getOne/${latestShit}`, {withCredentials: true})
+                    //console.log("latestshit",latestShit)
+                    const res = await axios.get(`https://kek.fm/api/getOne/${latestShit}`, {withCredentials: true})
                     const newShit = res.data[0]
-                    console.log("tehshit", newShit)
-                    console.log("owner", newShit.owner)
+                    //console.log("tehshit", newShit)
+                    //console.log("owner", newShit.owner)
 
                     let trades = [...newShit.buys,...newShit.sells]
                     const uniqueTx = trades.filter((item, index, self) => index === self.findIndex((t) => (t.maker == item.maker && t.timestamp == item.timestamp)))
                     uniqueTx.sort((a,b) => b.timestamp - a.timestamp)
-                    console.log("uniquetx", uniqueTx)
+                    //console.log("uniquetx", uniqueTx)
 
                     const soldTokens = (100000 - Number(ethers.utils.formatEther(uniqueTx[0].contractTokenBalance)))
                     const percentage = soldTokens / 75000 * 100
                     setPercentage(percentage)
 
                     const des = JSON.parse(newShit.description)
-                    console.log("d",des)
+                    //console.log("d",des)
                     setD(des)
                     setTehShit(newShit)
 
@@ -89,7 +89,7 @@ export default function TehShit(){
             <div className=" flex items-center justify-center w-[100px] h-[66px] animate-bounce ">
                 <img src={arrows} className="max-h-[66px] max-w-[100px] object-cover"></img>
             </div>
-            <div className="flex flex-row connectbox border-4 border-black p-2 gap-2 bg-base-11 relative hover:cursor-pointer hover:scale-110 max-w-[250px] hover:cursor-pointer  hover:border-base-2" onClick={() => handleClick()}>
+            <div className="flex flex-row shitbox border-4 border-base-2 p-2 gap-2 bg-base-11 relative hover:border-base-5 hover:cursor-pointer hover:scale-110 max-w-[250px] hover:cursor-pointer  hover:border-base-2" onClick={() => handleClick()}>
                 <div className="flex rounded-full w-[80px] h-[80px] border-4 border-black overflow-hidden">
                     {d && d.logo &&
                         <img src={d.logo} alt="logo" layout="fill" className="w-full h-full object-cover rounded-full" ></img>

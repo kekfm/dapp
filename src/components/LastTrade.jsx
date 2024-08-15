@@ -23,7 +23,7 @@ export default function LastTrade () {
 
     const fetchTradeData = async () => {
         if(event){
-            const response = await axios.get(`http://103.26.10.88/api/getOne/${event.tokenAddress}`, {withCredentials: true})
+            const response = await axios.get(`https://kek.fm/api/getOne/${event.tokenAddress}`, {withCredentials: true})
             const props = response.data[0]
             console.log("props", props)
             setName(props.name)
@@ -32,19 +32,19 @@ export default function LastTrade () {
     }
 
     useEffect(()=> {
-        const socket = io("http://103.26.10.88:5000")
+        const socket = io("https://kek.fm:5000")
 
         socket.on('connect', () => {
-            console.log("connected to websocket server")
+           // console.log("connected to websocket server")
         })
 
         socket.on("newBuyEvent", (data) => {
-            console.log("new buy event", data)
+           // console.log("new buy event", data)
             setEvent(data)
         })
 
         socket.on("newSellEvent", (data) => {
-            console.log("new sell event", data)
+            //console.log("new sell event", data)
             setEvent(data)
         })
 

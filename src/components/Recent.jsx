@@ -8,6 +8,7 @@ import axios from "axios"
 import "../../globals.css"
 import { ethers } from "ethers"
 import { useNavigate } from "react-router-dom"
+import ChainSelector from "./ChainSelector"
 
 
 export default function Recent () {
@@ -17,11 +18,12 @@ export default function Recent () {
     const [ticker, setTicker] = useState("")
     const [address, setAddress] = useState("")
     const [uniswap, setUniswap] = useState([])
+    const [nombre, setNombre] = useState("")
 
 
     const navigate = useNavigate()
     const handleClick = () => {
-        navigate(`/launch?token=${buySell.tokenAddress}`)
+        navigate(`/launch?token=${address}`)
     
     }
 
@@ -32,26 +34,20 @@ export default function Recent () {
 
     const fetchData = async () => {
         try{
-            const getCreated = await axios.get('http://103.26.10.88/api/getLastCreated',{withCredentials: true})
+            const getCreated = await axios.get('https://kek.fm/api/getLastCreated',{withCredentials: true})
             setCreated(getCreated.data)
     
-            const getLast = await axios.get('http://103.26.10.88/api/getLast',{withCredentials: true})
+            const getLast = await axios.get('https://kek.fm/api/getLast',{withCredentials: true})
             const last = getLast.data
-            console.log("getLast",getLast)
+
             const list = [...last[0].buys,...last[0].sells]
             list.sort((a,b) => b.timestamp - a.timestamp)
             setBuySell(list[0])
             setTicker(list[0].symbol)
-            setAddress(list[0].tokenAddress)
-
-            console.log("list[0]", list[0])
+            setNombre(list[0].name)
+            setAddress(last[0].tokenAddress)
     
-            const getUniswap = await axios.get('http://103.26.10.88/api/getUniswap',{withCredentials: true})
-            setUniswap(getUniswap.data)
-
-            console.log("created", getCreated.data)
-            console.log("buysell", list[0])
-            console.log("uniswap", getUniswap.data)
+           
 
 
         }catch(e){console.log("e",e)}
@@ -59,29 +55,33 @@ export default function Recent () {
     }
     
     useEffect(()=> {
-        const socket = io("http://103.26.10.88:5000")
-
+        const socket = io('https://kek.fm', {
+            path: '/socket.io/',
+            transports: ['websocket', 'polling'], // Allow both transports
+            withCredentials: true,
+        });
+    
         socket.on('connect', () => {
-            console.log("connected to websocket server")
+           // console.log("connected to websocket server")
         })
 
         socket.on("newBuyEvent", (data) => {
-            console.log("new buy event", data)
+            //console.log("new buy event", data)
             setBuySell(data)
         })
 
         socket.on("newSellEvent", (data) => {
-            console.log("new sell event", data)
+            //console.log("new sell event", data)
             setBuySell(data)
         })
 
         socket.on("newCreationEvent", (data) => {
-            console.log("new creation event", data)
+            //console.log("new creation event", data)
             setCreated(data)
         })
 
         socket.on("newUniswapEvent", (data) => {
-            console.log("new uniswap event", data)
+            //console.log("new uniswap event", data)
             setUniswap(data)
         })
 
@@ -97,49 +97,52 @@ export default function Recent () {
 
 
     return(
-        <div className="flex sm:flex-row  gap-4 justify-start flex-col max-sm:items-center">
-            <div className="">
-                {buySell && buySell.type === "buy" &&
-                    <div className="flex flex-col wiggle">
-                        <div>
-                            <img src={lastbuy} className="w-[50px]"></img>
-                        </div>
-                        <div className="font-basic text-xs font-semibold py-2 connectbox border-4 border-black w-[200px] overflow-x-hidden bg-base-12 hover:cursor-pointer" >
-                            <div className="flex flex-row gap-2 px-2">
-                                <div>
-                                   {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} bought {Number(ethers.utils.formatEther(buySell.amountETH)).toFixed(3)} ETH                     
+        <div className="flex sm:flex-row justify-between max-sm:items-start md:gap-20 gap-2">
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex ">
+                    {buySell && buySell.type === "buy" &&
+                        <div className="flex flex-col wiggle" onClick={handleClick}>
+                            <div>
+                                <img src={lastbuy} className="w-[50px]"></img>
+                            </div>
+                            <div className="font-basic text-xs font-semibold py-2 connectbox border-4 border-black w-[200px] overflow-x-hidden bg-base-12 hover:cursor-pointer" >
+                                <div className="flex flex-row gap-2 px-2">
+                                    <div>
+                                    {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} bought {Number(ethers.utils.formatEther(buySell.amountETH)).toFixed(3)} ETH                     
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
-                {buySell && buySell.type === "sell" && 
-                    <div className="flex flex-col" >
-                        <div>
-                            <img src={lastsale} className="w-[50px]"></img>
-                        </div>
-                        <div className="font-basic text-xs py-2 connectbox border-4 border-black w-[200px] bg-base-8 overflow-x-hidden hover:cursor-pointer" >
-                            <div className="flex flex-row  gap-2 px-2">
-                                <div>
-                                    {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} sold {Number(ethers.utils.formatEther(buySell.amountETH)).toFixed(3)} ETH
+                    }
+                    {buySell && buySell.type === "sell" && 
+                        <div className="flex flex-col" onClick={handleClick}>
+                            <div>
+                                <img src={lastsale} className="w-[50px]"></img>
+                            </div>
+                            <div className="font-basic text-xs py-2 connectbox border-4 border-black w-[200px] bg-base-8 overflow-x-hidden hover:cursor-pointer" >
+                                <div className="flex flex-row  gap-2 px-2">
+                                    <div>
+                                        {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} sold {Number(ethers.utils.formatEther(buySell.amountETH)).toFixed(3)} ETH
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    }
+                </div>
+                {created &&
+                    <div>
+                        <div>
+                            <img src={newpic} className="w-[50px]"></img>
+                        </div>
+                        <div onClick={handleCreated} className="font-basic text-xs font-semibold connectbox border-4 px-2 py-2 border-black w-[200px] overflow-x-hidden hover:cursor-pointer hover:bg-base-2">
+                             {created.name} (${created.symbol})
                         </div>
                     </div>
                 }
             </div>
-            {created &&
-                <div>
-                    <div>
-                        <img src={newpic} className="w-[50px]"></img>
-                    </div>
-                    <div onClick={handleCreated} className="font-basic text-xs font-semibold connectbox border-4 px-2 py-2 border-black w-[200px] overflow-x-hidden hover:cursor-pointer hover:bg-base-2">
-                        ${created.symbol}
-                    </div>
-                </div>
-               
-            }
-            
+            <div>
+                <ChainSelector />
+            </div>
         
         </div>
     )

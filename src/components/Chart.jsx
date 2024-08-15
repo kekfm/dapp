@@ -90,7 +90,7 @@ export default function Chart({ data }) {
         }
 
         lineSeriesRef.current.setData(lineData);
-        console.log("lineData", lineData);
+        //console.log("lineData", lineData);
 
     }, [data, seconds]);
 

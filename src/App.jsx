@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Hero from './components/Hero.jsx'
 import LaunchTable from './components/LaunchTable.jsx'
 import Marquee from "./components/Marquee"
-import gm from "./assets/GM.svg"
+import ChainSelector from "./components/ChainSelector"
 
 
 function App() {

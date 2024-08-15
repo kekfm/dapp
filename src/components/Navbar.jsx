@@ -37,11 +37,11 @@ export default function Navbar() {
     return (
         <div className="font-basic font-semibold flex flex-row justify-between pt-8 bg-base-1">
             <Link to="/">
-                <div className="text-4xl connectbox ml-8 px-10 py-2 border-4 border-black bg-base-4 ">
+                <div className="text-4xl connectbox max-sm:ml-2 ml-8 px-10 py-2 border-4 border-black bg-base-4 ">
                     kek
                 </div>
             </Link>
-            <div className="max-lg:hidden">
+            <div className="max-xl:hidden">
                 <Recent />
             </div>
             <div className="flex flex-row gap-2 justify-between mr-2 max-sm:hidden">

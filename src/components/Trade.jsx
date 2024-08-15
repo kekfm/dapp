@@ -5,7 +5,7 @@ import "../../globals.css"
 
 
 
-export default function Trade ({tokenAddress, tokenTicker, tokenBalance}) {
+export default function Trade ({tokenAddress, tokenTicker, tokenBalance, trading}) {
 
     const [isBuy, setIsBuy] = useState(true)
 
@@ -16,11 +16,11 @@ export default function Trade ({tokenAddress, tokenTicker, tokenBalance}) {
             </div>
             <div>
                 {isBuy &&
-                    <Buy tokenAddress={tokenAddress} tokenTicker={tokenTicker} setIsBuy={setIsBuy}/>
+                    <Buy tokenAddress={tokenAddress} tokenTicker={tokenTicker} setIsBuy={setIsBuy} tokenBalance={tokenBalance} trading={trading} />
                 }
 
                 {!isBuy &&
-                    <Sell tokenAddress={tokenAddress} tokenTicker={tokenTicker} setIsBuy={setIsBuy} tokenBalance={tokenBalance}/>
+                    <Sell tokenAddress={tokenAddress} tokenTicker={tokenTicker} setIsBuy={setIsBuy} tokenBalance={tokenBalance} trading={trading}/>
                 }
             </div>
             

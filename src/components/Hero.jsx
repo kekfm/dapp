@@ -33,7 +33,7 @@ export default function Hero () {
 
     return(
         <div className="relative flex flex-col gap-6">
-            <div className="absolute w-[300px] -rotate-6 max-lg:hidden">
+            <div className="absolute w-[300px] -rotate-6 top-40 max-lg:hidden">
                 <img src={modulus} className="w-[300px]"></img>
             </div>
             <div className="absolute w-[300px] rotate-6 right-10 top-60 max-lg:hidden">
@@ -48,7 +48,7 @@ export default function Hero () {
             <div className="absolute w-[300px] -rotate-6 right-40 bottom-10 max-lg:hidden">
                 <img src={cult} className="w-[300px]"></img>
             </div>
-            <div className="lg:hidden">
+            <div className="xl:hidden z-10">
                 <Recent />
             </div>
             <div className="flex justify-center pt-20 ">
@@ -70,7 +70,7 @@ export default function Hero () {
                 </div>*/}
               
             </div>
-            <div className="flex justify-center pt-20 pb-4 overflow-x-auto">
+            <div className="flex justify-center pt-20 pb-20 overflow-x-auto">
                 <TehShit />
             </div>
         </div>

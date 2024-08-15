@@ -8,7 +8,7 @@ import SellModal from "./SellModal"
 import change from "../assets/change2.svg"
 
 
-export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance}) {
+export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance, trading}) {
 
     const {chainId, account} = useEthers()
     const [sellAmountToken, setSellAmountToken] = useState(0)
@@ -33,8 +33,8 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                 const stringETH = minETH.toString()
 
                 if (validateForm()){
-                    console.log("stringETH", stringETH)
-                    console.log("parsedToken", parsedToken)
+                    //console.log("stringETH", stringETH)
+                    //console.log("parsedToken", parsedToken)
                     send(parsedToken, stringETH)
                     
                 }
@@ -94,8 +94,84 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
         console.log(value)
     }
 
+    if(!trading){
+        return(
+        <div className="connectbox border-4 border-black bg-gray-400 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
+            <SellModal className="z-10" isOpen={buyModalOpen} closeModal={handleBuyModal}/>
+            <form
+                name="buy"
+                onSubmit={handleBuySubmitBuy}
+            >
+            <div className="flex flex-col">
+                <div className="flex flex-row justify-between pb-2 ">
+                    <div className="font-basic font-semibold">
+                            launched
+                    </div>
+                    <div className="flex flex-row items-center">
+                        
+                        
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
+            
+            <div className="flex flex-col bg-base-4 border-2 border-black">
+                    <div className="flex flex-col bg-white px-2 py-2">
+                    <label className="font-basic text-sm font-medium pl-1" htmlFor="buyETH">sell amount (${tokenTicker})</label>
+
+                        <div className="border-2 border-black bg-white">
+                            <input
+                                placeholder={"$"+`${tokenTicker}`}
+                                type="number"
+                                id="buyETH"
+                                name="buyAmount (ETH)"
+                                onChange={handleChange}
+                                min="1"
+                                step="any"
+                                className="font-basic font-bold pl-1"
+                                disabled
+                            >
+                            </input>
+                        </div>
+                        <div className="mt-0 pt-0 pb-2">
+                            {errors && errors.tokenUnderflow && <span className="text-xs font-basic text-base-8">{errors.tokenUnderflow}</span> }
+                            {errors && errors.tokenOverflow && <span className="text-xs font-basic text-base-8">{errors.tokenOverflow}</span> }
+                        </div>
+                        <div className="flex justify-center hover:scale-110 ease-in-out hover:cursor-pointer">
+                            <img onClick={switchType} src={change} className="w-[30px]" />
+                        </div>
+                        <div className="flex flex-col font-basic font-medium text-sm">
+                            <div className="pl-1">
+                                you get 
+                            </div>
+                            <div className="border-2 border-black bg-base-1 p-2 b">
+                                0 ETH
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {(state.status == "None" || state.status == "Success" || state.status == "Fail" || state.status =="Exception") &&
+                    <button className=" border-2 border-black connectbox bg-gray-200 font-basic px-4 mt-2"
+                        disabled
+                        >
+                            sell
+                    </button>
+                }
+                {(state.status == "PendingSignature" || state.status == "Mining") &&
+                    <button className="animate-pulse  border-2 border-black bg-base-11 font-basic px-4 mt-2">
+                        selling...
+                    </button>
+                }
+               
+         </form>
+        </div>
+        )
+    }
+
     return(
-        <div className="connectbox border-4 border-black bg-base-2 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
+        <div className="connectbox border-4 border-black bg-base-3 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
             <SellModal className="z-10" isOpen={buyModalOpen} closeModal={handleBuyModal}/>
             <form
                 name="buy"
@@ -130,8 +206,6 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                 </div>
                 
             </div>
-            
-            
             <div className="flex flex-col bg-base-4 border-2 border-black">
                     <div className="flex flex-col bg-white px-2 py-2">
                     <label className="font-basic text-sm font-medium pl-1" htmlFor="buyETH">sell amount (${tokenTicker})</label>
@@ -178,8 +252,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                     <button className="animate-pulse  border-2 border-black bg-base-11 font-basic px-4 mt-2">
                         selling...
                     </button>
-                }
-               
+                }   
          </form>
         </div>
     )

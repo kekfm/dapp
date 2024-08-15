@@ -18,7 +18,7 @@ export default function Account (){
 
         const fetchData = async (devAddress) => {
             try {
-                const response = await axios.get(`http://103.26.10.88/api/getDev/${devAddress}`)
+                const response = await axios.get(`https://kek.fm/api/getDev/${devAddress}`)
                 const data = response.data
 
                 const filtered =  data.filter((item, index, self) => index === self.findIndex((t) => (
@@ -26,7 +26,6 @@ export default function Account (){
                 )))
 
                 setDevData(filtered)
-                console.log("dev data", filtered)
             }
            catch(e){console.log("error fetching dev data", e)}
 

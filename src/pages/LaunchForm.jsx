@@ -131,8 +131,8 @@ export default function Page () {
                 
             }
             catch(error){
-                console.error("error on launch", error)
-                console.log("formData fail", formData)
+                //console.error("error on launch", error)
+                //console.log("formData fail", formData)
 
             }
             

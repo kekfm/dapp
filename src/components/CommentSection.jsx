@@ -4,7 +4,7 @@ import Comments from "./Comments"
 
 
 
-export default function CommentSection ({tokenAddress, props}) {
+export default function CommentSection ({tokenAddress, props, txns}) {
 
     return(
         <div className="flex flex-col font-basic max-w-[500px] w-full ">
@@ -12,8 +12,8 @@ export default function CommentSection ({tokenAddress, props}) {
                 discussion
             </div>
             <div className="">
-                {props && props.comments.length > 0 && 
-                    props.comments.map((item, index) => (<Comments key={index} item={item}/>))
+                {props && props.length > 0 && 
+                    props.map((item, index) => (<Comments key={index} item={item} latest={txns}/>))
                 }
             </div>
             

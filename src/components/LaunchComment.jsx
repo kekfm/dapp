@@ -57,7 +57,7 @@ export default function LaunchComment ({tokenAddress}) {
 
         const sendForm = async (commentData) => {
             setCommentStatus(3)
-            const response = await axios.post(`http://103.26.10.88/api/postComment/${tokenAddress}`, commentData, {withCredentials: true})
+            const response = await axios.post(`https://kek.fm/api/postComment/${tokenAddress}`, commentData, {withCredentials: true})
             console.log("response", response)
             if(response.status == 201){ 
                 setCommentStatus(1)
@@ -102,7 +102,7 @@ export default function LaunchComment ({tokenAddress}) {
                 <div>
                     { (commentStatus == 0 || commentStatus == 1 || commentStatus == 2) &&
                         <button 
-                            className="connectbox border-4 border-black bg-base-1  font-basic px-2 mx-4 my-2"
+                            className="connectbox border-4 border-black bg-base-1 font-basic px-2 mx-4 my-2"
                             type="submit"
                             >
                                 post

@@ -32,6 +32,11 @@
 .connectbox{
   box-shadow: 4px 4px 0px 1px black;
 }
+
+.shitbox{
+  box-shadow: 4px 4px 0px 1px #fffb47;
+
+}
 .presalebox{
   box-shadow: 4px 4px 0px 1px #fff4d4;
 }
@@ -94,4 +99,23 @@
 /* Create the wiggle class */
 .wiggle {
   animation: wiggle 0.5s ease infinite;
+}
+
+@keyframes wiggle2 {
+  0%{ transform: rotate(-5deg); }
+  15% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  45% { transform: rotate(5deg); }
+  60% { transform: rotate(-5deg); }
+  70% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  90% { transform: rotate(5deg); }
+  100% { transform: rotate(-5deg); }
+
+}
+
+.wiggle2 {
+  animation: wiggle2 1s ease-in-out;
+  background-color: #2FFF2F; /* Change background color to green */
+  transition: background-color 1s ease-in-out; /* Smooth transition */
 }

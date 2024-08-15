@@ -73,7 +73,7 @@ export default function LaunchCard ({tag, data}) {
 
 
     return(
-    <div onClick={handleClick} name="box" className={`flex flex-col connectbox border-4 border-black w-[280px] h-[200px] bg-base-19 opacity-90 hover:opacity-100 hover:bg-base-7 hover:scale-110 hover:cursor-pointer`} >
+    <div onClick={handleClick} name="box" className={`flex flex-col connectbox border-4 border-black w-[280px] h-[200px] bg-base-19 opacity-90 hover:opacity-100 hover:bg-base-5 hover:scale-110 hover:cursor-pointer ${data.wiggle ? 'wiggle2' : ''}`} >
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
                 <div className=" w-[100px] h-[100px] border-4 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
