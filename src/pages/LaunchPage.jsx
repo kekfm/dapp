@@ -64,7 +64,6 @@ export default function LaunchPage () {
                 })
                 const latestTxnsArray = Object.values(latestTxns);
                 setLatestTx(latestTxnsArray)
-                console.log("latestTxnsArray", latestTxnsArray)
 
                 const last = latestTxnsArray[0]
 
@@ -87,11 +86,15 @@ export default function LaunchPage () {
                     setJeet("yes")
                 }
 
+               
                 const d = JSON.parse(data.description)
                 setD(d)
 
+                console.log("data.description", data.description)
+                console.log("d.des", d.des)
+
+
                 const uniswap = await axios.get(`https://kek.fm/api/getOneUniswap/${tokenAddress}`)
-                console.log("uniswap", uniswap)
                 if(uniswap.data.length > 0){
                     setTrading(false)
                 }
@@ -105,6 +108,9 @@ export default function LaunchPage () {
         setTokenAddr(tokenAddress)
        fetchData(tokenAddress) 
     },[])
+
+   
+      
 
     useEffect(() => {
         const socket = io('https://kek.fm', {

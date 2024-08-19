@@ -49,7 +49,6 @@ export default function LaunchTable() {
 
                 const response = await axios.get(`https://kek.fm/api/getCreated/${page}?chainId=${chain}`, {
                     withCredentials: true,
-                    timeout: 5000 // Adjust the timeout value as needed
                 });
 
                 const data = response.data.data;

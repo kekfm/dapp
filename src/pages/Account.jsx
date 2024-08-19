@@ -12,6 +12,7 @@ export default function Account (){
     const {account, chainId} = useEthers()
     const [searchParams, setSerchParams] = useSearchParams()
     const [devData, setDevData] = useState([])
+    const [devAddr, setDevAddr] = useState("")
 
 
     useEffect (() => {
@@ -20,6 +21,7 @@ export default function Account (){
             try {
                 const response = await axios.get(`https://kek.fm/api/getDev/${devAddress}`)
                 const data = response.data
+                console.log("devdata", data)
 
                 const filtered =  data.filter((item, index, self) => index === self.findIndex((t) => (
                     item.timestamp === t.timestamp
@@ -32,6 +34,7 @@ export default function Account (){
         }
 
         const devAddress = searchParams.get("account")
+        setDevAddr(devAddress)
 
         fetchData(devAddress)
     },[])
@@ -43,9 +46,12 @@ export default function Account (){
                 <div className="font-basic font-extrabold text-2xl mb-4">
                     <img src={devpage}></img>
                 </div>
-                <div className="connectbox border-4 border-black bg-base-5 px-4 py-2 font-basic font-semibold text-sm md:text-xl max-w-[300px]">
-                    {account.slice(0,10)}...{account.slice(account.length-8,account.length)}
-                </div>
+                {
+                    <div className="connectbox border-4 border-black bg-base-5 px-4 py-2 font-basic font-semibold text-sm md:text-xl max-w-[300px]">
+                        {devAddr.slice(0,10)}...{devAddr.slice(devAddr.length-8,devAddr.length)}
+                    </div>
+                }
+                
             </div>
             <div className="flex flex-col bg-base-5 connectbox border-4 border-black gap-4 items-center w-full mt-20 overflow-x-auto pb-10">
                 <div className="font-basic font-extrabold text-2xl pt-2">

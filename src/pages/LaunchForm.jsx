@@ -119,14 +119,24 @@ export default function Page () {
         if(validateForm()){
             try{
                 const contractAddresses = [contracts.eventhandler.addresses[chainId], contracts.WETH.addresses[chainId], contracts.sushiV2Factory.addresses[chainId], contracts.sushiV2Router.addresses[chainId]]
-                const tokenName = formData.name
-                const tokenSymbol = formData.ticker
-                const tokenInfo = `{"des": "${formData.description || ""}", "twitter": "${formData.twitter || ""}", "telegram": "${formData.telegram || ""}", "website": "${formData.website || ""}", "logo": "${formData.image || ""}"}`
+                //const tokenName = formData.name
+                //const tokenSymbol = formData.ticker
+                //const tokenInfo = `{"des": "${formData.description || ""}", "twitter": "${formData.twitter || ""}", "telegram": "${formData.telegram || ""}", "website": "${formData.website || ""}", "logo": "${formData.image || ""}"}`
+                const tokenName = escapeSpecialCharsForJSON(formData.name || "")
+                const tokenSymbol = escapeSpecialCharsForJSON(formData.ticker || "")
+                const tokenInfo = {
+                    des: escapeSpecialCharsForJSON(formData.description || ""),
+                    twitter: escapeSpecialCharsForJSON(formData.twitter || ""),
+                    telegram: escapeSpecialCharsForJSON(formData.telegram || ""),
+                    website: escapeSpecialCharsForJSON(formData.website || ""),
+                    logo: escapeSpecialCharsForJSON(formData.image || "")
+                };
+                const tokenInfoJSON = JSON.stringify(tokenInfo);
                 const feeAddress = contracts.feeAddress[chainId]
                 const buyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0
                 const txValue = buyAmount > 0 ? (buyAmount.add(buyAmount.mul(5).div(1000))).add(fee) : fee
                 {account && chainId &&
-                    send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
+                    send(contractAddresses, tokenName, tokenSymbol, tokenInfoJSON, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
                 }
                 
             }
@@ -142,6 +152,18 @@ export default function Page () {
         }
 
     }
+
+    const escapeSpecialCharsForJSON = (str) => {
+        return str
+            .replace(/\\/g, '\\\\')  // Escape backslashes
+            .replace(/"/g, '\\"')    // Escape double quotes
+            .replace(/\b/g, '\\b')   // Escape backspace
+            .replace(/\f/g, '\\f')   // Escape form feed
+            .replace(/\n/g, '\\n')   // Escape new lines
+            .replace(/\r/g, '\\r')   // Escape carriage returns
+            .replace(/\t/g, '\\t');  // Escape tabs
+    };
+    
 
 
     return(

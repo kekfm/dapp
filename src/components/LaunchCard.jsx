@@ -39,6 +39,11 @@ export default function LaunchCard ({tag, data}) {
         navigate(`/me?account=${data.owner}`)
         console.log("data.owner", data.owner)
     }
+
+    const handleImageError = () => {
+        setLogoURL(noimage); // Fallback to placeholder if image fails to load
+    };
+
     
 
     useEffect(() => {
@@ -78,7 +83,7 @@ export default function LaunchCard ({tag, data}) {
             <div className="flex flex-row justify-between">
                 <div className=" w-[100px] h-[100px] border-4 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
                     {d && d.logo &&
-                        <img src={d.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo"/>
+                        <img src={d.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo" onError={handleImageError}/>
                     }
                     {d && !d.logo &&
                         <img src={noimage} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo"/>
