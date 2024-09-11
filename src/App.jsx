@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import Hero from './components/Hero.jsx'
-import LaunchTable from './components/LaunchTable.jsx'
-import Marquee from "./components/Marquee"
-import ChainSelector from "./components/ChainSelector"
+import Hero from './components/landing/Hero.jsx'
+import LaunchTable from './components/landing/LaunchTable.jsx'
+import Marquee from "./components/nav/Marquee"
 
 
 function App() {

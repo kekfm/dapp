@@ -4,14 +4,13 @@ import axios from 'axios'
 import "../../globals.css"
 import noimage from "../assets/noimage.svg"
 import tokenpage from "../assets/tokenpage.svg"
-import Buy from "../components/Buy"
 import { useTokenBalance, useEthers } from '@usedapp/core'
 import { ethers } from 'ethers'
-import Trade from '../components/Trade'
-import CommentSection from '../components/CommentSection'
-import Holders from '../components/Holders'
-import Progressbar from '../components/Progressbar'
-import ChartSection from '../components/ChartSection'
+import Trade from '../components/launchpage/trade/Trade'
+import CommentSection from '../components/launchpage/comments/CommentSection'
+import Holders from '../components/launchpage/Holders'
+import Progressbar from '../components/landing/Progressbar'
+import ChartSection from '../components/launchpage/chart/ChartSection'
 import { io } from "socket.io-client"
 
 

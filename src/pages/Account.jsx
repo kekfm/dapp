@@ -3,7 +3,7 @@ import { useEthers } from "@usedapp/core"
 import { useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import axios from "axios"
-import LaunchCard from "../components/LaunchCard"
+import LaunchCard from "../components/landing/LaunchCard"
 import devpage from "../assets/devpage.svg"
 
 

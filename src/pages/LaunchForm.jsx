@@ -4,8 +4,8 @@ import { useEthers} from "@usedapp/core";
 import { Contract, ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
 import {useFeeInfo, useCreateToken} from "../helpers/factoryHooks.jsx"
-import SuccessModal from "../components/SuccessModal"
-import FailModal from "../components/FailModal"
+import SuccessModal from "../components/launchform/SuccessModal"
+import FailModal from "../components/launchform/FailModal"
 import bump from "../assets/sendit.svg"
 import launch from "../assets/launch.svg"
 
@@ -122,21 +122,22 @@ export default function Page () {
                 //const tokenName = formData.name
                 //const tokenSymbol = formData.ticker
                 //const tokenInfo = `{"des": "${formData.description || ""}", "twitter": "${formData.twitter || ""}", "telegram": "${formData.telegram || ""}", "website": "${formData.website || ""}", "logo": "${formData.image || ""}"}`
-                const tokenName = escapeSpecialCharsForJSON(formData.name || "")
-                const tokenSymbol = escapeSpecialCharsForJSON(formData.ticker || "")
-                const tokenInfo = {
-                    des: escapeSpecialCharsForJSON(formData.description || ""),
-                    twitter: escapeSpecialCharsForJSON(formData.twitter || ""),
-                    telegram: escapeSpecialCharsForJSON(formData.telegram || ""),
-                    website: escapeSpecialCharsForJSON(formData.website || ""),
-                    logo: escapeSpecialCharsForJSON(formData.image || "")
-                };
-                const tokenInfoJSON = JSON.stringify(tokenInfo);
+                const tokenName = formData.name
+                const tokenSymbol = formData.ticker
+                const tokenInfo = JSON.stringify({
+                    des: formData.description || "",
+                    twitter: formData.twitter || "",
+                    telegram: formData.telegram || "",
+                    website: formData.website || "",
+                    logo: formData.image || ""
+                });
+                console.log("tokenInfo", tokenInfo)
                 const feeAddress = contracts.feeAddress[chainId]
                 const buyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0
                 const txValue = buyAmount > 0 ? (buyAmount.add(buyAmount.mul(5).div(1000))).add(fee) : fee
                 {account && chainId &&
-                    send(contractAddresses, tokenName, tokenSymbol, tokenInfoJSON, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
+                    send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
+                    
                 }
                 
             }

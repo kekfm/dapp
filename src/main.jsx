@@ -10,7 +10,7 @@ import { Mainnet, DAppProvider, Goerli } from '@usedapp/core'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AppLayout from './pages/AppLayout.jsx'
 import Provider  from './helpers/config.jsx'
-import Navbar from './components/Navbar.jsx'
+import Navbar from './components//nav/Navbar.jsx'
 import './index.css'
 
 
