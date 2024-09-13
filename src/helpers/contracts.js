@@ -9,7 +9,8 @@ export const contracts = {
     factory: 
         {
             addresses: {
-                97:'0xA9B3b651bc5FfE3a9783541ED16E70430958B470'
+                //97:'0xA9B3b651bc5FfE3a9783541ED16E70430958B470' //old
+                97: "0x42d350729a67791Cf18e3C55F1df153C18e09183" // new after audit
             },
 
             interface: {
