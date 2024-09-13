@@ -29,6 +29,8 @@ export default {
           17:'#bafca2', //very light green
           18:'#ffb2ef', //light rose
           19:'#fdfd96',
+          20:'#0b9981', //chart green
+          21:'#ff0000' // chart red
 
         }
       },

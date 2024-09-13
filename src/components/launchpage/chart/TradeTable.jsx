@@ -33,11 +33,11 @@ export default function TradeTable({ buys, sells }) {
                         <tbody>
                             {transactions && transactions.map((t, index) => (
                                 <tr key={index} className="p-2 text-xs text-left border-b">
-                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{moment.unix(t.timestamp).format('MM-DD HH:mm')}</td> : <td className="px-2 text-left text-base-8">{moment.unix(t.timestamp).format('MM-DD HH:mm')}</td>}
-                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{t.maker.slice(0, 4)}...{t.maker.slice(t.maker.length - 6, t.maker.length)}</td> : <td className="px-2 text-left text-base-8">{t.maker.slice(0, 4)}...{t.maker.slice(t.maker.length - 6, t.maker.length)} </td>}
-                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{ethers.utils.formatEther(t.amountToken)}</td> : <td className="px-2 text-left font-semibold text-base-8">{ethers.utils.formatEther(t.amountToken)}</td>}
-                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{parseFloat(ethers.utils.formatEther(t.amountETH)).toFixed(5)}</td> : <td className="px-2 text-left font-semibold text-base-8">{parseFloat(ethers.utils.formatEther(t.amountETH)).toFixed(5)}</td>}
-                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{parseFloat(ethers.utils.formatEther(t.lastTokenPrice) / 1e18).toFixed(9)}</td> : <td className="px-2 text-left font-semibold text-base-8">{parseFloat(ethers.utils.formatEther(t.lastTokenPrice) / 1e18).toFixed(9)}</td>}
+                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{moment.unix(t.timestamp).format('MM-DD HH:mm')}</td> : <td className="px-2 text-left text-base-21">{moment.unix(t.timestamp).format('MM-DD HH:mm')}</td>}
+                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12">{t.maker.slice(0, 4)}...{t.maker.slice(t.maker.length - 6, t.maker.length)}</td> : <td className="px-2 text-left text-base-21">{t.maker.slice(0, 4)}...{t.maker.slice(t.maker.length - 6, t.maker.length)} </td>}
+                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12 font-semibold">{ethers.utils.formatEther(t.amountToken)}</td> : <td className="px-2 text-left font-semibold text-base-21">{ethers.utils.formatEther(t.amountToken)}</td>}
+                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12 font-semibold">{parseFloat(ethers.utils.formatEther(t.amountETH)).toFixed(5)}</td> : <td className="px-2 text-left font-semibold text-base-21">{parseFloat(ethers.utils.formatEther(t.amountETH)).toFixed(5)}</td>}
+                                    {t.type === "buy" ? <td className="px-2 text-left text-base-12 font-semibold">{parseFloat(ethers.utils.formatEther(t.lastTokenPrice)).toFixed(9)}</td> : <td className="px-2 text-left font-semibold text-base-21">{parseFloat(ethers.utils.formatEther(t.lastTokenPrice)).toFixed(9)}</td>}
                                 </tr>
                             ))}
                         </tbody>
