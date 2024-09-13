@@ -38,13 +38,13 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 const parsedTokens = ethers.utils.parseEther(stringMinTokens)
 
                 //calc tx value
-                const valNum = Number(buyAmountETH) + Number(buyAmountETH) * 5 / 1000
+                const valNum = Number(buyAmountETH)// + Number(buyAmountETH) * 5 / 1000
                 console.log("valNum",valNum)
                 const stringNum = valNum.toString()
                 const txValue = ethers.utils.parseEther(stringNum)
 
                 if (validateForm()){
-                    send(parsedTokens, parsedETH, {value: txValue})
+                    send(parsedTokens, parsedETH, {value: txValue, gasLimit: 300000})
                 }
                 
             }catch(e){console.log("error buying", e)}
