@@ -21,7 +21,8 @@ export const contracts = {
     eventhandler:
         {
             addresses:{
-                97:"0xAF3B1FF5C33C9D144300f7Eb9EFD9a044fF5Acb2"
+                //97:"0xAF3B1FF5C33C9D144300f7Eb9EFD9a044fF5Acb2" //old
+                97:"0xAAC562D8B30630fc48247767858f20D34bc1082e" //new after audit
             }
 
         },
