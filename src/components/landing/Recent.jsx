@@ -33,10 +33,13 @@ export default function Recent () {
 
     const fetchData = async () => {
         try{
-            const getCreated = await axios.get('https://kek.fm/api/getLastCreated',{withCredentials: true})
+            //const getCreated = await axios.get('https://kek.fm/api/getLastCreated',{withCredentials: true}) // old implementation using vps
+            const getCreated = await axios.get('https://indexer-rx9n.onrender.com/api/getLastCreated',{withCredentials: true})
+
             setCreated(getCreated.data)
-    
-            const getLast = await axios.get('https://kek.fm/api/getLast',{withCredentials: true})
+            //const getLast = await axios.get('https://kek.fm/api/getLast',{withCredentials: true}) // old implementation using vps
+            const getLast = await axios.get('https://indexer-rx9n.onrender.com/api/getLast',{withCredentials: true})
+
             const last = getLast.data
 
             const list = [...last[0].buys,...last[0].sells]
@@ -54,7 +57,8 @@ export default function Recent () {
     }
     
     useEffect(()=> {
-        const socket = io('https://kek.fm', {
+       //const socket = io('https://kek.fm', { // old implementation using vps
+       const socket = io('https://indexer-rx9n.onrender.com', { // new implementation using render
             path: '/socket.io/',
             transports: ['websocket', 'polling'], // Allow both transports
             withCredentials: true,

@@ -35,7 +35,7 @@ export default function LaunchTable() {
         }
     }
    
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -47,7 +47,9 @@ export default function LaunchTable() {
                     chain = chainId
                 }
 
-                const response = await axios.get(`https://kek.fm/api/getCreated/${page}?chainId=${chain}`, {
+                //const response = await axios.get(`https://kek.fm/api/getCreated/${page}?chainId=${chain}`, { // old implementation using vps
+                const response = await axios.get(`https://indexer-rx9n.onrender.com/api/getCreated/${page}?chainId=${chain}`, { // new implementation using render
+
                     withCredentials: true,
                 });
 
@@ -65,7 +67,7 @@ export default function LaunchTable() {
                     // If des field needs parsing, do it here
                     const parsedData = data.map(item => ({
                         ...item,
-                        d: JSON.parse(item.description || '{}') // Assuming des is a JSON string
+                        d: item.description // Assuming des is a JSON string
                     }));
                     setFiles(parsedData);
                     console.log("parsed data", parsedData)
@@ -84,7 +86,9 @@ export default function LaunchTable() {
     }, [page, chainId]); // Empty dependency array ensures this effect runs once on mount
 
     useEffect(() => {
-        const socket = io('https://kek.fm', {
+       // const socket = io('https://kek.fm', { // old implementation with vps
+          const socket = io('https://indexer-rx9n.onrender.com', { // old implementation with vps
+
             path: '/socket.io/',
             transports: ['websocket', 'polling'], // Allow both transports
             withCredentials: true,

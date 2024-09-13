@@ -26,7 +26,9 @@ export default function TehShit(){
         const fetchData = async () => {
             try{
                 
-                const response = await axios.get("https://kek.fm/api/getShit",{withCredentials: true})
+                //const response = await axios.get("https://kek.fm/api/getShit",{withCredentials: true})
+                const response = await axios.get("https://indexer-rx9n.onrender.com/api/getShit",{withCredentials: true})
+
                 const shit = response.data
                 shit.sort((a,b) => b.timestamp - a.timestamp)
                 //console.log("shit",shit)
@@ -34,7 +36,9 @@ export default function TehShit(){
                 if(shit){
                     const latestShit = shit[0].tokenAddress
                     //console.log("latestshit",latestShit)
-                    const res = await axios.get(`https://kek.fm/api/getOne/${latestShit}`, {withCredentials: true})
+                    //const res = await axios.get(`https://kek.fm/api/getOne/${latestShit}`, {withCredentials: true})
+                    const res = await axios.get(`https://indexer-rx9n.onrender.com/api/getOne/${latestShit}`, {withCredentials: true})
+
                     const newShit = res.data[0]
                     //console.log("tehshit", newShit)
                     //console.log("owner", newShit.owner)
@@ -48,7 +52,7 @@ export default function TehShit(){
                     const percentage = soldTokens / 75000 * 100
                     setPercentage(percentage)
 
-                    const des = JSON.parse(newShit.description)
+                    const des = newShit.description
                     //console.log("d",des)
                     setD(des)
                     setTehShit(newShit)

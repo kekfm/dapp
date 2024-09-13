@@ -38,7 +38,8 @@ export default function LaunchPage () {
     useEffect(()=>{
         const fetchData = async (tokenAddress) =>{
             try{
-                const response = await axios.get(`https://kek.fm/api/getOne/${tokenAddress}`)
+                //const response = await axios.get(`https://kek.fm/api/getOne/${tokenAddress}`) //use for vps
+                const response = await axios.get(`https://indexer-rx9n.onrender.com/api/getOne/${tokenAddress}`) //new implementation on render
                 const data = response.data[0]
                 //console.log("launch page data",data)
                 setProps(data)
@@ -86,14 +87,17 @@ export default function LaunchPage () {
                 }
 
                
-                const d = JSON.parse(data.description)
+                //const d = JSON.parse(data.description) //old implementation without parsing in backend
+                const d = data.description //new implementation with parsing in backend
                 setD(d)
 
                 console.log("data.description", data.description)
                 console.log("d.des", d.des)
 
 
-                const uniswap = await axios.get(`https://kek.fm/api/getOneUniswap/${tokenAddress}`)
+                //const uniswap = await axios.get(`https://kek.fm/api/getOneUniswap/${tokenAddress}`) //implementation when using a vps
+                const uniswap = await axios.get(`https://indexer-rx9n.onrender.com/api/getOneUniswap/${tokenAddress}`) // new implementation on render
+
                 if(uniswap.data.length > 0){
                     setTrading(false)
                 }
@@ -112,7 +116,9 @@ export default function LaunchPage () {
       
 
     useEffect(() => {
-        const socket = io('https://kek.fm', {
+        //const socket = io('https://kek.fm', { // old implementation using vps
+        const socket = io('https://indexer-rx9n.onrender.com', { // old implementation using vps
+
             path: '/socket.io/',
             transports: ['websocket', 'polling'], // Allow both transports
             withCredentials: true,
