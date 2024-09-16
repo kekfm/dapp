@@ -57,13 +57,17 @@ export default function LaunchPage () {
                 transactions.sort((a,b) => b.timestamp - a.timestamp)
                 let latestTxns = {}
                 transactions.forEach(transaction => {
-                    const {maker} = transactions
+                    const {maker} = transaction
                     if(!latestTxns[maker]){
                         latestTxns[maker] = transaction
                     }
                 })
                 const latestTxnsArray = Object.values(latestTxns);
                 setLatestTx(latestTxnsArray)
+
+                console.log("latestTxns", latestTxns)
+                console.log("latestTxnsArray", latestTxnsArray)
+                console.log("transactions", transactions)
 
                 const last = latestTxnsArray[0]
 
@@ -91,8 +95,8 @@ export default function LaunchPage () {
                 const d = data.description //new implementation with parsing in backend
                 setD(d)
 
-                console.log("data.description", data.description)
-                console.log("d.des", d.des)
+                //console.log("data.description", data.description)
+                //console.log("d.des", d.des)
 
 
                 //const uniswap = await axios.get(`https://kek.fm/api/getOneUniswap/${tokenAddress}`) //implementation when using a vps

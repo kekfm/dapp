@@ -5,6 +5,8 @@ import { ethers } from "ethers"
 
 
 export default function Holders ({data}) {
+
+    console.log("holders", data)
     return(
         <div className="flex flex-col md:items-start ">
             <div className="flex flex-col">
@@ -24,17 +26,17 @@ export default function Holders ({data}) {
                             {data && data.map((item, index) => (
                                 <tr key={index} className="text-xs">
                                     {item.maker &&
-                                        <td className="text-left px-4 py-2">
+                                        <td className="text-left px-4 py-1">
                                             {item.maker.slice(0,4)}...{item.maker.slice(item.maker.length -8, item.maker.length)}
                                         </td>
                                     }
                                 {item.userTokenBalance &&
-                                        <td className="text-right px-4 py-2">
+                                        <td className="text-right px-4 py-1">
                                             {ethers.utils.formatEther(item.userTokenBalance)}
                                         </td>
                                 }
                                     {item.userTokenBalance &&
-                                        <td className="text-right px-4 py-2">
+                                        <td className="text-right px-4 py-1">
                                             {(Number(ethers.utils.formatEther(item.userTokenBalance)) / 75000 * 100).toFixed(1)} 
                                         </td>
                                     }
