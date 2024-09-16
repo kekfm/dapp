@@ -86,10 +86,10 @@ export default function LaunchCard ({tag, data}) {
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
                 <div className=" w-[100px] h-[100px] border-4 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
-                    {data && data.d.logo &&
-                        <img src={data.d.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo" onError={handleImageError}/>
+                    {data && data.description.logo &&
+                        <img src={data.description.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo" onError={handleImageError}/>
                     }
-                    {data && !data.d.logo &&
+                    {data && !data.description.logo &&
                         <img src={noimage} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo"/>
                     }
                 </div>
@@ -103,17 +103,17 @@ export default function LaunchCard ({tag, data}) {
                         <Progressbar percentage={percentage} />
                     </div>
                     <div className= "flex flex-row justify-start gap-2 pt-1">
-                        {data && data.d.website &&
+                        {data && data.description.website &&
                             <div name="web" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.website)}>
                                 [web]
                             </div>
                         }
-                        {data && data.d.twitter &&
+                        {data && data.description.twitter &&
                             <div name="twitter" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.twitter)}>
                                 [x]
                             </div>
                         }
-                        {data && data.d.telegram &&
+                        {data && data.description.telegram &&
                             <div name="telegram" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.telegram)}>
                                 [telegram]
                             </div>
@@ -132,7 +132,7 @@ export default function LaunchCard ({tag, data}) {
             </div>
         </div>
         <div className='font-basic font-bold text-xs text-wrap truncate px-1 py-1 mx-2 h-12'>
-            {data.d.des.slice(0,205)}...
+            {data.description.des.slice(0,205)}...
         </div>
     </div>
     )

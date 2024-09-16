@@ -56,6 +56,9 @@ export default function LaunchTable() {
                 const data = response.data.data;
                 const maxPages = response.data.totalPages
                 setMax(maxPages)
+                setFiles(data);
+                console.log("data launchtable", data)
+
 
                /*const uniqueData = data.filter((item, index, self) => index === self.findIndex((t) => (
                     t.tokenAddress === item.tokenAddress
@@ -63,7 +66,7 @@ export default function LaunchTable() {
 
                 //uniqueData.sort((a,b) => b.timestamp-a.timestamp)
 
-                if (Array.isArray(data)) {
+                /*if (Array.isArray(data)) {
                     // If des field needs parsing, do it here
                     const parsedData = data.map(item => ({
                         ...item,
@@ -74,7 +77,7 @@ export default function LaunchTable() {
                 } else {
                     console.error('Expected data to be an array, but received:', data);
                     setError('Invalid data format received.');
-                }
+                }*/
 
             } catch (error) {
                 console.error('Error fetching data:', error);

@@ -44,6 +44,7 @@ const router = createBrowserRouter([
         element: <Terms />
 
       },
+     
     ]
   }
 

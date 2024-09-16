@@ -5,8 +5,13 @@ export default function Footer () {
 
 
   const navigate = useNavigate()
-  const handleClick = () =>{
+  const handleTermsClick = () =>{
     navigate("/terms")
+  }
+  const handleAuditClick = () =>{
+
+    window.open("https://pdfupload.io/docs/796cb9df", "_blank")
+
   }
 
     return(
@@ -17,9 +22,15 @@ export default function Footer () {
         <div className="font-basic pt-4">
           kek © 2024
         </div>
-        <div className="font-basic pt-4 hover:cursor-pointer" onClick={handleClick}>
-          {"[terms]"}
+        <div className="flex flex-row gap-2">
+          <div className="font-basic pt-4 hover:cursor-pointer" onClick={handleTermsClick}>
+            {"[terms]"}
+          </div>
+          <div className="font-basic pt-4 hover:cursor-pointer" onClick={handleAuditClick}>
+            {"[audit]"}
+          </div>
         </div>
+       
       </div>
     )
 }

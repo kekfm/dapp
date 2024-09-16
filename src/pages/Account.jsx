@@ -5,6 +5,8 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import LaunchCard from "../components/landing/LaunchCard"
 import devpage from "../assets/devpage.svg"
+import empty from "../assets/emptiness.svg"
+
 
 
 export default function Account (){
@@ -40,6 +42,17 @@ export default function Account (){
 
         fetchData(devAddress)
     },[])
+
+    if(devData.length == 0){
+        return(
+            <div className="flex h-screen justify-center">
+                <div className="flex justify-center w-60">
+                    <img src= {empty} alt="empty"></img>
+                </div>
+            </div>
+            
+        )
+    }
 
     return(
 
