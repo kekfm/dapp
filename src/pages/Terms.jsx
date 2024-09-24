@@ -127,6 +127,13 @@ export default function Terms () {
                     Any information on Tokens provided on our Interface is for informational purposes only and may be incomplete or false. This information should not be construed as investment advice. By presenting Token information for your convenience, we are not making any investment recommendation or any statement on a specific Token being a safe or sound investment.
                 </p>
             </div >
+            <div className="flex-col">
+                <h3 className="text-xl font-bold">Platform Fees</h3>
+                <p>
+                    Launching a Token on the Platform is free. Buying and Selling a Token on the platform is charged with a 0.5% platform fee.
+                </p>
+            </div>
+
             <div className="pb-20 font-bold">
                 Your KEK-Team
             </div>

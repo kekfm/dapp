@@ -8,13 +8,18 @@ import SuccessModal from "../components/launchform/SuccessModal"
 import FailModal from "../components/launchform/FailModal"
 import bump from "../assets/sendit.svg"
 import launch from "../assets/launch.svg"
+import supported from "../assets/supported.svg"
+import bnb from "../assets/s_bnb.svg"
+import modulus from "../assets/s_modulus.svg"
+import base from "../assets/s_base.svg"
+import { supportedChainIds } from '../helpers/chains';
 
 
 
 
 export default function Page () {
 
-    const {account, chainId} = useEthers()
+    const {account, chainId, switchNetwork} = useEthers()
 
     
     const {state, send, events, resetState} = useCreateToken('deployNewToken', chainId, {transactionName: 'create'})
@@ -38,6 +43,10 @@ export default function Page () {
     const [errors, setErrors] = useState({})
     const [isOpen, setIsOpen] = useState(false)
     const [failOpen, setFailOpen] = useState(false)
+
+    const handleNetworkChange = (chain) =>{
+        switchNetwork(chain)
+    }
 
 
     useEffect(() => {
@@ -165,7 +174,21 @@ export default function Page () {
             .replace(/\t/g, '\\t');  // Escape tabs
     };
     
-
+    if (!supportedChainIds.includes(chainId)) {
+        return(
+            <div className="flex flex-col justify-center mt-10">
+                <div className="flex justify-center">
+                    <img src={supported} alt="image"></img>
+                </div>
+                <div className="flex flex-row justify-center gap-4 p-4 ">
+                    <img onClick={() => handleNetworkChange(97)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="image"></img>
+                    <img onClick={() => handleNetworkChange(6666)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="image"></img>
+                    <img onClick={() => handleNetworkChange(8453)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="image"></img>
+                </div>
+            </div>
+            
+        )
+    }
 
     return(
         <div className="flex flex-col font-basic font-medium items-center justify-center min-h-screen bg-base-1 pb-20 ">

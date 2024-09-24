@@ -9,7 +9,7 @@ export function useGetTokenAmount(chainId, tokenAddress, ethAmount) {
       useCall(
         chainId && ethAmount != "" &&
           {
-            contract: new Contract(tokenAddress, contracts.token.interface[97]),
+            contract: new Contract(tokenAddress, contracts.token.interface[chainId]),
             method: "calcTokenAmount", // Method to be called
             args: [ethAmount], // Method arguments - address to be checked for balance etc
           }
@@ -26,7 +26,7 @@ export function useGetETHAmount(chainId, tokenAddress, tokenAmount) {
       useCall(
         chainId &&
           {
-            contract: new Contract(tokenAddress, contracts.token.interface[97]),
+            contract: new Contract(tokenAddress, contracts.token.interface[chainId]),
             method: "calcETHAmount", // Method to be called
             args: [tokenAmount], // Method arguments - address to be checked for balance etc
           }
