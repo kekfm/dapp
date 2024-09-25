@@ -9,9 +9,7 @@ export default function Footer () {
     navigate("/terms")
   }
   const handleAuditClick = () =>{
-
     window.open("https://pdfupload.io/docs/796cb9df", "_blank")
-
   }
 
     return(

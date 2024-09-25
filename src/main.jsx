@@ -5,6 +5,7 @@ import LaunchForm from './pages/LaunchForm.jsx'
 import LaunchPage from './pages/LaunchPage.jsx'
 import Account from './pages/Account.jsx'
 import Terms from './pages/Terms.jsx'
+import Game from './pages/Game.jsx'
 import './index.css'
 import { Mainnet, DAppProvider, Goerli } from '@usedapp/core'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -42,6 +43,11 @@ const router = createBrowserRouter([
       { 
         path:"/terms",
         element: <Terms />
+
+      },
+      { 
+        path:"/game",
+        element: <Game />
 
       },
      

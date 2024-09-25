@@ -9,6 +9,7 @@ import left from "../../assets/left.svg"
 import right from "../../assets/right.svg"
 import connect from "../../assets/please_connect.svg"
 import supported from "../../assets/supported.svg"
+import empty from "../../assets/emptiness.svg"
 import bnb from "../../assets/s_bnb.svg"
 import modulus from "../../assets/s_modulus.svg"
 import base from "../../assets/s_base.svg"
@@ -168,6 +169,14 @@ export default function LaunchTable() {
         )
     }
 
+    if(supportedChainIds.includes(chainId) && files.length == 0){
+        return(
+            <div className="flex flex-row justify-center">
+                <img src={empty} alt="empty"></img>
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-col justify-center w-full">
              <div className="flex justify-center">
@@ -183,7 +192,7 @@ export default function LaunchTable() {
             <div className="flex flex-row justify-center gap-2">
                 {page == 1 ? "" :<img onClick={handleDown} src={left} className="hover:cursor-pointer"></img>}
                 <div className="font-basic font-bold content-center">{page}/{max}</div>
-                {page == max ? "" :<img onClick={handleUp} src={right} className="hover:cursor-pointer"></img>}
+                {page == max ? "" : <img onClick={handleUp} src={right} className="hover:cursor-pointer"></img>}
             </div>
         </div>
     )

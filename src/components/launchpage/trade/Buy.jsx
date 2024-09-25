@@ -113,11 +113,6 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                     <div className="font-basic font-semibold">
                             launched
                     </div>
-                    <div className="flex flex-row items-center">
-                        
-                        
-                        
-                    </div>
                 </div>
                 
             </div>

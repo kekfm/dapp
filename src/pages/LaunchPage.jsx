@@ -3,6 +3,9 @@ import { useState, useEffect} from 'react'
 import axios from 'axios'
 import "../../globals.css"
 import noimage from "../assets/noimage.svg"
+import bnb from "../assets/bnbconnect.svg"
+import base from "../assets/baseconnect.svg"
+import modulus from "../assets/modulusconnect.svg"
 import tokenpage from "../assets/tokenpage.svg"
 import { useTokenBalance, useEthers } from '@usedapp/core'
 import { ethers } from 'ethers'
@@ -32,7 +35,7 @@ export default function LaunchPage () {
 
 
 
-    const {account } = useEthers()
+    const {account, chainId } = useEthers()
     const navigate = useNavigate()
 
     useEffect(()=>{
@@ -44,6 +47,7 @@ export default function LaunchPage () {
                 //console.log("launch page data",data)
                 setProps(data)
                 setComments(data.comments)
+                console.log("launch page data", data)
 
                 //get unique tx
                 const uBuys = data.buys.filter((buy, index, self) => index === self.findIndex((t) => (t.maker === buy.maker && t.timestamp === buy.timestamp)))
@@ -210,6 +214,23 @@ export default function LaunchPage () {
                                     <div className="text-xs pt-2">
                                         <span className="font-bold">dev jeeted?</span> {jeet}
                                     </div>
+                                    <div>
+                                        {props.chainId == 97 && 
+                                            <div className="flex flex-row gap-2 text-xs pt-2">
+                                                <span>chain:</span> <img className="w-4" src={bnb}></img>
+                                            </div>
+                                        }
+                                        {props.chainId == 8453 && 
+                                            <div className="flex flex-row gap-2 text-xs pt-2">
+                                                <span>chain:</span> <img className="w-4" src={base}></img>
+                                            </div>
+                                        }
+                                        {props.chainId == 6666 && 
+                                            <div className="flex flex-row gap-2 text-xs pt-2">
+                                                <span>chain:</span> <img className="w-4" src={modulus}></img>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                             <div className='flex text-sm connectbox max-w-[300px] lg:max-w-[480px] h-28 border-2 border-black mt-6 px-1 mb-4 mr-2 bg-white  overflow-auto'>
@@ -224,7 +245,7 @@ export default function LaunchPage () {
                         <div className="flex flex-col justify-start">
                         
                                 <div className="flex font-basic font-semibold text-xl text-start pr-4 mr-2 pb-4 w-full "> 
-                                    <Trade tokenAddress={props.tokenAddress} tokenTicker={props.symbol} tokenBalance={tokenBalance} trading={trading}/>
+                                    <Trade tokenAddress={props.tokenAddress} tokenTicker={props.symbol} tokenBalance={tokenBalance} trading={trading} chain={props.chainId}/>
                                 </div>
                             
                             {tokenBalance ? 
