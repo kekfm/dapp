@@ -1,8 +1,8 @@
-import '../../../globals.css'
+import '../../globals.css'
 import { useEffect, useState} from 'react'
-import {formatter} from "../../helpers/formatter"
+import {formatter} from "../helpers/formatter"
 import { Link } from 'react-router-dom';
-import BANG from "./BANG.png"
+import BANG from "../assets/BANG.png"
 
 
 
