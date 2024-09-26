@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import "../../globals.css"
-import binance from "./game/BINANCE.png"
+import binance from "./game/WENBINANCE.png"
 import bug from "./game/bug.png"
 import cramer from "./game/cramer.png"
 import dumpit from "./game/dumpit.png"
@@ -9,10 +9,22 @@ import gensler from "./game/gensler.png"
 import MrO from "./game/MrO.png"
 import rate_hike from "./game/rate_hike.png"
 import skywalker from "./game/skywalker.png"
+import GameModal from "./game/GameModal"
 
 
 
 export default function Game(){
+
+const [isOpen, setIsOpen] = useState(false)
+
+const handleKill = () =>{
+    setIsOpen(true)
+}
+
+const closeModal = () => {
+    setIsOpen(false)
+}
+//GAME
 
 //board
 let board
@@ -315,10 +327,17 @@ function detectCollision(a, b){
 
 
     return(
-        <div className="flex flex-col justify-center text-center mt-20">
-            <div className="font-basic font-bold text-3xl"> Life of Mr. O</div>
-            <canvas className="connectbox border-4 border-black mb-2" id="board"></canvas>
-            <button onClick={() => handleRestart()} className="font-basic font-semibold w-16 connectbox border-4 border-black">again</button>
+        <div className="flex justify-center">
+            <GameModal isOpen={isOpen} closeModal={closeModal} />
+            <div className="flex flex-col justify-center text-center mt-20 max-w-[1200px]">
+                <div className="font-basic font-bold text-3xl"> Life of Mr. O</div>
+                <canvas className="connectbox border-4 border-black mb-2" id="board"></canvas>
+                <div className=" flex flex-row gap-4">
+                    <button onClick={() => handleRestart()} className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-2 hover:scale-110" >start</button>
+                    <button onClick={() => handleKill()} className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-8 hover:scale-110" >kill me</button>
+                </div>
+            </div>
         </div>
+        
     )
 }

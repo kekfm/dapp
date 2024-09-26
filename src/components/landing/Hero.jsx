@@ -12,7 +12,9 @@ import time from "../../assets/time.svg"
 import memes from "../../assets/memes.svg"
 import many from "../../assets/themany.svg"
 import cult from "../../assets/cult.svg"
+import play from "../../assets/play.png"
 import "../../../globals.css"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -21,6 +23,7 @@ import "../../../globals.css"
 
 export default function Hero () {
 
+    const navigate = useNavigate()
     const [isExplainerOpen, setIsExplainerOpen] = useState(false)
 
     const handleExplainerModal=() => {
@@ -31,6 +34,10 @@ export default function Hero () {
         if(!isExplainerOpen){
             setIsExplainerOpen(true)
         }
+    }
+
+    const handleGame = () =>{
+        navigate("/game")
     }
 
     return(
@@ -70,9 +77,12 @@ export default function Hero () {
                {/*<div className="absolute z-200 -top-44 right-10">
                     <LastTrade />
                 </div>*/}
-              
+                
             </div>
-            <div className="flex justify-center pt-20 pb-20 overflow-x-auto">
+            <div className="flex justify-center -rotate-6 pt-10">
+                <img onClick={() => handleGame()} src={play} className="w-[80px] hover:scale-110 hover:cursor-pointer"></img>
+            </div>
+            <div className="flex justify-center pt-10 pb-20 overflow-x-auto">
                 <TehShit />
             </div>
         </div>
