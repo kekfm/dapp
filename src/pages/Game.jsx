@@ -78,6 +78,8 @@ export default function Game() {
   // Enemy spawn timeout ID
   const enemyTimeoutIdRef = useRef(null);
 
+  
+
   useEffect(() => {
     const canvas = document.getElementById("board");
     canvas.width = boardWidth;
@@ -474,12 +476,12 @@ export default function Game() {
           className="connectbox border-4 border-black mb-2"
           id="board"
           tabIndex={-1}
-          style={{ width: '100%', height: '50vh', display: 'block' }}
+          style={{ width: '100%', height: '100vh', display: 'block' }}
 
         ></canvas>
   
         {isGameOver && (
-          <div className="game-over-overlay font-basic font-bold font-base-2 w-full">
+          <div className="game-over-overlay font-basic font-bold font-base-2">
             <h1>Game Over</h1>
             <button onClick={handleRestart}>Restart</button>
           </div>
