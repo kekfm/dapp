@@ -476,7 +476,7 @@ export default function Game() {
           className="connectbox border-4 border-black mb-2"
           id="board"
           tabIndex={-1}
-          style={{ width: '100%', height: '100vh', display: 'block' }}
+          style={{ width: '100%', height: '80vh', display: 'block' }}
 
         ></canvas>
   
