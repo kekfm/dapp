@@ -1,343 +1,518 @@
-import { useEffect, useRef, useState } from "react"
-import "../../globals.css"
-import binance from "../assets/WENBINANCE.png"
-import bug from "../assets/bug.png"
-import cramer from "../assets/cramer.png"
-import dumpit from "../assets/dumpit.png"
-import FUD from "../assets/FUD.png"
-import gensler from "../assets/gensler.png"
-import MrO from "../assets/MrO.png"
-import rate_hike from "../assets/rate_hike.png"
-import skywalker from "../assets/skywalker.png"
-import GameModal from "../components/GameModal"
+import { useEffect, useRef, useState } from "react";
+import "../../globals.css";
+import binance from "../assets/WENBINANCE.png";
+import bug from "../assets/bug.png";
+import cramer from "../assets/cramer.png";
+import dumpit from "../assets/dumpit.png";
+import FUD from "../assets/FUD.png";
+import gensler from "../assets/gensler.png";
+import MrO from "../assets/MrO.png";
+import rate_hike from "../assets/rate_hike.png";
+import skywalker from "../assets/skywalker.png";
+import GameModal from "../components/GameModal";
 
+export default function Game() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+  const handleKill = () => {
+    setIsOpen(true);
+  };
 
-export default function Game(){
+  const closeModal = () => {
+    setIsOpen(false);
+  };
 
-const [isOpen, setIsOpen] = useState(false)
+  // Game constants
+  const boardWidth = 750;
+  const boardHeight = 250;
 
-const handleKill = () =>{
-    setIsOpen(true)
-}
+  // Refs for canvas and context
+  const canvasRef = useRef(null);
+  const contextRef = useRef(null);
 
-const closeModal = () => {
-    setIsOpen(false)
-}
-//GAME
+  // Background
+  const backgroundImageRef = useRef(null);
+  const backgroundXRef = useRef(0);
+  const backgroundSpeed = 2.5;
 
-//board
-let board
-let boardWidth = 750
-let boardHeight = 250
-let context
+  // Buterik (player)
+  const buterikRef = useRef({
+    x: 50,
+    y: boardHeight - 64,
+    width: 32,
+    height: 64,
+    velocityY: 0,
+  });
+  const buterikImgRef = useRef(null);
+  const frameXRef = useRef(0);
+  const frameCountRef = useRef(0);
 
-//background
-let backgroundImage;
-let backgroundX = 0; // Starting X position of the background
-let backgroundSpeed = 2; 
+  // Enemies
+  const enemiesArrayRef = useRef([]);
 
-//buterik
-let buterikWidth = 32 // maybe set to imagesize
-let buterikHeight = 64 // maybe set to imagesize
-let buterikX = 50
-let buterikY = boardHeight - buterikHeight
-let buterikImg
+  // Physics constants
+  const gravity = 0.35;
+  const velocityX = -2.5;
 
-let buterik = {
-    x : buterikX,
-    y : buterikY,
-    width : buterikWidth,
-    height : buterikHeight
-}
+  // Game state
+  const gameOverRef = useRef(false);
+  const scoreRef = useRef(0);
 
-let frameX = 0;  // Current frame's X coordinate on the spritesheet
-let frameY = 0;  // Current frame's Y coordinate on the spritesheet
-let maxFrame = 2; // Number of frames (0 to 3 means 4 frames total)
-let frameCount = 0; // Frame rate control
-let frameDelay = 10; // Delay between frames
+  // Images
+  const dumpitImgRef = useRef(null);
+  const skywalkerImgRef = useRef(null);
+  const fudImgRef = useRef(null);
+  const bugImgRef = useRef(null);
+  const ratehikeImgRef = useRef(null);
+  const genslerImgRef = useRef(null);
+  const cramerImgRef = useRef(null);
 
-//enemies
-let enemiesArray = []
+  // Game loop timing
+  const lastTimeRef = useRef(0);
 
-let dumpitWidth = 30
-let skywalkerWidth = 40
-let fudWidth = 80
-let bugWidth = 150
-let rateHikeWidth = 150
-let genslerWidth = 40
+  // Animation frame ID
+  const animationFrameIdRef = useRef(null);
 
-let characHeight = 60
-let flyHeight = 40
-let flyHeight2 = 42.5
+  // Enemy spawn timeout ID
+  const enemyTimeoutIdRef = useRef(null);
 
-let enemyX = 700
-let characY = boardHeight - characHeight
-let flyY = boardHeight - 100 - flyHeight
+  useEffect(() => {
+    const canvas = document.getElementById("board");
+    canvas.width = boardWidth;
+    canvas.height = boardHeight;
+    const context = canvas.getContext("2d");
 
-let dumpitImg
-let skywalkerImg
-let fudImg
-let bugImg
-let ratehikeImg
-let genslerImg
-let cramerImg
-/*
-width x height
+    const handleFirstTouch = () => {
+        requestFullScreen();
+        startGame();
+        canvas.removeEventListener("touchstart", handleFirstTouch);
+      };
 
-buterik: 100 x 100
-dump_it: 40 x 60
-skywalker: 40 x 60
-fud: 60 x 50
-bug: 200 x 50
-rate_hike: 200 x 50
-gensler: 50 x 80
-*/
+      const requestFullScreen = () => {
+        if (canvas.requestFullscreen) {
+          canvas.requestFullscreen();
+        } else if (canvas.webkitRequestFullscreen) {
+          canvas.webkitRequestFullscreen();
+        } else if (canvas.mozRequestFullScreen) {
+          canvas.mozRequestFullScreen();
+        } else if (canvas.msRequestFullscreen) {
+          canvas.msRequestFullscreen();
+        }
+      };
 
-//physics
-let velocityX = -2 //enemy moving left speed
-let velocityY = 0
-let gravity = 0.28
+    canvasRef.current = canvas;
+    contextRef.current = context;
 
-let gameOver = false
-let score = 0
-let enemyIntervalId = useRef(null); // Use useRef to persist across renders
+    // Load images
+    const backgroundImage = new Image();
+    backgroundImage.src = binance;
 
+    const buterikImg = new Image();
+    buterikImg.src = MrO;
 
-const handleRestart = () => {
-    window.location.reload()
-}
+    // Enemy images
+    const dumpitImg = new Image();
+    dumpitImg.src = dumpit;
 
+    const cramerImg = new Image();
+    cramerImg.src = cramer;
 
-/*useEffect(() => {
-    clearInterval(enemyIntervalId.current); // Clear previous interval
-    gameOver = false;
-    score = 0;
-    enemiesArray = [];
-    startGame();
+    const skywalkerImg = new Image();
+    skywalkerImg.src = skywalker;
 
+    const fudImg = new Image();
+    fudImg.src = FUD;
+
+    const bugImg = new Image();
+    bugImg.src = bug;
+
+    const ratehikeImg = new Image();
+    ratehikeImg.src = rate_hike;
+
+    const genslerImg = new Image();
+    genslerImg.src = gensler;
+
+    // Wait for all images to load
+    let imagesLoaded = 0;
+    const totalImages = 9;
+
+    const imageLoaded = () => {
+      imagesLoaded++;
+      if (imagesLoaded === totalImages) {
+        // All images are loaded, start the game
+        backgroundImageRef.current = backgroundImage;
+        buterikImgRef.current = buterikImg;
+        dumpitImgRef.current = dumpitImg;
+        cramerImgRef.current = cramerImg;
+        skywalkerImgRef.current = skywalkerImg;
+        fudImgRef.current = fudImg;
+        bugImgRef.current = bugImg;
+        ratehikeImgRef.current = ratehikeImg;
+        genslerImgRef.current = genslerImg;
+
+        if (isMobile) {
+          // Request full-screen mode on first touch
+          
+
+          // Start the game on first touch
+        
+
+          canvas.addEventListener("touchstart", handleFirstTouch);
+        }
+      }
+    };
+
+    // Attach onload handlers
+    backgroundImage.onload = imageLoaded;
+    buterikImg.onload = imageLoaded;
+    dumpitImg.onload = imageLoaded;
+    cramerImg.onload = imageLoaded;
+    skywalkerImg.onload = imageLoaded;
+    fudImg.onload = imageLoaded;
+    bugImg.onload = imageLoaded;
+    ratehikeImg.onload = imageLoaded;
+    genslerImg.onload = imageLoaded;
+
+    // Event listeners for jumping
+    const handleJump = (e) => moveButerik(e);
+
+    if (isMobile) {
+      document.addEventListener("touchstart", handleJump);
+    } else {
+      document.addEventListener("keydown", moveButerik);
+    }
+
+    // Clean up function
     return () => {
-        // Clean up interval and event listeners when unmounting
-        clearInterval(enemyIntervalId.current);
+      // Clear intervals and animation frames
+      if (enemyTimeoutIdRef.current) {
+        clearTimeout(enemyTimeoutIdRef.current);
+      }
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+      if (isMobile) {
+        document.removeEventListener("touchstart", handleJump);
+        canvas.removeEventListener("touchstart", handleFirstTouch);
+      } else {
         document.removeEventListener("keydown", moveButerik);
       }
-},[gameOver])*/
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-//const startGame = () => {
-    window.onload = function(){
-        board = document.getElementById("board")
-        board.height = boardHeight
-        board.width = boardWidth
-    
-    
-        context = board.getContext("2d")
-    
-        //draw initial buterik
-        //context.fillStyle="green"
-        //context.fillRect(buterik.x, buterik.y, buterik.width, buterik.height)
-        backgroundImage = new Image();
-        backgroundImage.src = binance;
-    
-        backgroundImage.onload = function() {
-            requestAnimationFrame(update); // Start the game loop
-        };
-    
-        buterikImg = new Image()
-        buterikImg.src = MrO
-    
-        buterikImg.onload = function(){
-            context.drawImage(buterikImg, buterik.x, buterik.y, buterik.width, buterik.height)
-    
+  function startGame() {
+    // Start the game loop
+    animationFrameIdRef.current = requestAnimationFrame(update);
+
+    // Start spawning enemies with random delay
+    spawnEnemyWithRandomDelay();
+  }
+
+  function spawnEnemyWithRandomDelay() {
+    if (gameOverRef.current) {
+      return;
+    }
+
+    // Generate a random delay between 1 and 3 seconds (1000ms to 3000ms)
+    const randomDelay = Math.random() * 5000 + 2000;
+
+    enemyTimeoutIdRef.current = setTimeout(() => {
+      placeEnemy();
+      spawnEnemyWithRandomDelay(); // Schedule the next enemy
+    }, randomDelay);
+  }
+
+  function update(time) {
+    if (gameOverRef.current) {
+      return;
+    }
+
+    try {
+      const context = contextRef.current;
+
+      context.clearRect(0, 0, boardWidth, boardHeight);
+
+      // Update background position
+      backgroundXRef.current -= backgroundSpeed;
+
+      if (backgroundXRef.current <= -backgroundImageRef.current.width) {
+        backgroundXRef.current = 0;
+      }
+
+      // Draw background
+      context.drawImage(
+        backgroundImageRef.current,
+        backgroundXRef.current,
+        0,
+        backgroundImageRef.current.width,
+        boardHeight
+      );
+      context.drawImage(
+        backgroundImageRef.current,
+        backgroundXRef.current + backgroundImageRef.current.width,
+        0,
+        backgroundImageRef.current.width,
+        boardHeight
+      );
+
+      // Update buterik
+      const buterik = buterikRef.current;
+      buterik.velocityY += gravity;
+      buterik.y = Math.min(
+        buterik.y + buterik.velocityY,
+        boardHeight - buterik.height
+      );
+
+      // Prevent buterik from sinking below the ground
+      if (buterik.y >= boardHeight - buterik.height) {
+        buterik.y = boardHeight - buterik.height;
+        buterik.velocityY = 0;
+      }
+
+      // Update frame for animation
+      frameCountRef.current++;
+      if (frameCountRef.current >= 10) {
+        frameXRef.current = (frameXRef.current + 1) % 2;
+        frameCountRef.current = 0;
+      }
+
+      context.drawImage(
+        buterikImgRef.current,
+        frameXRef.current * buterik.width,
+        0,
+        buterik.width,
+        buterik.height,
+        buterik.x,
+        buterik.y,
+        buterik.width,
+        buterik.height
+      );
+
+      // Update enemies
+      const enemiesArray = enemiesArrayRef.current;
+      for (let i = enemiesArray.length - 1; i >= 0; i--) {
+        let enemy = enemiesArray[i];
+        enemy.x += velocityX;
+
+        context.drawImage(
+          enemy.img,
+          enemy.x,
+          enemy.y,
+          enemy.width,
+          enemy.height
+        );
+
+        // Check collision
+        if (detectCollision(buterik, enemy)) {
+          console.log("Collision detected!");
+          gameOverRef.current = true;
+          setIsGameOver(true);
+          // Clear intervals and animation frames
+          if (enemyTimeoutIdRef.current) {
+            clearTimeout(enemyTimeoutIdRef.current);
+          }
+          if (animationFrameIdRef.current) {
+            cancelAnimationFrame(animationFrameIdRef.current);
+          }
+          break;
         }
-    
-        dumpitImg = new Image()
-        dumpitImg.src = dumpit
-    
-        cramerImg = new Image()
-        cramerImg.src = cramer
-    
-        skywalkerImg = new Image()
-        skywalkerImg.src = skywalker
-    
-        fudImg = new Image()
-        fudImg.src = FUD
-    
-        bugImg = new Image()
-        bugImg.src = bug
-    
-        ratehikeImg = new Image()
-        ratehikeImg.src = rate_hike
-    
-        genslerImg = new Image()
-        genslerImg.src = gensler
-    
-        requestAnimationFrame(update)
-        setInterval(placeEnemy, 1000)
-    
-        document.addEventListener("keydown", moveButerik)
-    }
-//}
 
-
-
-function update () {
-    requestAnimationFrame(update)
-    if(gameOver){
-        return
-    }
-
-    context.clearRect(0, 0, board.width, board.height)
-
-    backgroundX -= backgroundSpeed;
-
-    // If the background has moved entirely off-screen, reset it
-    if (backgroundX <= -backgroundImage.width) {
-        backgroundX = 0;
-    }
-
-    // Draw the background image twice to create a continuous loop
-    context.drawImage(backgroundImage, backgroundX, 0, backgroundImage.width, boardHeight);
-    context.drawImage(backgroundImage, backgroundX + backgroundImage.width, 0, backgroundImage.width, boardHeight);
-
-
-    //buterik
-    velocityY += gravity
-    buterik.y = Math.min(buterik.y + velocityY, buterikY) //apply gravity
-
-    frameCount++;
-    if (frameCount >= frameDelay) {
-        frameX = (frameX + 1) % maxFrame;  // Loop through frames
-        frameCount = 0;
-    }
-
-    context.drawImage(
-        buterikImg,                    // Image source (spritesheet)
-        frameX * buterik.width,         // X position of the frame in the spritesheet
-        0,                              // Y position (top of the spritesheet)
-        buterik.width,                  // Width of each frame
-        buterik.height,                 // Height of each frame
-        buterik.x,                      // X position on the canvas
-        buterik.y,                      // Y position on the canvas
-        buterik.width,                  // Draw width on canvas
-        buterik.height                  // Draw height on canvas
-    );
-
-    //enemy
-    for (let i = 0; i < enemiesArray.length; i++){
-        let enemy = enemiesArray[i]
-        enemy.x += velocityX
-        context.drawImage(enemy.img, enemy.x, enemy.y, enemy.width, enemy.height)
-
-        if (detectCollision(buterik, enemy)){
-            gameOver = true
-
+        // Remove off-screen enemies
+        if (enemy.x + enemy.width < 0) {
+          enemiesArray.splice(i, 1);
         }
+      }
+
+      // Update score
+      scoreRef.current++;
+
+      context.fillStyle = "black";
+      context.font = "20px courier";
+      context.fillText(scoreRef.current, 5, 20);
+
+      // Continue the game loop
+      animationFrameIdRef.current = requestAnimationFrame(update);
+    } catch (error) {
+      console.error("Error in update function:", error);
+      gameOverRef.current = true;
+      // Clear intervals and animation frames
+      if (enemyTimeoutIdRef.current) {
+        clearTimeout(enemyTimeoutIdRef.current);
+      }
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+    }
+  }
+
+  function moveButerik(e) {
+    if (gameOverRef.current) {
+      return;
     }
 
-     //score
-     context.fillStyle="black";
-     context.font="20px courier";
-     score++;
-     context.fillText(score, 5, 20)
-
-}
-
-function moveButerik(e){
-    if(gameOver){
-        return
+    // Prevent default action if available
+    if (e.preventDefault) {
+      e.preventDefault();
     }
 
-    if((e.code == "Space" || e.code == "ArrowUp") && buterik.y == buterikY){
-        //jump
-        velocityY = -10
+    // Handle touch events
+    if (e.type === "touchstart" || e.type === "click") {
+      const buterik = buterikRef.current;
+      if (buterik.y >= boardHeight - buterik.height) {
+        buterik.velocityY = -10;
+      }
+      return;
     }
 
-}
+    // Handle keyboard events
+    if (e.repeat) return;
 
-function placeEnemy(){
-    // place enemy
+    const buterik = buterikRef.current;
+
+    if (
+      (e.code === "Space" || e.code === "ArrowUp") &&
+      buterik.y >= boardHeight - buterik.height
+    ) {
+      // Jump
+      buterik.velocityY = -10;
+    }
+  }
+
+  function placeEnemy() {
+    if (gameOverRef.current) {
+      return;
+    }
+
+    const enemiesArray = enemiesArrayRef.current;
 
     let enemy = {
-        img : null,
-        x : enemyX,
-        y : null,
-        width : null,
-        height: null
+      img: null,
+      x: boardWidth,
+      y: null,
+      width: null,
+      height: null,
+    };
+
+    let placeEnemyChance = Math.random();
+
+    if (placeEnemyChance > 0.80) {
+      enemy.img = genslerImgRef.current;
+      enemy.y = boardHeight - 60;
+      enemy.width = 40;
+      enemy.height = 60;
+    } else if (placeEnemyChance > 0.50) {
+      enemy.img = dumpitImgRef.current;
+      enemy.y = boardHeight - 60;
+      enemy.width = 30;
+      enemy.height = 60;
+    } else if (placeEnemyChance > 0.30) {
+      enemy.img = skywalkerImgRef.current;
+      enemy.y = boardHeight - 60;
+      enemy.width = 40;
+      enemy.height = 60;
+    } else {
+      // Default enemy
+      enemy.img = dumpitImgRef.current;
+      enemy.y = boardHeight - 60;
+      enemy.width = 30;
+      enemy.height = 60;
     }
 
-    let placeEnemyChance = Math.random() // 0 - 0.9999
+    enemiesArray.push(enemy);
+  }
 
-    
-    if(placeEnemyChance > .90) {
-        enemy.img = ratehikeImg
-        enemy.y = flyY
-        enemy.width = rateHikeWidth
-        enemy.height = flyHeight2
-        enemiesArray.push(enemy)
+  function detectCollision(a, b) {
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
+  }
+
+  const handleRestart = () => {
+    // Reset game state
+    gameOverRef.current = false;
+    setIsGameOver(false);
+    scoreRef.current = 0;
+    enemiesArrayRef.current = [];
+    buterikRef.current = {
+      x: 50,
+      y: boardHeight - 64,
+      width: 32,
+      height: 64,
+      velocityY: 0,
+    };
+    frameXRef.current = 0;
+    frameCountRef.current = 0;
+    backgroundXRef.current = 0;
+    lastTimeRef.current = 0;
+
+    // Clear existing intervals and timeouts
+    if (enemyTimeoutIdRef.current) {
+      clearTimeout(enemyTimeoutIdRef.current);
     }
-    else if(placeEnemyChance > .80) {
-        enemy.img = genslerImg
-        enemy.y = characY
-        enemy.width = genslerWidth
-        enemy.height = characHeight
-        enemiesArray.push(enemy)
-    }
-    else if(placeEnemyChance > .70) {
-        enemy.img = cramerImg
-        enemy.y = flyY
-        enemy.width = rateHikeWidth
-        enemy.height = flyHeight2
-        enemiesArray.push(enemy)
-    }
-    else if(placeEnemyChance > .60) {
-        enemy.img = fudImg
-        enemy.y = flyY
-        enemy.width = fudWidth
-        enemy.height = flyHeight
-        enemiesArray.push(enemy)
-    }
-    else if(placeEnemyChance > .50) {
-        enemy.img = dumpitImg
-        enemy.y = characY
-        enemy.width = dumpitWidth
-        enemy.height = characHeight
-        enemiesArray.push(enemy)
-    }
-    else if(placeEnemyChance > .30) {
-        enemy.img = skywalkerImg
-        enemy.y = characY
-        enemy.width = skywalkerWidth
-        enemy.height = characHeight
-        enemiesArray.push(enemy)
+    if (animationFrameIdRef.current) {
+      cancelAnimationFrame(animationFrameIdRef.current);
     }
 
-    if (enemiesArray > 5){
-        enemiesArray.shift() // remove elements so array does not fill
+    // Restart enemy spawning and game loop
+    startGame();
+  };
+
+  return (
+    <div>
+    {isMobile && (
+     <div id="game-container">
+        <GameModal isOpen={isOpen} closeModal={closeModal} />
+        <canvas
+          className="connectbox border-4 border-black mb-2"
+          id="board"
+          tabIndex={-1}
+        ></canvas>
+  
+        {isGameOver && (
+          <div className="game-over-overlay font-basic font-bold font-base-2 w-full">
+            <h1>Game Over</h1>
+            <button onClick={handleRestart}>Restart</button>
+          </div>
+        )}
+      </div>)
     }
-}
-
-function detectCollision(a, b){
-    return a.x < b.x + b.width && // a´s top left corner doesnt reach b´s top right corner
-           a.x + a.width > b.x && //a´s top right corner passes b´s top left corner
-           a.y < b.y + b.height && //a´s top left corner doesnt reach b´s bottom left corner
-           a.y + a.height > b.y // a´s bottom left corner passes b´s top left corner
-}
-
-
-
-
-    return(
-        <div className="flex justify-center">
+    {!isMobile &&
+        <div className="flex flex-col pt-20 justify-center">
             <GameModal isOpen={isOpen} closeModal={closeModal} />
-            <div className="flex flex-col justify-center text-center mt-20 max-w-[1200px]">
-                <div className="font-basic font-bold text-3xl"> Life of Mr. O</div>
-                <canvas className="connectbox border-4 border-black mb-2" id="board"></canvas>
-                <div className=" flex flex-row gap-4">
-                    <button onClick={() => handleRestart()} className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-2 hover:scale-110" >start</button>
-                    <button onClick={() => handleKill()} className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-8 hover:scale-110" >kill me</button>
-                </div>
+            <div className="font-basic font-bold"> Life of Mr. O</div>
+            <canvas
+                className="connectbox border-4 border-black mb-2"
+                id="board"
+                tabIndex={-1}
+            ></canvas>
+            <div className="flex flex-row gap-4">
+                <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={handleRestart}
+                    className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-2 hover:scale-110 m-2"
+                >
+                    Start
+                </button>
+                <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={handleKill}
+                    className="font-basic font-semibold w-24 connectbox border-4 border-black bg-base-8 hover:scale-110 m-2"
+                >
+                    Kill Me
+                </button>
             </div>
         </div>
-        
-    )
+
+    }
+    </div>
+    
+  );
 }

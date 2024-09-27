@@ -119,3 +119,41 @@
   background-color: #2FFF2F; /* Change background color to green */
   transition: background-color 1s ease-in-out; /* Smooth transition */
 }
+
+#game-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white; /* Text color */
+  font-size: 2rem; /* Adjust as needed */
+  z-index: 1000; /* Ensure overlay appears above other elements */
+}
+
+.game-over-overlay h1 {
+  margin-bottom: 20px;
+}
+
+.game-over-overlay button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
