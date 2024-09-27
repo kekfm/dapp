@@ -135,8 +135,8 @@ html, body {
 
 .game-over-overlay {
   position: absolute;
-  top: 20;
-  left: 20;
+  top: 10;
+  left: 10;
 
   background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
   display: flex;
