@@ -481,9 +481,13 @@ export default function Game() {
         ></canvas>
   
         {isGameOver && (
-          <div className="game-over-overlay font-basic font-bold font-base-2">
-            <h1>Game Over</h1>
-            <button onClick={handleRestart}>Restart</button>
+          <div className="fixed inset-0 flex items-center justify-center z-50 font-basic font-bold font-base-2">
+            <div className="fixed inset-0 bg-black opacity-70 content-center">
+                <div className="flex flex-col items-center justify-center relative z-50 w-full">
+                    <h1 className="font-basic text-base-2 text-xl">Game Over</h1>
+                    <button className="font-basic text-base-2 px-2 bg-base-6 " onClick={handleRestart}>Restart</button>
+                </div>
+            </div>
           </div>
         )}
       </div>)
