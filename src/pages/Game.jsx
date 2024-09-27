@@ -466,12 +466,16 @@ export default function Game() {
   return (
     <div>
     {isMobile && (
-     <div id="game-container">
+     <div id="game-container relative ">
         <GameModal isOpen={isOpen} closeModal={closeModal} />
+        <div className="font-basic font-bold"> Life of Mr. O</div>
+
         <canvas
           className="connectbox border-4 border-black mb-2"
           id="board"
           tabIndex={-1}
+          style={{ width: '100%', height: '50vh', display: 'block' }}
+
         ></canvas>
   
         {isGameOver && (
