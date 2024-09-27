@@ -135,9 +135,9 @@ html, body {
 
 .game-over-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  
+  top: 20;
+  left: 20;
+
   background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
   display: flex;
   flex-direction: column;
