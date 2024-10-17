@@ -135,7 +135,7 @@ export default function Terms () {
             </div>
 
             <div className="pb-20 font-bold">
-                Your KEK-Team
+                Your kek-Team
             </div>
 
         </div>  

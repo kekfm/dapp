@@ -5,13 +5,18 @@ import LaunchForm from './pages/LaunchForm.jsx'
 import LaunchPage from './pages/LaunchPage.jsx'
 import Account from './pages/Account.jsx'
 import Terms from './pages/Terms.jsx'
+import Paper from './pages/Paper.jsx'
+import DaoLanding from './pages/DaoLanding.jsx'
+import Proposal from './pages/Proposal.jsx'
+import Vote from './pages/Vote.jsx'
+import ProposalPage from './pages/ProposalPage.jsx'
 import Game from './pages/Game.jsx'
 import './index.css'
 import { Mainnet, DAppProvider, Goerli } from '@usedapp/core'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AppLayout from './pages/AppLayout.jsx'
 import Provider  from './helpers/config.jsx'
-import Navbar from './components//nav/Navbar.jsx'
+import Navbar from './components/nav/Navbar.jsx'
 import './index.css'
 
 
@@ -43,6 +48,31 @@ const router = createBrowserRouter([
       { 
         path:"/terms",
         element: <Terms />
+
+      },
+      { 
+        path:"/paper",
+        element: <Paper />
+
+      },
+      { 
+        path:"/dao",
+        element: <DaoLanding />
+
+      },
+      { 
+        path:"/dao/proposal",
+        element: <Proposal />
+
+      },
+      { 
+        path:"/dao/vote",
+        element: <Vote />
+
+      },
+      { 
+        path:"/dao/vote/:proposalId",
+        element: <ProposalPage />
 
       },
       { 

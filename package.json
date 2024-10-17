@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@snapshot-labs/snapshot.js": "^0.12.24",
     "@usedapp/core": "^1.2.13",
     "axios": "^1.7.2",
     "dompurify": "^3.1.6",
