@@ -39,7 +39,7 @@ export const Connect = ({handleOpen, isOpen}) => {
     const {open} = useAppKit()
 
     const handleBox = () =>{
-        activateBrowserWallet({ type: 'walletConnectV2' })
+        activateBrowserWallet()
         
     }
 

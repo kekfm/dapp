@@ -8,17 +8,6 @@ import { WalletConnectV2Connector } from "@usedapp/wallet-connect-v2-connector";
 export default function Provider({children}){
 
     const config = {
-        connectors:{
-            walletConnectV2: new WalletConnectV2Connector({
-                projectId:"e55976fffe11b95244b98b0b155c5ca9",
-                chains:[BSCTestnet, Modulus, Base],
-                rpcMap:{
-                    97: 'https://bsc-testnet-rpc.publicnode.com',
-                    6666: 'https://rpc.moduluszk.io',
-                    8453: "https://base-mainnet.infura.io/v3/2122ff7e81604a82bcad9e69b1042632"
-                }
-            })
-        },
         supportedChainIds: supportedChainIds,
         readOnlyChainId: [BSCTestnet.chainId],
         readOnlyUrls:{
