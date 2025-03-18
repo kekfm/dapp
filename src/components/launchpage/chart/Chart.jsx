@@ -54,7 +54,7 @@ export default function Chart({ data }) {
 
         const chart = createChart(chartContainerRef.current, {
             width: chartContainerRef.current.clientWidth,
-            height: 300,
+            height: 150,
             ...chartOptions
         });
             
@@ -128,8 +128,10 @@ export default function Chart({ data }) {
     return (
         <div className="flex flex-col justify-start">
             <div className="font-basic text-xl font-bold">chart</div>
-            <div className="flex connectbox border-4 border-black bg-white p-4">
-                <div ref={chartContainerRef} style={{ width: '700px', height: '300px' }}></div>
+            <div className="flex connectbox border-4 border-black bg-white p-4 w-[400px] h-[200px]">
+                {/*<div ref={chartContainerRef} style={{ width: '700px', height: '300px' }}></div>*/}
+                <div ref={chartContainerRef} className="w-full h-full"></div>
+
             </div>
         </div>
     );

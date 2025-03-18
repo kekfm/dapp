@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reown/appkit": "^1.7.0",
+    "@reown/appkit-adapter-ethers5": "^1.7.0",
     "@snapshot-labs/snapshot.js": "^0.12.24",
     "@usedapp/core": "^1.2.13",
+    "@usedapp/wallet-connect-v2-connector": "^1.0.4",
     "axios": "^1.7.2",
     "dompurify": "^3.1.6",
     "ethers": "^5.7.2",
