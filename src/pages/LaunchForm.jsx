@@ -1,9 +1,10 @@
 import '../../globals.css'
 import { useEffect, useState} from 'react'
-import { useEthers} from "@usedapp/core";
-import { Contract, ethers } from "ethers";
+import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
+import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
+import { ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
-import {useFeeInfo, useCreateToken} from "../helpers/factoryHooks.jsx"
+import {useFeeInfo} from "../helpers/factoryHooks"
 import SuccessModal from "../components/launchform/SuccessModal"
 import FailModal from "../components/launchform/FailModal"
 import bump from "../assets/sendit.svg"
@@ -13,22 +14,30 @@ import bnb from "../assets/s_bnb.svg"
 import modulus from "../assets/s_modulus.svg"
 import base from "../assets/s_base.svg"
 import { supportedChainIds } from '../helpers/chains';
+import factoryAbi from '../abis/factoryABI.json'
 
+export default function LaunchForm() {
+    const { isConnected, address } = useAppKitAccount()
+    const { chainId } = useAppKitNetwork()
+    console.log("chainId", chainId)
 
+    // Read fee directly from contract
+    const { data: fee, error: feeError, isError: isFeeError } = useReadContract({
+        address: chainId ? contracts.factory.addresses[chainId] : undefined,
+        abi: factoryAbi,
+        functionName: 'fee'
+    })
 
-
-export default function Page () {
-
-    const {account, chainId, switchNetwork} = useEthers()
-
-    
-    const {state, send, events, resetState} = useCreateToken('deployNewToken', chainId, {transactionName: 'create'})
-    const fee = useFeeInfo(chainId)
+    // Token contract hooks
+    const { writeContract, isPending: isWritePending, isError: isWriteError, data: tokenHash } = useWriteContract()
+    const { data: tokenReceipt, isPending: isTokenReceiptPending, isSuccess: isTokenReceiptSuccess, isError: isTokenReceiptError } = useWaitForTransactionReceipt({ 
+        hash: tokenHash,
+        enabled: Boolean(tokenHash) 
+    });
 
     const imgWidth = 120
     const imgHeight = 60
     const loadSize = 60
-
 
     const [formData, setFormData] = useState({
         name:'',
@@ -44,25 +53,14 @@ export default function Page () {
     const [isOpen, setIsOpen] = useState(false)
     const [failOpen, setFailOpen] = useState(false)
 
-    const handleNetworkChange = (chain) =>{
-        switchNetwork(chain)
-    }
-
-
     useEffect(() => {
-        console.log("state.status", state.status)
-
-        if(state.status == "Success"){
+        if (isTokenReceiptSuccess) {
             setIsOpen(true)
         }
-        if(state.status == "Exception" || state.status == "Fail"){
-            setFailOpen()
+        if (isWriteError || isTokenReceiptError) {
+            setFailOpen(true)
         }
-        if(state.status == "Exception" || state.status == "Fail"){
-            resetState()
-        }
-
-    },[state.status])
+    }, [isTokenReceiptSuccess, isWriteError, isTokenReceiptError])
 
     const closeModal = () =>{
         setIsOpen(false)
@@ -73,15 +71,12 @@ export default function Page () {
         setFailOpen(false)
     }
 
-
     const handleChange = (e) => {
         const {name, value} = e.target
         setFormData({...formData, [name]: value})
-
     }
 
     const validateForm = () => {
-    
         let newErrors = {};
         let tickerErrors = {}
         let buyAmountErrors = {}
@@ -103,9 +98,8 @@ export default function Page () {
         if(Object.keys(buyAmountErrors).length > 0){newErrors.buyAmount = buyAmountErrors}
         
         setErrors(newErrors)
-
+        console.log("newErrors", newErrors)
         return Object.keys(newErrors).length === 0;
-
     }
 
     function isValidURL(str) {
@@ -118,19 +112,24 @@ export default function Page () {
         return !!pattern.test(str);
     }
 
-      function isValidImageURL(str) {
+    function isValidImageURL(str) {
         return /\.(png|jpg)$/i.test(str);
     }
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = (e) => {
         e.preventDefault()
+        console.log("isConnected", isConnected)
+        console.log("fee", fee)
 
-        if(validateForm()){
+        if (!fee) {
+            console.error("Fee not loaded yet");
+            return;
+        }
+
+        if(validateForm() && isConnected){
             try{
+                console.log("calling")
                 const contractAddresses = [contracts.eventhandler.addresses[chainId], contracts.WETH.addresses[chainId], contracts.sushiV2Factory.addresses[chainId], contracts.sushiV2Router.addresses[chainId]]
-                //const tokenName = formData.name
-                //const tokenSymbol = formData.ticker
-                //const tokenInfo = `{"des": "${formData.description || ""}", "twitter": "${formData.twitter || ""}", "telegram": "${formData.telegram || ""}", "website": "${formData.website || ""}", "logo": "${formData.image || ""}"}`
                 const tokenName = formData.name
                 const tokenSymbol = formData.ticker
                 const tokenInfo = JSON.stringify({
@@ -140,40 +139,31 @@ export default function Page () {
                     website: formData.website || "",
                     logo: formData.image || ""
                 });
-                console.log("tokenInfo", tokenInfo)
+
                 const feeAddress = contracts.feeAddress[chainId]
-                const buyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0
-                const txValue = buyAmount > 0 ? (buyAmount.add(buyAmount.mul(5).div(1000))).add(fee) : fee
-                {account && chainId &&
-                    send(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, buyAmount, {value: txValue}) // corrected to txValue from fee. not tested yet
-                    
-                }
-                
+                const parsedBuyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0n
+                console.log("parsedBuyAmount", parsedBuyAmount)
+                const totalValue = parsedBuyAmount > 0n ? (parsedBuyAmount + (parsedBuyAmount * 5n) / 1000n) + BigInt(fee) : BigInt(fee)
+                console.log("totalValue", totalValue)
+
+                console.log("calling writeContract")
+                writeContract({
+                    address: contracts.factory.addresses[chainId],
+                    abi: factoryAbi,
+                    functionName: "deployNewToken",
+                    args: [contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount],
+                    value: totalValue
+                })
             }
             catch(error){
-                //console.error("error on launch", error)
-                //console.log("formData fail", formData)
-
+                console.error("Error creating token:", error)
+                setFailOpen(true)
             }
-            
-        } else{
-            console.log("newErrors", errors.ticker)
-            console.log("newErrors", errors.buyAmount)
         }
-
     }
 
-    const escapeSpecialCharsForJSON = (str) => {
-        return str
-            .replace(/\\/g, '\\\\')  // Escape backslashes
-            .replace(/"/g, '\\"')    // Escape double quotes
-            .replace(/\b/g, '\\b')   // Escape backspace
-            .replace(/\f/g, '\\f')   // Escape form feed
-            .replace(/\n/g, '\\n')   // Escape new lines
-            .replace(/\r/g, '\\r')   // Escape carriage returns
-            .replace(/\t/g, '\\t');  // Escape tabs
-    };
-    
+    console.log("tokenReceipt", tokenReceipt)
+
     if (!supportedChainIds.includes(chainId)) {
         return(
             <div className="flex flex-col justify-center mt-10">
@@ -181,21 +171,20 @@ export default function Page () {
                     <img src={supported} alt="image"></img>
                 </div>
                 <div className="flex flex-row justify-center gap-4 p-4 ">
-                    <img onClick={() => handleNetworkChange(97)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="image"></img>
-                    <img onClick={() => handleNetworkChange(6666)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="image"></img>
-                    <img onClick={() => handleNetworkChange(8453)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="image"></img>
+                    <img onClick={() => switchNetwork(97)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="image"></img>
+                    <img onClick={() => switchNetwork(6666)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="image"></img>
+                    <img onClick={() => switchNetwork(8453)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="image"></img>
                 </div>
             </div>
-            
         )
     }
 
     return(
         <div className="flex flex-col font-basic font-medium items-center justify-center min-h-screen bg-base-1 pb-20 ">
-            <SuccessModal className="z-10" tx={state} isOpen={isOpen} closeModal={() => closeModal()}/>
+            <SuccessModal className="z-10" tx={tokenReceipt} isOpen={isOpen} closeModal={() => closeModal()}/>
             <FailModal className="z-10" isOpen={failOpen} closeModal={() => closeFailModal()}/>
             <div className={`pb-8 pt-20`}>
-                <img src={launch}></img>
+                <img src={launch} alt="launch"></img>
             </div>
             <form className={`connectbox border-4 border-black bg-base-4 py-2 pl-4 sm:pl-10 pr-4 sm:pr-20 h-auto content-center w-5/6 max-w-[700px] z-0`}
                 name="launch"
@@ -205,8 +194,7 @@ export default function Page () {
                     input your token params
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`font-basic`} htmlFor="name">name</label>
-
+                    <label className={`font-basic`} htmlFor="name">name</label>
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="Coin"
                         type="text"
@@ -214,14 +202,11 @@ export default function Page () {
                         name="name"
                         onChange={handleChange}
                         value={formData.name}
-                    >
-
-                    </input>
-                {errors && errors.name && <span className={`font-basic text-base-8 text-xs`}>{errors.name}</span>}
+                    />
+                    {errors && errors.name && <span className={`font-basic text-base-8 text-xs`}>{errors.name}</span>}
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`font-basic`} htmlFor="ticker">ticker</label>
-
+                    <label className={`font-basic`} htmlFor="ticker">ticker</label>
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="COIN"
                         type="text"
@@ -229,17 +214,12 @@ export default function Page () {
                         name="ticker"
                         onChange={handleChange}
                         value={formData.ticker}
-
-                    >
-                   
-                    </input>
+                    />
                     {errors && errors.ticker?.empty && <span className={`font-basic text-base-8 text-xs`}>{errors.ticker.empty}</span>}
                     {errors && errors.ticker?.length && <span className={`font-basic text-base-8 text-xs`}>{errors.ticker.length}</span>}
-
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
                     <label className={`font-basic`} htmlFor="description">description</label>
-
                     <textarea className="flex border-2 border-black px-1 text-sm min-h-24 h-auto w-auto"
                         placeholder="token description"
                         type="text"
@@ -247,14 +227,8 @@ export default function Page () {
                         name="description"
                         onChange={handleChange}
                         value={formData.description}
-
-
-                    >
-
-                    </textarea>
+                    />
                     {errors && errors.description && <span className={`font-basic text-base-8 text-xs`}>{errors.description}</span>}
-
-
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
                     <label className={`font-basic`} htmlFor="website">website <span className={`font-basic text-xs`}>(optional)</span></label>
@@ -265,15 +239,11 @@ export default function Page () {
                         name="website"
                         onChange={handleChange}
                         value={formData.website}
-
-                    >
-
-                    </input>
+                    />
                     {errors && errors.website && <span className={`font-basic text-base-8 text-xs`}>{errors.website}</span>}
-
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`font-basic`} htmlFor="twitter">twitter <span className={`font-basic text-xs`}>(optional)</span></label>
+                    <label className={`font-basic`} htmlFor="twitter">twitter <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
                         placeholder="https://x.com/YourX"
                         type="text"
@@ -281,84 +251,62 @@ export default function Page () {
                         name="twitter"
                         onChange={handleChange}
                         value={formData.twitter}
-
-                        >
-
-                    </input>
+                    />
                     {errors && errors.twitter && <span className={`font-basic text-base-8 text-xs`}>{errors.twitter}</span>}
-
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`font-basic`} htmlFor="telegram">telegram <span className={`font-basic text-xs`}>(optional)</span></label>
-
+                    <label className={`font-basic`} htmlFor="telegram">telegram <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
-                            placeholder="https://t.me/YourTG"
-                            type="text"
-                            id="telegram"
-                            name="telegram"
-                            onChange={handleChange}
-                            value={formData.telegram}
-
-                    >
-
-                    </input>
+                        placeholder="https://t.me/YourTG"
+                        type="text"
+                        id="telegram"
+                        name="telegram"
+                        onChange={handleChange}
+                        value={formData.telegram}
+                    />
                     {errors && errors.telegram && <span className={`font-basic text-base-8 text-xs`}>{errors.telegram}</span>}
-
                 </div>
                 <div className={`flex flex-col justify-between py-2`}>
-                <label className={`font-basic`} htmlFor="image">logo <span className={`font-basic text-xs`}>(optional)</span></label>
-
+                    <label className={`font-basic`} htmlFor="image">logo <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
-                            placeholder=".png or .jpg"
-                            type="text"
-                            id="image"
-                            name="image"
-                            onChange={handleChange}
-                            value={formData.image}
-
-                    
-                    >
-                    </input>
+                        placeholder=".png or .jpg"
+                        type="text"
+                        id="image"
+                        name="image"
+                        onChange={handleChange}
+                        value={formData.image}
+                    />
                     {errors && errors.image && <span className={`font-basic text-base-8 text-xs`}>{errors.image}</span>}
-
                 </div>
                 <div className={`flex flex-col justify-between py-3`}>
-                <label className={`font-basic`} htmlFor="buyAmount">buy amount[ETH] <span className={`font-basic text-xs`}>(optional)</span></label>
-
+                    <label className={`font-basic`} htmlFor="buyAmount">buy amount[ETH] <span className={`font-basic text-xs`}>(optional)</span></label>
                     <input className="border-2 border-black px-1 text-sm"
-                            placeholder="0.001"
-                            type="number"
-                            id="buyAmount"
-                            name="buyAmount"
-                            onChange={handleChange}
-                            value={formData.buyAmount}
-                            step="any"
-
-                    
-                    >
-                    </input>
+                        placeholder="0.001"
+                        type="number"
+                        id="buyAmount"
+                        name="buyAmount"
+                        onChange={handleChange}
+                        value={formData.buyAmount}
+                        step="any"
+                    />
                     {errors && errors.buyAmount?.number && <span className={`font-basic text-base-8 text-xs`}>{errors.buyAmount.number}</span>}
                     {errors && errors.buyAmount?.negative && <span className={`font-basic text-base-8 text-xs`}>{errors.buyAmount.negative}</span>}
-
                 </div>
                 
-                {(state.status === "None" || state.status === 'Success' || state.status === 'Fail') &&
-                    <div className="flex flex-row justify-end gap-8 py-4">
-
-                        <img className="animate-bounce max-sm:hidden" src={bump} width={imgWidth} height={imgHeight} alt="arrow"></img>
-                        <button type="submit" className={`font-basic connectbox border-4 border-black bg-base-7 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer`}> launch </button>
-                    </div>
-                }
-                {(state.status === 'Mining' || state.status === 'PendingSignature') && 
+                {(isWritePending || (tokenHash && isTokenReceiptPending)) ? (
                     <div className="flex flex-row justify-end gap-8 py-4">
                         <button className={`font-basic connectbox border-4 border-black bg-base-2 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer animate-pulse`} disabled> launching... </button>
                     </div>
-
-                }
+                ) : (
+                    <div className="flex flex-row justify-end gap-8 py-4">
+                        <img className="animate-bounce max-sm:hidden" src={bump} width={imgWidth} height={imgHeight} alt="arrow"></img>
+                        <button type="submit" className={`font-basic connectbox border-4 border-black bg-base-7 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer`}> launch </button>
+                    </div>
+                )}
             </form>
-            <div className={`font-bold pt-4`}> launch price: nothang</div>
-
-
+            <div className={`font-bold pt-4`}> 
+                launch price: {fee ? `${ethers.utils.formatEther(fee.toString())} ETH` : 'loading...'} 
+            </div>
         </div>
     )
 }

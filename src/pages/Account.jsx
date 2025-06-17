@@ -22,7 +22,7 @@ export default function Account (){
         const fetchData = async (devAddress) => {
             try {
                 //const response = await axios.get(`https://kek.fm/api/getDev/${devAddress}`) // old implementation using vps
-                const response = await axios.get(`https://indexer-rx9n.onrender.com/api/getDev/${devAddress}`) // new implementation using render
+                const response = await axios.get(`${import.meta.env.VITE_GET_DEV}${devAddress}`) // new implementation using render
 
                 const data = response.data
                 console.log("devdata", data)

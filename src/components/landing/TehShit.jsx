@@ -27,23 +27,23 @@ export default function TehShit(){
             try{
                 
                 //const response = await axios.get("https://kek.fm/api/getShit",{withCredentials: true})
-                const response = await axios.get("https://indexer-rx9n.onrender.com/api/getShit",{withCredentials: true})
+                const response = await axios.get(`${import.meta.env.VITE_GET_SHIT}`,{withCredentials: true})
 
                 const shit = response.data
                 shit.sort((a,b) => b.timestamp - a.timestamp)
                 //console.log("shit",shit)
 
                 if(shit){
-                    const latestShit = shit[0].tokenAddress
+                    const latestShit = shit?.[0]?.tokenAddress
                     //console.log("latestshit",latestShit)
                     //const res = await axios.get(`https://kek.fm/api/getOne/${latestShit}`, {withCredentials: true})
-                    const res = await axios.get(`https://indexer-rx9n.onrender.com/api/getOne/${latestShit}`, {withCredentials: true})
+                    const res = await axios.get(`${import.meta.env.VITE_GET_ONE}${latestShit}`, {withCredentials: true})
 
                     const newShit = res.data[0]
                     //console.log("tehshit", newShit)
                     //console.log("owner", newShit.owner)
 
-                    let trades = [...newShit.buys,...newShit.sells]
+                    let trades = [...newShit?.buys,...newShit?.sells]
                     const uniqueTx = trades.filter((item, index, self) => index === self.findIndex((t) => (t.maker == item.maker && t.timestamp == item.timestamp)))
                     uniqueTx.sort((a,b) => b.timestamp - a.timestamp)
                     //console.log("uniquetx", uniqueTx)
@@ -81,6 +81,9 @@ export default function TehShit(){
             navigate(`/launch?token=${tehShit.tokenAddress}`)
         }
     }
+
+    if(tehShit.length===0) return null
+    console.log("tehShit")
 
     return(
         <div className="relative flex flex-col font-basic max-w-72 items-center pb-10" >

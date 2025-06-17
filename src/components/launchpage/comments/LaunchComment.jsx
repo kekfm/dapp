@@ -5,12 +5,16 @@ import axios from "axios"
 import DOMPurify from "dompurify"
 import CommentSuccessModal from "./CommentSuccessModal"
 import CommentFailModal from "./CommentFailModal"
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitNetworkCore } from '@reown/appkit/react';
 
 
 
 export default function LaunchComment ({tokenAddress}) {
 
-        const {account} = useEthers()
+        const { address, isConnected } = useAppKitAccount();
+        const { chainId } = useAppKitNetworkCore();
+
 
         const [commentText, setCommentText] = useState("")
         const [errors, setErrors] = useState({})
@@ -34,7 +38,7 @@ export default function LaunchComment ({tokenAddress}) {
 
                     const commentData = {
                         tokenAddress: tokenAddress,
-                        account: account,
+                        account: address,
                         comment: cleanComment,
                         timestamp: timestamp
                     }
@@ -49,7 +53,7 @@ export default function LaunchComment ({tokenAddress}) {
             let newErrors = {}
             if(commentText.length < 1){newErrors.short = "cannot send an empty comment, sir"}
             if(commentText.length > 1000){newErrors.long = "max is 1000 characters"}
-            if(!account){newErrors.account = "connect your wallet to comment"}
+            if(!address){newErrors.account = "connect your wallet to comment"}
 
             setErrors(newErrors)
             return Object.keys(newErrors).length === 0
@@ -58,7 +62,7 @@ export default function LaunchComment ({tokenAddress}) {
         const sendForm = async (commentData) => {
             setCommentStatus(3)
             //const response = await axios.post(`https://kek.fm/api/postComment/${tokenAddress}`, commentData, {withCredentials: true}) // old implementation using vps
-            const response = await axios.post(`https://indexer-rx9n.onrender.com/api/postComment/${tokenAddress}`, commentData, {withCredentials: true}) // new implementation using render
+            const response = await axios.post(`${import.meta.env.VITE_POST_COMMENT}${tokenAddress}`, commentData, {withCredentials: true}) // new implementation using render
 
             console.log("response", response)
             if(response.status == 201){ 

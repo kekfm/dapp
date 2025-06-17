@@ -18,7 +18,7 @@ export default function Footer () {
           - this protocol is sufficiently degentralized -
         </div>
         <div className="font-basic pt-4">
-          kek © 2024
+          kek © 2025
         </div>
         <div className="flex flex-row gap-2">
           <div className="font-basic pt-4 hover:cursor-pointer" onClick={handleTermsClick}>

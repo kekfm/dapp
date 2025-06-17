@@ -15,7 +15,11 @@ import modulus from "../../assets/s_modulus.svg"
 import base from "../../assets/s_base.svg"
 import { supportedChainIds } from '../../helpers/chains';
 
-import { useEthers} from "@usedapp/core";
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitNetworkCore } from '@reown/appkit/react';
+
+
+
 
 
 
@@ -25,7 +29,9 @@ export default function LaunchTable() {
     const [page, setPage] = useState(1)
     const [max, setMax] = useState()
 
-    const {chainId, account, switchNetwork} = useEthers()
+    const { chainId } = useAppKitNetworkCore();
+    const { address, isConnected } = useAppKitAccount();
+
 
     console.log("chainId", chainId)
 
@@ -54,14 +60,14 @@ export default function LaunchTable() {
             try {
                 let chain
                 if(!chainId){
-                    chain = 97
+                    chain = 6666
                 }
                 if(chainId){
                     chain = chainId
                 }
 
                 //const response = await axios.get(`https://kek.fm/api/getCreated/${page}?chainId=${chain}`, { // old implementation using vps
-                const response = await axios.get(`https://indexer-rx9n.onrender.com/api/getCreated/${page}?chainId=${chain}`, { // new implementation using render
+                const response = await axios.get(`${import.meta.env.VITE_GET_CREATED}${page}?chainId=${chain}`, { // new implementation using render
 
                     withCredentials: true,
                 });
@@ -103,7 +109,7 @@ export default function LaunchTable() {
 
     useEffect(() => {
        // const socket = io('https://kek.fm', { // old implementation with vps
-          const socket = io('https://indexer-rx9n.onrender.com', { // old implementation with vps
+          const socket = io(`${import.meta.env.VITE_SOCKET_IO}`, { // old implementation with vps
 
             path: '/socket.io/',
             transports: ['websocket', 'polling'], // Allow both transports
@@ -144,7 +150,7 @@ export default function LaunchTable() {
 
     if (error) return <p>{error}</p>;
 
-    if(!account && !chainId) {
+    if(!address && !chainId) {
         return(
             <div className="flex justify-center">
                 <img src={connect} alt="image"></img>

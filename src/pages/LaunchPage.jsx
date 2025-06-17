@@ -7,7 +7,6 @@ import bnb from "../assets/bnbconnect.svg"
 import base from "../assets/baseconnect.svg"
 import modulus from "../assets/modulusconnect.svg"
 import tokenpage from "../assets/tokenpage.svg"
-import { useTokenBalance, useEthers } from '@usedapp/core'
 import { ethers } from 'ethers'
 import Trade from '../components/launchpage/trade/Trade'
 import CommentSection from '../components/launchpage/comments/CommentSection'
@@ -15,6 +14,11 @@ import Holders from '../components/launchpage/Holders'
 import Progressbar from '../components/landing/Progressbar'
 import ChartSection from '../components/launchpage/chart/ChartSection'
 import { io } from "socket.io-client"
+import factoryAbi from '../abis/factoryABI.json'
+import tokenAbi from '../abis/tokenABI.json'
+import { useAppKitAccount } from '@reown/appkit/react';
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+
 
 
 
@@ -33,16 +37,15 @@ export default function LaunchPage () {
     const [trading, setTrading] = useState(true)
     const [comments, setComments] = useState([])
 
+    const { address, chainId } = useAppKitAccount()
 
-
-    const {account, chainId } = useEthers()
     const navigate = useNavigate()
 
     useEffect(()=>{
         const fetchData = async (tokenAddress) =>{
             try{
                 //const response = await axios.get(`https://kek.fm/api/getOne/${tokenAddress}`) //use for vps
-                const response = await axios.get(`https://indexer-rx9n.onrender.com/api/getOne/${tokenAddress}`) //new implementation on render
+                const response = await axios.get(`${import.meta.env.VITE_GET_ONE}${tokenAddress}`) //new implementation on render
                 const data = response.data[0]
                 //console.log("launch page data",data)
                 setProps(data)
@@ -104,7 +107,7 @@ export default function LaunchPage () {
 
 
                 //const uniswap = await axios.get(`https://kek.fm/api/getOneUniswap/${tokenAddress}`) //implementation when using a vps
-                const uniswap = await axios.get(`https://indexer-rx9n.onrender.com/api/getOneUniswap/${tokenAddress}`) // new implementation on render
+                const uniswap = await axios.get(`${import.meta.env.VITE_GET_ONE_UNISWAP}${tokenAddress}`) // new implementation on render
 
                 if(uniswap.data.length > 0){
                     setTrading(false)
@@ -125,7 +128,7 @@ export default function LaunchPage () {
 
     useEffect(() => {
         //const socket = io('https://kek.fm', { // old implementation using vps
-        const socket = io('https://indexer-rx9n.onrender.com', { // old implementation using vps
+        const socket = io(`${import.meta.env.VITE_SOCKET_IO}`, { // old implementation using vps
 
             path: '/socket.io/',
             transports: ['websocket', 'polling'], // Allow both transports
@@ -145,7 +148,14 @@ export default function LaunchPage () {
 
     },[])
 
-    const tokenBalance = useTokenBalance(tokenAddr, account)
+    const { data: tokenBalance } = useReadContract({
+        address: tokenAddr,
+        abi: tokenAbi,
+        functionName: 'balanceOf',
+        args: [address]
+    })
+
+    console.log("tokenBalance", tokenBalance)
    
     const goToDev = () => {
         navigate(`/me?account=${props.owner}`)
@@ -205,10 +215,10 @@ export default function LaunchPage () {
                                     </div>
                                     <div className="flex flex-row gap-2 text-xs pt-2">
                                         <div>
-                                            <span className="font-bold">buys:</span> <span className="text-base-2 font-bold">{uniqueBuys.length}</span>
+                                            <span className="font-bold">buys:</span> <span className="text-base-2 font-bold">{uniqueBuys?.length}</span>
                                         </div>
                                         <div>
-                                            <span className="font-bold">sells:</span> <span className="text-base-2 font-bold">{uniqueSells.length}</span>
+                                            <span className="font-bold">sells:</span> <span className="text-base-2 font-bold">{uniqueSells?.length}</span>
                                         </div>
                                     </div>
                                     <div className="text-xs pt-2">
@@ -245,20 +255,20 @@ export default function LaunchPage () {
                         <div className="flex flex-col justify-start">
                         
                                 <div className="flex font-basic font-semibold text-xl text-start pr-4 mr-2 pb-4 w-full "> 
-                                    <Trade tokenAddress={props.tokenAddress} tokenTicker={props.symbol} tokenBalance={tokenBalance} trading={trading} chain={props.chainId}/>
+                                    <Trade tokenAddress={props?.tokenAddress} tokenTicker={props?.symbol} tokenBalance={tokenBalance} trading={trading} chain={props?.chainId}/>
                                 </div>
                             
                             {tokenBalance ? 
                                 <div className="flex items-start justify-start">
                                     <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-2 p-1 mr-2 max-sm:w-[250px] max-w-[300px]"> 
-                                        your balance: {ethers.utils.formatEther(tokenBalance)} ${props.symbol}
+                                        your balance: {tokenBalance ? ethers.utils.formatEther(tokenBalance?.toString()) : '0'} ${props?.symbol}
                                     </div>
                                 </div>
                                 
                                 :
                                 <div className="flex justify-start">
                                     <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-2 p-1 mr-2 max-sm:w-[250px] max-w-[300px]">
-                                        your balance: 0 ${props.symbol}
+                                        your balance: 0 ${props?.symbol}
                                     </div>
                                 </div>   
                             }

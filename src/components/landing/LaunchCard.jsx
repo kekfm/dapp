@@ -41,7 +41,7 @@ export default function LaunchCard ({tag, data}) {
     const handleToken = (e) => {
         e.stopPropagation()
         if(e.target.name==="tkn" || e.target.closest('[name="tkn"]'))
-        window.open(`https://testnet.bscscan.com/address/${data.tokenAddress}`, "_blank")
+        window.open(`https://eye.modulus.io/address/${data.tokenAddress}`, "_blank")
     }
 
     const handleImageError = () => {

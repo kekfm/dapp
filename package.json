@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reown/appkit": "^1.7.0",
+    "@reown/appkit": "^1.7.9",
     "@reown/appkit-adapter-ethers5": "^1.7.0",
+    "@reown/appkit-adapter-wagmi": "^1.7.9",
     "@snapshot-labs/snapshot.js": "^0.12.24",
+    "@tanstack/react-query": "^5.80.7",
     "@usedapp/core": "^1.2.13",
     "@usedapp/wallet-connect-v2-connector": "^1.0.4",
     "axios": "^1.7.2",
@@ -24,7 +26,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.20.0",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "viem": "^2.31.3",
+    "wagmi": "^2.15.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
