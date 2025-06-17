@@ -19,10 +19,6 @@ import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { useAppKitNetworkCore } from '@reown/appkit/react';
 
 
-
-
-
-
 export default function LaunchTable() {
     const [files, setFiles] = useState([]);
     const [error, setError] = useState(null);
