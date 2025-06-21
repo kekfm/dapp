@@ -19,21 +19,7 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script src="https://cdn.jsdelivr.net/npm/@snapshot-labs/snapshot.js"></script>
-    <script>
-      window.addEventListener("DOMContentLoaded", function () {
-        const tg = window.Telegram.WebApp;
-        tg.ready(); // always call this once loaded
     
-        const initData = tg.initDataUnsafe;
-    
-        console.log("User:", initData.user);
-        console.log("Start param:", initData.start_param);
-        console.log("Full initData:", tg.initData);
-    
-        // You can also use:
-        document.body.innerHTML += `<pre>${JSON.stringify(initData, null, 2)}</pre>`;
-      });
-    </script>
     
   </body>
 </html>

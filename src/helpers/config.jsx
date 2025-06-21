@@ -1,7 +1,8 @@
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet, arbitrum, sepolia } from '@reown/appkit/networks'
-import type { AppKitNetwork } from '@reown/appkit/networks'
 import { defineChain } from '@reown/appkit/networks';
+import { createAppKit } from '@reown/appkit/react'
+
 
 
 // Get projectId from https://cloud.reown.com
@@ -14,7 +15,7 @@ if (!projectId) {
 export const metadata = {
     name: 'AppKit',
     description: 'AppKit Example',
-    url: 'http://localhost:5173', // origin must match your domain & subdomain
+    url: window.location.origin, // origin must match your domain & subdomain
     icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 
@@ -39,12 +40,33 @@ const modulus = defineChain({
 })
 
 // for custom networks visit -> https://docs.reown.com/appkit/react/core/custom-networks
-export const networks = [modulus] as [AppKitNetwork, ...AppKitNetwork[]]
+export const networks = [modulus] 
 
-//Set up the Wagmi Adapter (Config)
 export const wagmiAdapter = new WagmiAdapter({
   projectId,
   networks
 })
+
+// Create AppKit instance
+export const appkit = createAppKit({
+  adapters: [wagmiAdapter],
+  networks,
+  projectId,
+  metadata,
+  features: {
+    analytics: true,
+    email: false, // default to true
+    socials: [
+      
+    ],
+    emailShowWallets: false
+  },
+  
+})
+
+
+
+//Set up the Wagmi Adapter (Config)
+
 
 export const config = wagmiAdapter.wagmiConfig
