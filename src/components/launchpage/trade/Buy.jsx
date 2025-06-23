@@ -18,8 +18,31 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const tokenAmount = useGetTokenAmount(chainId, tokenAddress, parsedETH)
     const { buy, isPending, isSuccess, isError, receipt } = useBuyToken(chainId, tokenAddress)
 
+    // Debug logging for Telegram vs Website
+    useEffect(() => {
+        const isTelegramWebApp = typeof window !== 'undefined' && window.Telegram?.WebApp?.initData;
+        console.log("Environment Debug:", {
+            isTelegramWebApp,
+            address,
+            chainId,
+            tokenAddress,
+            location: window.location.href,
+            origin: window.location.origin,
+            userAgent: navigator.userAgent
+        });
+    }, [address, chainId, tokenAddress]);
+
     const handleBuySubmitBuy = async (e) => {
         e.preventDefault()
+        console.log("Buy attempt started:", {
+            buyAmountETH,
+            address,
+            chainId,
+            tokenAddress,
+            isPending,
+            isError
+        });
+
         if (buyAmountETH > 0) {
             try {
                 // calc input params
@@ -42,10 +65,21 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 console.log("txValue", ethers.utils.formatEther(txValue.toString()))
 
                 if (validateForm()) {
+                    console.log("Validation passed, calling buy function...");
                     await buy(parsedTokens, parsedETH, txValue)
+                } else {
+                    console.log("Validation failed:", errors);
                 }
             } catch (e) {
                 console.log("error buying", e)
+                console.error("Detailed buy error:", {
+                    error: e,
+                    message: e.message,
+                    stack: e.stack,
+                    address,
+                    chainId,
+                    tokenAddress
+                });
             }
         } else {
             console.log("input an amount greater than zero")
