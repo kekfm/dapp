@@ -20,15 +20,10 @@ import Navbar from './components/nav/Navbar.jsx'
 import './index.css'
 import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import {projectId, metadata, networks, wagmiAdapter, initializeTelegramWebApp} from './helpers/config.jsx'
+import {projectId, metadata, networks, wagmiAdapter} from './helpers/config.jsx'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
-
-// Initialize Telegram WebApp if running in Telegram
-if (typeof window !== 'undefined') {
-  initializeTelegramWebApp();
-}
 
 const generalConfig = {
   projectId,

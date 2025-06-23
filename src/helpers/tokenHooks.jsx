@@ -3,7 +3,6 @@ import { ethers } from "ethers"
 import { contracts } from "./contracts"
 import { supportedChainIds } from "./chains"
 import tokenAbi from '../abis/tokenABI.json'
-import React from 'react'
 
 export function useGetTokenAmount(chainId, tokenAddress, ethAmount) {
     const { data: tokenAmount, error } = useReadContract({
@@ -45,53 +44,21 @@ export function useBuyToken(chainId, tokenAddress) {
     })
 
     const buy = async (minimumTokens, amountETH, value) => {
-        console.log("useBuyToken: buy function called with:", {
-            chainId,
-            tokenAddress,
-            minimumTokens: minimumTokens?.toString(),
-            amountETH: amountETH?.toString(),
-            value: value?.toString(),
-            isTelegramWebApp: typeof window !== 'undefined' && window.Telegram?.WebApp?.initData
-        });
-
-        if (!chainId || !tokenAddress) {
-            console.error("useBuyToken: Missing chainId or tokenAddress", { chainId, tokenAddress });
-            return;
-        }
+        if (!chainId || !tokenAddress) return
 
         try {
-            console.log("useBuyToken: Calling writeContract...");
-            await writeContract({
+            writeContract({
                 address: tokenAddress,
                 abi: tokenAbi,
                 functionName: 'buy',
                 args: [minimumTokens, amountETH],
                 value
             })
-            console.log("useBuyToken: writeContract call completed");
         } catch (error) {
-            console.error("useBuyToken: Error in writeContract:", {
-                error,
-                message: error.message,
-                code: error.code,
-                data: error.data
-            });
+            console.error("Error buying token:", error)
             throw error
         }
     }
-
-    // Log state changes
-    React.useEffect(() => {
-        console.log("useBuyToken state update:", {
-            isWritePending,
-            isWriteError,
-            hash,
-            isReceiptPending,
-            isSuccess,
-            isReceiptError,
-            receipt
-        });
-    }, [isWritePending, isWriteError, hash, isReceiptPending, isSuccess, isReceiptError, receipt]);
 
     return {
         buy,
