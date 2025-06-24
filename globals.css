@@ -16,7 +16,6 @@
   }
 }
 
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -81,6 +80,33 @@
   animation: grow-shrink 2s infinite;
 }
 
+/* Telegram-compatible bounce animation */
+@keyframes telegram-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transform: translate3d(0,0,0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -15px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -7px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.telegram-bounce {
+  animation: telegram-bounce 1s infinite;
+  /* Fallback for environments that don't support transform3d */
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Enhanced wiggle for Telegram */
 @keyframes wiggle {
   0%, 100% {
     transform: rotate(0deg);
@@ -118,6 +144,37 @@
   animation: wiggle2 1s ease-in-out;
   background-color: #2FFF2F; /* Change background color to green */
   transition: background-color 1s ease-in-out; /* Smooth transition */
+}
+
+/* Telegram WebApp optimizations */
+@media screen and (max-width: 480px) {
+  /* Optimize animations for mobile/telegram */
+  .animate-bounce {
+    animation: telegram-bounce 1s infinite;
+  }
+}
+
+/* Detect Telegram environment and use optimized animations */
+.telegram-env .animate-bounce {
+  animation: telegram-bounce 1s infinite;
+}
+
+.telegram-env .animate-pulse {
+  animation: telegram-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes telegram-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Telegram-specific styles */
+.telegram-loading {
+  animation: telegram-pulse 1.5s ease-in-out infinite;
 }
 
 #game-container {
