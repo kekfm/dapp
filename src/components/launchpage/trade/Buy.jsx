@@ -47,7 +47,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
             try {
                 // calc input params
                 const slipPerc = slippage > 0 ? slippage : 5
-                const numTokens = Number(tokenAmount)
+                const numTokens = Number(tokenAmountOut)
                 const slippageTokens = (slipPerc * numTokens / 100)
                 const minTokens = numTokens - slippageTokens
                 const stringMinTokens = minTokens.toString()
@@ -82,7 +82,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
         let newErrors = {}
         if(slippage < 0){newErrors.slippageUnderflow = "min is 0%"}
         if(slippage > 90){newErrors.slippageOverflow = "max is 90%"}
-        if(Number(buyAmountETH) < 0){newErrors.ETHUnderflow = "must be at least 0.0001 ETH"}
+        if(Number(buyAmountETH) < 0.0001){newErrors.ETHUnderflow = "must be at least 0.0001 ETH"}
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0

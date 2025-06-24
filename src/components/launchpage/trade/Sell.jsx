@@ -16,10 +16,24 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
     const [slippage, setSlippage] = useState(5)
     const [sellModalOpen, setSellModalOpen] = useState(false)
     const [errors, setErrors] = useState({})
+    const [calcCultOut, setCalcCultOut] = useState(0)
     
-    const { sellToken, isPending, isSuccess, isError, receipt } = useSellToken(tokenAddress)
+    const { sellToken, isLoading, isSuccess, isError, receipt } = useSellToken(tokenAddress)
     const { balance:ethBalance, error } = useCultBalance()
-    const { cultOut:ETHAmount, error:cultOutError } = useGetCultOut(tokenAddress)
+    const { cultOut, error:cultOutError, getCultOut } = useGetCultOut(tokenAddress)
+
+    useEffect(() => {
+        async function fetchCultOut() {
+            if(sellAmountToken > 0) {
+                const cultOut = await getCultOut(sellAmountToken)
+                console.log("cultOut", cultOut)
+                setCalcCultOut(cultOut)
+            } else {
+                setCalcCultOut(0)
+            }
+        }
+        fetchCultOut()
+    }, [sellAmountToken])
 
     const handleSellSubmit = async (e) => {
         e.preventDefault()
@@ -27,11 +41,11 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
             try {
                 // calc input params
                 const slipPerc = slippage > 0 ? slippage : 5
-                const minETH = Number(ETHAmount) - (Number(ETHAmount) * slipPerc / 100)
+                const minETH = Number(calcCultOut) - (Number(calcCultOut) * slipPerc / 100)
                 const stringETH = minETH.toString()
 
                 if (validateForm()) {
-                    await sellToken(parsedToken, stringETH)
+                    await sellToken(parsedToken, ethers.parseEther(stringETH))
                 }
             } catch (e) {
                 console.log("error selling", e)
@@ -74,7 +88,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
         const stringValue = value.toString()
 
         if(value > 0) {
-            const parsed = ethers.utils.parseEther(stringValue)
+            const parsed = ethers.parseEther(stringValue)
             setParsedToken(parsed)
         }
     }
@@ -174,12 +188,12 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                         <div className="flex flex-col font-basic font-medium text-sm">
                             <div className="pl-1">you get</div>
                             <div className="border-2 border-black bg-base-1 p-2 b">
-                                {ethBalance ? ethBalance + " ETH" : "0 ETH"}
+                                {calcCultOut ? calcCultOut + " CULT" : "0 CULT"}
                             </div>
                         </div>
                     </div>
                 </div>
-                {!isPending ? (
+                {!isLoading ? (
                     <button className="border-2 border-black connectbox bg-base-1 font-basic px-4 mt-2" type="submit">
                         sell
                     </button>

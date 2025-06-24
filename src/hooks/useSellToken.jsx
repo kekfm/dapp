@@ -89,14 +89,12 @@ export default function useBuyToken(tokenAddress) {
             setIsSuccess(false);
 
             console.log("📝 Preparing transaction parameters...");
-            
 
-            console.log("💰 Transaction value check:", {
-                txValue: txValue.toString(),
-                parsedBuyAmount: parsedBuyAmount.toString()
-            });
 
-            console.log("🔐 Calling contract.deployNewToken...");
+            console.log("🔐 Calling contract.sell...");
+
+            console.log("tokenAmount", tokenAmount)
+            console.log("minETH", minETH)
             
             // Call the contract method
             const tx = await contract.sell(

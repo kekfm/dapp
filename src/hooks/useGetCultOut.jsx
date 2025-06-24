@@ -1,9 +1,9 @@
 import { ethers } from "ethers"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
 
-export default function useTokenBalance(tokenAddress) {
+export default function useGetCultOut(tokenAddress) {
     const { isConnected, address } = useAppKitAccount()
     const { chainId } = useAppKitNetwork()
     const { walletProvider } = useAppKitProvider("eip155")
@@ -47,10 +47,7 @@ export default function useTokenBalance(tokenAddress) {
             console.log("Wallet contract created successfully")
             setContract(contractInstance)
             
-            const cultOut = await contractInstance.calcETHAmount(address);
-            console.log("Cult out retrieved via wallet:", cultOut)
-            const formattedCultOut = ethers.formatEther(cultOut);
-            setCultOut(formattedCultOut);
+            
         } catch (err) {
             console.error('Error with wallet provider, trying read-only:', err);
             initializeReadOnlyContract();
@@ -93,15 +90,33 @@ export default function useTokenBalance(tokenAddress) {
             console.log("Read-only contract created successfully")
             setContract(contractInstance)
             
-            const cultOut = await contractInstance.calcETHAmount(address);
-            const formattedCultOut = ethers.formatEther(cultOut);
-            console.log("Cult out retrieved via read-only:", cultOut)
-            setCultOut(formattedCultOut);
+            
         } catch (err) {
             console.error('Error with read-only provider:', err);
             setError('Failed to get balance: ' + err.message);
         }
     }
 
-    return { cultOut, error }
+    const getCultOut = useCallback(async (amount) => {
+        if (!contract) {
+            console.error('Contract not initialized');
+            return null;
+        }
+
+        try {
+            console.log("Getting CULT out for amount:", amount.toString());
+            const cultOut = await contract.calcETHAmount(ethers.parseEther(amount));
+            console.log("CULT out:", cultOut.toString());
+            
+            // Format to readable number
+            const formattedCultOut = ethers.formatEther(cultOut);
+            return formattedCultOut;
+        } catch (err) {
+            console.error('Error calculating CULT amount:', err);
+            setError('Failed to calculate CULT amount: ' + err.message);
+            return null;
+        }
+    }, [contract]);
+
+    return { cultOut, error, getCultOut }
 }
