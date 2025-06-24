@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
 
@@ -36,18 +36,14 @@ export default function useCreateToken() {
     }, [isConnected, address, walletProvider, chainId])
 
     const initializeContract = async () => {
-        console.log("Initializing contract with:", {
+        console.log("Initializing contract with wallet provider:", {
             walletProvider: !!walletProvider,
             chainId,
             hasContracts: !!contracts.factory.addresses[chainId]
         })
         
         if (!walletProvider || !chainId) {
-            console.log('Missing requirements:', { 
-                hasWalletProvider: !!walletProvider, 
-                chainId: chainId,
-                contracts: contracts.factory.addresses[chainId] 
-            });
+            console.log('Missing wallet requirements, falling back to read-only');
             return;
         }
 
@@ -69,56 +65,119 @@ export default function useCreateToken() {
                 signer
             );
             setContract(newContract);
-            console.log('Contract initialized successfully');
+            console.log('Wallet contract created successfully');
         } catch (err) {
             console.error('Error initializing contract:', err);
             setError('Failed to initialize contract: ' + err.message);
         }
     }
 
-    const createToken = async (contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, txValue) => {
+    const createToken = useCallback(async (contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, txValue) => {
+        console.log("🚀 createToken called with:", {
+            contractAddresses,
+            tokenName,
+            tokenSymbol,
+            tokenInfo,
+            feeAddress,
+            parsedBuyAmount: parsedBuyAmount.toString(),
+            txValue: txValue.toString(),
+            contract: !!contract,
+            isConnected,
+            chainId
+        });
+
         if (!contract) {
-            console.error('Contract not initialized');
+            console.error('❌ Contract not initialized');
+            setError('Contract not initialized');
+            return;
+        }
+
+        if (!isConnected) {
+            console.error('❌ Wallet not connected');
+            setError('Wallet not connected');
             return;
         }
 
         try {
+            console.log("🔄 Starting transaction...");
             setIsLoading(true);
             setError(null);
             setTxHash(null);
             setTxReceipt(null);
             setIsSuccess(false);
 
-            console.log("Creating token with:", {
-                contractAddresses,
-                tokenName,
-                tokenSymbol,
-                tokenInfo,
-                feeAddress,
-                parsedBuyAmount,
-                txValue
-            })
+            console.log("📝 Preparing transaction parameters...");
+            
+            // Validate all parameters
+            if (!contractAddresses || contractAddresses.length !== 4) {
+                throw new Error('Invalid contract addresses array');
+            }
+            
+            if (!tokenName || !tokenSymbol) {
+                throw new Error('Token name and symbol are required');
+            }
 
-            const tx = await contract.deployNewToken(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, { value: String(txValue)});
+            console.log("💰 Transaction value check:", {
+                txValue: txValue.toString(),
+                parsedBuyAmount: parsedBuyAmount.toString()
+            });
+
+            console.log("🔐 Calling contract.deployNewToken...");
+            
+            // Call the contract method
+            const tx = await contract.deployNewToken(
+                contractAddresses, 
+                tokenName, 
+                tokenSymbol, 
+                tokenInfo, 
+                feeAddress, 
+                parsedBuyAmount, 
+                { 
+                    value: String(txValue),
+                }
+            );
+            
+            console.log("✅ Transaction sent! Hash:", tx.hash);
             setTxHash(tx.hash);
 
+            console.log("⏳ Waiting for transaction confirmation...");
             const receipt = await tx.wait();
-            console.log('Transaction receipt:', receipt);
+            console.log('✅ Transaction confirmed! Receipt:', receipt);
             setTxReceipt(receipt);
 
             if (receipt.status === 1) {
+                console.log("🎉 Transaction successful!");
                 setIsSuccess(true);
             } else {
-                throw new Error('Transaction failed');
+                throw new Error('Transaction failed - status 0');
             }
 
         } catch (err) {
-            console.error('Error creating token:', err);
-            setError('Failed to create token: ' + err.message);
+            console.error('💥 Error during token creation:', {
+                error: err,
+                message: err.message,
+                code: err.code,
+                reason: err.reason,
+                transaction: err.transaction
+            });
+            
+            let errorMessage = 'Failed to create token: ' + err.message;
+            
+            // Handle specific error types
+            if (err.code === 'INSUFFICIENT_FUNDS') {
+                errorMessage = 'Insufficient funds to complete transaction';
+            } else if (err.code === 'USER_REJECTED') {
+                errorMessage = 'Transaction rejected by user';
+            } else if (err.message.includes('insufficient funds')) {
+                errorMessage = 'Insufficient funds for transaction + gas fees';
+            }
+            
+            setError(errorMessage);
         } finally {
+            console.log("🏁 Transaction process completed, setting loading to false");
             setIsLoading(false);
         }
-    }
+    }, [contract, isConnected, chainId]);
 
     return { contract, isLoading, error, txHash, txReceipt, isSuccess, createToken }
 
