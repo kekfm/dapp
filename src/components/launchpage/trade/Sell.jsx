@@ -4,6 +4,9 @@ import "/globals.css"
 import { ethers } from "ethers"
 import SellModal from "./SellModal"
 import change from "../../../assets/change2.svg"
+import useSellToken from '../../../hooks/useSellToken'
+import useCultBalance from '../../../hooks/useCultBalance'
+import useGetCultOut from '../../../hooks/useGetCultOut'
 
 export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance, trading}) {
     const { address } = useAppKitAccount()
@@ -14,8 +17,9 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
     const [sellModalOpen, setSellModalOpen] = useState(false)
     const [errors, setErrors] = useState({})
     
-    const ETHAmount = useGetETHAmount(chainId, tokenAddress, parsedToken)
-    const { sell, isPending, isSuccess, isError, receipt } = useSellToken(chainId, tokenAddress)
+    const { sellToken, isPending, isSuccess, isError, receipt } = useSellToken(tokenAddress)
+    const { balance:ethBalance, error } = useCultBalance()
+    const { cultOut:ETHAmount, error:cultOutError } = useGetCultOut(tokenAddress)
 
     const handleSellSubmit = async (e) => {
         e.preventDefault()
@@ -27,7 +31,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                 const stringETH = minETH.toString()
 
                 if (validateForm()) {
-                    await sell(parsedToken, stringETH)
+                    await sellToken(parsedToken, stringETH)
                 }
             } catch (e) {
                 console.log("error selling", e)
@@ -46,7 +50,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
         if(slippage < 0){newErrors.slippageUnderflow = "min is 0%"}
         if(slippage > 90){newErrors.slippageOverflow = "max is 90%"}
         if(Number(sellAmountToken) < 0){newErrors.tokenUnderflow = "must be at least 0.0001 ETH"}
-        if(Number(sellAmountToken) > Number(ethers.utils.formatEther(tokenBalance))){newErrors.tokenOverflow = "amount exceeds your balance"}
+        if(Number(sellAmountToken) > Number(ethers.formatEther(tokenBalance))){newErrors.tokenOverflow = "amount exceeds your balance"}
 
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
@@ -170,7 +174,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                         <div className="flex flex-col font-basic font-medium text-sm">
                             <div className="pl-1">you get</div>
                             <div className="border-2 border-black bg-base-1 p-2 b">
-                                {ETHAmount ? ethers.utils.formatEther(ETHAmount.toString()) + " ETH" : "0 ETH"}
+                                {ethBalance ? ethBalance + " ETH" : "0 ETH"}
                             </div>
                         </div>
                     </div>

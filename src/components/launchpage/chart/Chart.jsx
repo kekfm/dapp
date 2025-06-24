@@ -9,7 +9,7 @@ export default function Chart({ data }) {
     const candlestickSeriesRef = useRef();
 
     const formatEtherValue = (value) => {
-        return parseFloat(ethers.utils.formatEther(value)).toFixed(18);
+        return parseFloat(ethers.formatEther(value)).toFixed(18);
     };
 
     const toFixedWithoutScientific = (num, precision) => {

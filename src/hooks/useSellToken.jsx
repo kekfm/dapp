@@ -4,7 +4,7 @@ import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/ap
 import { contracts } from "../helpers/contracts"
 
 
-export default function useCreateToken() {
+export default function useBuyToken(tokenAddress) {
 
     const { isConnected, address } = useAppKitAccount()
     const { chainId } = useAppKitNetwork()
@@ -17,10 +17,12 @@ export default function useCreateToken() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [contract, setContract] = useState(null);
 
+   
+
 
     useEffect(() => {
         // Add delay to ensure provider is ready
-        if (isConnected && walletProvider && chainId) {
+        if (tokenAddress && isConnected && walletProvider && chainId) {
             console.log("All conditions met, initializing contract...")
             setTimeout(() => initializeContract(), 100)
         } else {
@@ -30,14 +32,9 @@ export default function useCreateToken() {
                 needsChainId: !chainId
             })
         }
-    }, [isConnected, address, walletProvider, chainId])
+    }, [tokenAddress, isConnected, address, walletProvider, chainId])
 
     const initializeContract = async () => {
-        console.log("Initializing contract with wallet provider:", {
-            walletProvider: !!walletProvider,
-            chainId,
-            hasContracts: !!contracts.factory.addresses[chainId]
-        })
         
         if (!walletProvider || !chainId) {
             console.log('Missing wallet requirements, falling back to read-only');
@@ -50,15 +47,15 @@ export default function useCreateToken() {
             const signer = await provider.getSigner();
             console.log('Signer obtained:', signer);
             
-            const contractAddress = contracts.factory.addresses[chainId];
+            const contractAddress = tokenAddress;
             console.log('Creating contract with:', {
                 address: contractAddress,
-                interface: contracts.factory.interface[chainId]
+                interface: contracts.token.interface[chainId]
             });
             
             const newContract = new ethers.Contract(
                 contractAddress,
-                contracts.factory.interface[chainId],
+                contracts.token.interface[chainId],
                 signer
             );
             setContract(newContract);
@@ -69,19 +66,7 @@ export default function useCreateToken() {
         }
     }
 
-    const createToken = useCallback(async (contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, txValue) => {
-        console.log("🚀 createToken called with:", {
-            contractAddresses,
-            tokenName,
-            tokenSymbol,
-            tokenInfo,
-            feeAddress,
-            parsedBuyAmount: parsedBuyAmount.toString(),
-            txValue: txValue.toString(),
-            contract: !!contract,
-            isConnected,
-            chainId
-        });
+    const sellToken = useCallback(async (tokenAmount, minETH) => {
 
         if (!contract) {
             console.error('❌ Contract not initialized');
@@ -105,14 +90,6 @@ export default function useCreateToken() {
 
             console.log("📝 Preparing transaction parameters...");
             
-            // Validate all parameters
-            if (!contractAddresses || contractAddresses.length !== 4) {
-                throw new Error('Invalid contract addresses array');
-            }
-            
-            if (!tokenName || !tokenSymbol) {
-                throw new Error('Token name and symbol are required');
-            }
 
             console.log("💰 Transaction value check:", {
                 txValue: txValue.toString(),
@@ -122,16 +99,9 @@ export default function useCreateToken() {
             console.log("🔐 Calling contract.deployNewToken...");
             
             // Call the contract method
-            const tx = await contract.deployNewToken(
-                contractAddresses, 
-                tokenName, 
-                tokenSymbol, 
-                tokenInfo, 
-                feeAddress, 
-                parsedBuyAmount, 
-                { 
-                    value: String(txValue),
-                }
+            const tx = await contract.sell(
+                tokenAmount,
+                minETH,
             );
             
             console.log("✅ Transaction sent! Hash:", tx.hash);
@@ -176,6 +146,6 @@ export default function useCreateToken() {
         }
     }, [contract, isConnected, chainId]);
 
-    return { contract, isLoading, error, txHash, txReceipt, isSuccess, createToken }
+    return { contract, isLoading, error, txHash, txReceipt, isSuccess, sellToken }
 
 }

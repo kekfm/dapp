@@ -17,7 +17,8 @@ import { io } from "socket.io-client"
 import factoryAbi from '../abis/factoryABI.json'
 import tokenAbi from '../abis/tokenABI.json'
 import { useAppKitAccount } from '@reown/appkit/react';
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import useTokenBalance from '../hooks/useTokenBalance'
+
 
 
 
@@ -40,6 +41,8 @@ export default function LaunchPage () {
     const { address, chainId } = useAppKitAccount()
 
     const navigate = useNavigate()
+
+    const { balance:tokenBalance, error } = useTokenBalance(tokenAddr)
 
     useEffect(()=>{
         const fetchData = async (tokenAddress) =>{
@@ -79,7 +82,7 @@ export default function LaunchPage () {
                 const last = latestTxnsArray[0]
 
                 if(last){
-                    const soldTokens = (100000 - Number(ethers.utils.formatEther(last.contractTokenBalance)))
+                    const soldTokens = (100000 - Number(ethers.formatEther(last.contractTokenBalance)))
                     const percentage = soldTokens / 75000 * 100
                     setPercentage(percentage)
                 }
@@ -148,12 +151,7 @@ export default function LaunchPage () {
 
     },[])
 
-    const { data: tokenBalance } = useReadContract({
-        address: tokenAddr,
-        abi: tokenAbi,
-        functionName: 'balanceOf',
-        args: [address]
-    })
+   
 
     console.log("tokenBalance", tokenBalance)
    
@@ -261,7 +259,7 @@ export default function LaunchPage () {
                             {tokenBalance ? 
                                 <div className="flex items-start justify-start">
                                     <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-2 p-1 mr-2 max-sm:w-[250px] max-w-[300px]"> 
-                                        your balance: {tokenBalance ? ethers.utils.formatEther(tokenBalance?.toString()) : '0'} ${props?.symbol}
+                                        your balance: {tokenBalance ? ethers.formatEther(tokenBalance?.toString()) : '0'} ${props?.symbol}
                                     </div>
                                 </div>
                                 

@@ -4,6 +4,9 @@ import "/globals.css"
 import { ethers } from "ethers"
 import BuyModal from "./BuyModal"
 import change from "../../../assets/change2.svg"
+import useBuyToken from '../../../hooks/useBuyToken'
+import useTokenBalance from '../../../hooks/useTokenBalance'
+import useGetTokensOut from '../../../hooks/useGetTokensOut'
 
 export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const { address } = useAppKitAccount()
@@ -13,9 +16,30 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const [slippage, setSlippage] = useState(5)
     const [buyModalOpen, setBuyModalOpen] = useState(false)
     const [errors, setErrors] = useState({})
+    const [tokenAmountOut, setTokenAmountOut] = useState(0)
     
-    const tokenAmount = useGetTokenAmount(chainId, tokenAddress, parsedETH)
-    const { buy, isPending, isSuccess, isError, receipt } = useBuyToken(chainId, tokenAddress)
+    const { buyToken, isLoading, isSuccess, isError, receipt } = useBuyToken(tokenAddress)
+    const { balance, error } = useTokenBalance(tokenAddress)
+    const { tokensOut:tokenAmount, error:tokensOutError, getTokenAmount } = useGetTokensOut (tokenAddress)
+
+    useEffect(() => {
+        const fetchTokenAmount = async () => {
+            if(buyAmountETH > 0 && getTokenAmount) {
+                try {
+                    const tokensOut = await getTokenAmount(ethers.parseEther(buyAmountETH.toString()))
+                    setTokenAmountOut(tokensOut || "0")
+                } catch (error) {
+                    console.error("Error fetching token amount:", error)
+                    setTokenAmountOut("0")
+                }
+            } else {
+                setTokenAmountOut("0")
+            }
+        }
+        fetchTokenAmount()
+    }, [buyAmountETH, getTokenAmount])
+
+
 
     const handleBuySubmitBuy = async (e) => {
         e.preventDefault()
@@ -23,25 +47,24 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
             try {
                 // calc input params
                 const slipPerc = slippage > 0 ? slippage : 5
-                const formattedTokens = ethers.utils.formatEther(tokenAmount)
-                const numTokens = Number(formattedTokens)
+                const numTokens = Number(tokenAmount)
                 const slippageTokens = (slipPerc * numTokens / 100)
                 const minTokens = numTokens - slippageTokens
                 const stringMinTokens = minTokens.toString()
-                const parsedTokens = ethers.utils.parseEther(stringMinTokens)
+                const parsedTokens = ethers.parseEther(stringMinTokens)
 
                 //calc tx value
                 const valNum = Number(buyAmountETH)// + Number(buyAmountETH) * 5 / 1000
                 console.log("valNum",valNum)
                 const stringNum = valNum.toString()
-                const txValue = ethers.utils.parseEther(stringNum)
+                const txValue = ethers.parseEther(stringNum)
 
-                console.log("parsedTokens", ethers.utils.formatEther(parsedTokens.toString()))
-                console.log("parsedETH", ethers.utils.formatEther(parsedETH.toString()))
-                console.log("txValue", ethers.utils.formatEther(txValue.toString()))
+                console.log("parsedTokens", ethers.formatEther(parsedTokens.toString()))
+                console.log("parsedETH", ethers.formatEther(parsedETH.toString()))
+                console.log("txValue", ethers.formatEther(txValue.toString()))
 
                 if (validateForm()) {
-                    await buy(parsedTokens, parsedETH, txValue)
+                    await buyToken(parsedTokens, parsedETH, txValue)
                 }
             } catch (e) {
                 console.log("error buying", e)
@@ -83,7 +106,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
         const stringValue = value.toString()
 
         if(value > 0) {
-            const parsed = ethers.utils.parseEther(stringValue)
+            const parsed = ethers.parseEther(stringValue)
             setParsedETH(parsed)
         }
     }
@@ -193,17 +216,17 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                         <div className="flex flex-col font-basic font-medium text-sm">
                             <div className="pl-1">you get</div>
                             <div className="border-2 border-black bg-base-1 p-2 b">
-                                {tokenAmount ? ethers.utils.formatEther(tokenAmount.toString()) + "$" + tokenTicker : "0 $" + tokenTicker}
+                                {tokenAmountOut ? tokenAmountOut + "$" + tokenTicker : "0 $" + tokenTicker}
                             </div>
                         </div>
                     </div>
                 </div>
                 <button 
-                    className={`border-2 border-black connectbox font-basic px-4 mt-2 ${isPending ? 'bg-base-11 animate-pulse' : 'bg-base-1'}`}
+                    className={`border-2 border-black connectbox font-basic px-4 mt-2 ${isLoading ? 'bg-base-11 animate-pulse' : 'bg-base-1'}`}
                     type="submit"
-                    disabled={isPending}
+                    disabled={isLoading}
                 >
-                    {isPending ? 'buying...' : 'buy'}
+                    {isLoading ? 'buying...' : 'buy'}
                 </button>
             </form>
         </div>

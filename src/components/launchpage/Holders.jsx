@@ -32,12 +32,12 @@ export default function Holders ({data}) {
                                     }
                                 {item.userTokenBalance &&
                                         <td className="text-right px-4 py-1">
-                                            {ethers.utils.formatEther(item.userTokenBalance)}
+                                            {ethers.formatEther(item.userTokenBalance)}
                                         </td>
                                 }
                                     {item.userTokenBalance &&
                                         <td className="text-right px-4 py-1">
-                                            {(Number(ethers.utils.formatEther(item.userTokenBalance)) / 75000 * 100).toFixed(1)} 
+                                            {(Number(ethers.formatEther(item.userTokenBalance)) / 75000 * 100).toFixed(1)} 
                                         </td>
                                     }
                                 </tr>
