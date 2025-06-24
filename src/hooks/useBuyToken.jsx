@@ -89,6 +89,9 @@ export default function useBuyToken(tokenAddress) {
             
 
             console.log("🔐 Calling contract.deployNewToken...");
+
+            const signer1 = await walletProvider.getSigner();
+            console.log("signer1", signer1)
             
             // Call the contract method
             const tx = await contract.buy(
