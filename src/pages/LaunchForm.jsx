@@ -300,7 +300,7 @@ export default function LaunchForm() {
                 )}
             </form>
             <div className={`font-bold pt-4`}> 
-                launch price: {feeInfo ? `${ethers.formatEther(feeInfo.toString())} CULT` : 'loading...'} 
+                launch price: {feeInfo ? `${ethers.formatEther(feeInfo.toString())} CULT` : 'fuck you'} 
             </div>
         </div>
     )
