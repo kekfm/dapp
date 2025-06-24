@@ -191,7 +191,7 @@ export default function LaunchTable() {
                     ))}
                 </div>
             </div>
-            <div className="flex flex-row justify-center gap-2">
+            <div className="flex flex-row justify-center gap-2 mt-6">
                 {page == 1 ? "" :<img onClick={handleDown} src={left} className="hover:cursor-pointer"></img>}
                 <div className="font-basic font-bold content-center">{page}/{max}</div>
                 {page == max ? "" : <img onClick={handleUp} src={right} className="hover:cursor-pointer"></img>}
