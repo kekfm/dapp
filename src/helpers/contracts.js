@@ -15,9 +15,9 @@ export const contracts = {
             },
 
             interface: {
-                97: new ethers.utils.Interface(factoryABI),
-                8453: new ethers.utils.Interface(factoryABI),
-                6666: new ethers.utils.Interface(factoryABI)
+                97: new ethers.Interface(factoryABI),
+                8453: new ethers.Interface(factoryABI),
+                6666: new ethers.Interface(factoryABI)
             }
         },
     eventhandler:
@@ -65,9 +65,9 @@ export const contracts = {
         },
     token:{
             interface:{
-                97: new ethers.utils.Interface(tokenABI),
-                8453: new ethers.utils.Interface(tokenABI),
-                6666: new ethers.utils.Interface(tokenABI)
+                97: new ethers.Interface(tokenABI),
+                8453: new ethers.Interface(tokenABI),
+                6666: new ethers.Interface(tokenABI)
 
             }
     }

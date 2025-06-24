@@ -1,12 +1,8 @@
 
 import '../../../globals.css';
-import { useEthers } from "@usedapp/core";
 import baseconnect from "../../assets/baseconnect.svg"
 import bnbconnect from "../../assets/bnbconnect.svg"
 import modulusconnect from "../../assets/modulusconnect.svg"
-import { createAppKit } from '@reown/appkit/react'
-import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
-import { mainnet, base } from '@reown/appkit/networks'
 import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { useAppKitNetworkCore } from '@reown/appkit/react';
 

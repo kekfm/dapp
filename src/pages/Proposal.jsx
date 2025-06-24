@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useEthers,useBlockNumber } from '@usedapp/core';
 import "../../globals.css"
 import ProposalSuccessModal from '../components/dao/ProposalSuccessModal';
 
 
 
-
+/*
 export default function Proposal () {
 
 
@@ -20,9 +19,7 @@ export default function Proposal () {
     const hub = 'https://testnet.hub.snapshot.org'; // or https://testnet.hub.snapshot.org for testnet
     const client = new snapshot.Client712(hub);
     
-    const {chainId, account, library} = useEthers()
-    const blockNumber = useBlockNumber()
-    const web3 = library;
+   
 
     //console.log("chainid", chainId)
     //console.log("account", account)
@@ -72,7 +69,7 @@ export default function Proposal () {
             
         }
     }
-
+/*
     const validateForm = () => {
         let newErrors = {}
 
@@ -115,7 +112,7 @@ export default function Proposal () {
 
     }
 
-
+*/
 
 
    /* if(chainId != 1){
@@ -126,7 +123,7 @@ export default function Proposal () {
         )
         
     }*/
-    
+/*
     if(chainId == 1 || chainId == 11155111){
         return(
             <div className="flex justify-center pt-20">
@@ -192,4 +189,4 @@ export default function Proposal () {
 }
 
 
-
+*/

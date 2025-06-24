@@ -2,7 +2,6 @@ import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
 import { useState, useEffect } from 'react'
 import "/globals.css"
 import { ethers } from "ethers"
-import { useGetTokenAmount, useBuyToken } from "../../../helpers/tokenHooks.jsx"
 import BuyModal from "./BuyModal"
 import change from "../../../assets/change2.svg"
 

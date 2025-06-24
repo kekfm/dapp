@@ -1,5 +1,4 @@
 import "/globals.css"
-import { useEthers } from "@usedapp/core"
 import { useState } from "react"
 import axios from "axios"
 import DOMPurify from "dompurify"

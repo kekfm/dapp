@@ -1,17 +1,18 @@
 import "../../globals.css"
-import { useEthers } from "@usedapp/core"
 import { useSearchParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import axios from "axios"
 import LaunchCard from "../components/landing/LaunchCard"
 import devpage from "../assets/devpage.svg"
 import empty from "../assets/emptiness.svg"
+import { useAppKitAccount } from '@reown/appkit/react'
+
 
 
 
 export default function Account (){
 
-    const {account, chainId} = useEthers()
+    const {address} = useAppKitAccount()
     const [searchParams, setSerchParams] = useSearchParams()
     const [devData, setDevData] = useState([])
     const [devAddr, setDevAddr] = useState("")

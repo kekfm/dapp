@@ -4,13 +4,13 @@ import { NavAccount } from "./NavAccount";
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import burger from "../../assets/burger.svg";
-import { useEthers } from '@usedapp/core';
 import Recent from '../landing/Recent';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const boxRef = useRef(null);
-    const {account} = useEthers()
+    const { address } = useAppKitAccount();
 
     const handleOpen = () => {
         setIsOpen(prevState => !prevState);
@@ -45,7 +45,7 @@ export default function Navbar() {
                 <Recent />
             </div>
             <div className="flex flex-row gap-2 justify-between mr-2 max-sm:hidden">
-                {account &&
+                {address &&
                     <NavAccount handleOpen={handleOpen} isOpen={isOpen} />
                 }
                 <Connect handleOpen={handleOpen} isOpen={isOpen} />
@@ -59,7 +59,7 @@ export default function Navbar() {
                         <div className="flex flex-col connectbox fixed inset-0 bg-base-2 mx-4 border-4 border-black p-10 mt-32 h-64 max-w-[300px]">
                             <div className="font-basic font-bold pb-4 text-xl">navigate</div>
                             <div className="flex flex-col z-100">
-                                {account &&
+                                {address &&
                                     <NavAccount handleOpen={handleOpen} isOpen={isOpen} />
                                 }
                                 <Connect handleOpen={handleOpen} isOpen={isOpen} />

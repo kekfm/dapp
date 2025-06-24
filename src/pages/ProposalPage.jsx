@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment/moment';
 import "../../globals.css"
-import { useEthers } from '@usedapp/core';
 
 
+/*
 const ProposalDetail = () => {
   const { proposalId } = useParams(); // Get the proposalId from the route parameters
   const [proposal, setProposal] = useState(null);
@@ -18,8 +18,6 @@ const ProposalDetail = () => {
   const [hasEnded, setHasEnded] = useState(false)
 
 
-  const {library, account} = useEthers()
-  const web3 = library
 
   const hub = "https://testnet.hub.snapshot.org"
   const client = new snapshot.Client712(hub)
@@ -190,3 +188,4 @@ const ProposalDetail = () => {
 };
 
 export default ProposalDetail;
+*/

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEthers, useBlockNumber } from '@usedapp/core';
 import "../../globals.css";
 import axios from 'axios';
 import moment from 'moment/moment';

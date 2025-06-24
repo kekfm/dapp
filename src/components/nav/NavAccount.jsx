@@ -1,18 +1,18 @@
 import "../../../globals.css"
-import { useEthers } from "@usedapp/core"
 import { useNavigate, useSearchParams } from "react-router-dom"
+import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
 
 export  function NavAccount ({handleOpen, isOpen}) {
+    const { address } = useAppKitAccount()
 
-    const {chainId, account} = useEthers()
     const navigate = useNavigate()
 
     const handleClick = () => {
         if(isOpen){
             handleOpen()
         }
-        if(account){
-            navigate(`/me?account=${account}`)
+        if(address){
+            navigate(`/me?account=${address}`)
         }
     }
 

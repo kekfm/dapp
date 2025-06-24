@@ -1,5 +1,4 @@
 import "../../../globals.css"
-import { useEthers } from "@usedapp/core";
 
 
 

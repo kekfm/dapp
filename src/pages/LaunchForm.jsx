@@ -1,10 +1,9 @@
 import '../../globals.css'
 import { useEffect, useState} from 'react'
 import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
-import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
+import { useNavigate } from 'react-router-dom'
 import { ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
-import {useFeeInfo} from "../helpers/factoryHooks"
 import SuccessModal from "../components/launchform/SuccessModal"
 import FailModal from "../components/launchform/FailModal"
 import bump from "../assets/sendit.svg"
@@ -15,25 +14,19 @@ import modulus from "../assets/s_modulus.svg"
 import base from "../assets/s_base.svg"
 import { supportedChainIds } from '../helpers/chains';
 import factoryAbi from '../abis/factoryABI.json'
+import useFeeInfo from '../hooks/useFeeInfo'
+import useCreateToken from '../hooks/useCreateToken'
 
 export default function LaunchForm() {
     const { isConnected, address } = useAppKitAccount()
     const { chainId } = useAppKitNetwork()
-    console.log("chainId", chainId)
+    const navigate = useNavigate()
 
     // Read fee directly from contract
-    const { data: fee, error: feeError, isError: isFeeError } = useReadContract({
-        address: chainId ? contracts.factory.addresses[chainId] : undefined,
-        abi: factoryAbi,
-        functionName: 'fee'
-    })
+    const { feeInfo, error } = useFeeInfo()
 
-    // Token contract hooks
-    const { writeContract, isPending: isWritePending, isError: isWriteError, data: tokenHash } = useWriteContract()
-    const { data: tokenReceipt, isPending: isTokenReceiptPending, isSuccess: isTokenReceiptSuccess, isError: isTokenReceiptError } = useWaitForTransactionReceipt({ 
-        hash: tokenHash,
-        enabled: Boolean(tokenHash) 
-    });
+    // Factory contract hook
+    const { contract, isLoading: isCreateLoading, error: createError, txHash, txReceipt, isSuccess, createToken } = useCreateToken()
 
     const imgWidth = 120
     const imgHeight = 60
@@ -50,25 +43,21 @@ export default function LaunchForm() {
         buyAmount:''
     })
     const [errors, setErrors] = useState({})
-    const [isOpen, setIsOpen] = useState(false)
-    const [failOpen, setFailOpen] = useState(false)
 
+    // Handle success modal - open when transaction succeeds
     useEffect(() => {
-        if (isTokenReceiptSuccess) {
-            setIsOpen(true)
+        if (isSuccess && txReceipt) {
+            console.log("Token creation successful, opening success modal");
         }
-        if (isWriteError || isTokenReceiptError) {
-            setFailOpen(true)
-        }
-    }, [isTokenReceiptSuccess, isWriteError, isTokenReceiptError])
+    }, [isSuccess, txReceipt])
 
-    const closeModal = () =>{
-        setIsOpen(false)
-        router.push('/')
+    const closeModal = () => {
+        navigate('/')
     }
 
-    const closeFailModal = () =>{
-        setFailOpen(false)
+    const closeFailModal = () => {
+        // Clear error state when closing fail modal
+        // This will be handled by the hook state
     }
 
     const handleChange = (e) => {
@@ -119,9 +108,9 @@ export default function LaunchForm() {
     const handleSubmit = (e) => {
         e.preventDefault()
         console.log("isConnected", isConnected)
-        console.log("fee", fee)
+        console.log("fee", feeInfo)
 
-        if (!fee) {
+        if (!feeInfo) {
             console.error("Fee not loaded yet");
             return;
         }
@@ -141,28 +130,19 @@ export default function LaunchForm() {
                 });
 
                 const feeAddress = contracts.feeAddress[chainId]
-                const parsedBuyAmount = formData.buyAmount > 0 ? ethers.utils.parseEther(formData.buyAmount.toString()) : 0n
+                const parsedBuyAmount = formData.buyAmount > 0 ? ethers.parseEther(formData.buyAmount.toString()) : 0n
                 console.log("parsedBuyAmount", parsedBuyAmount)
-                const totalValue = parsedBuyAmount > 0n ? (parsedBuyAmount + (parsedBuyAmount * 5n) / 1000n) + BigInt(fee) : BigInt(fee)
+                const totalValue = parsedBuyAmount > 0n ? (parsedBuyAmount + (parsedBuyAmount * 5n) / 1000n) + BigInt(feeInfo) : BigInt(feeInfo)
                 console.log("totalValue", totalValue)
 
                 console.log("calling writeContract")
-                writeContract({
-                    address: contracts.factory.addresses[chainId],
-                    abi: factoryAbi,
-                    functionName: "deployNewToken",
-                    args: [contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount],
-                    value: totalValue
-                })
+                createToken(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, totalValue)
             }
             catch(error){
                 console.error("Error creating token:", error)
-                setFailOpen(true)
             }
         }
     }
-
-    console.log("tokenReceipt", tokenReceipt)
 
     if (!supportedChainIds.includes(chainId)) {
         return(
@@ -179,10 +159,25 @@ export default function LaunchForm() {
         )
     }
 
+    console.log("feeInfo", feeInfo)
+
     return(
         <div className="flex flex-col font-basic font-medium items-center justify-center min-h-screen bg-base-1 pb-20 ">
-            <SuccessModal className="z-10" tx={tokenReceipt} isOpen={isOpen} closeModal={() => closeModal()}/>
-            <FailModal className="z-10" isOpen={failOpen} closeModal={() => closeFailModal()}/>
+            {/* Success Modal - controlled by hook state */}
+            <SuccessModal 
+                className="z-10" 
+                isOpen={isSuccess && txReceipt} 
+                closeModal={closeModal}
+                tx={txReceipt}
+            />
+            {/* Fail Modal - controlled by hook state */}
+            <FailModal 
+                className="z-10" 
+                isOpen={!!createError} 
+                closeModal={closeFailModal}
+                error={createError}
+            />
+            
             <div className={`pb-8 pt-20`}>
                 <img src={launch} alt="launch"></img>
             </div>
@@ -293,7 +288,7 @@ export default function LaunchForm() {
                     {errors && errors.buyAmount?.negative && <span className={`font-basic text-base-8 text-xs`}>{errors.buyAmount.negative}</span>}
                 </div>
                 
-                {(isWritePending || (tokenHash && isTokenReceiptPending)) ? (
+                {isCreateLoading ? (
                     <div className="flex flex-row justify-end gap-8 py-4">
                         <button className={`font-basic connectbox border-4 border-black bg-base-2 py-2 px-8 hover:-translate-y-2 delay-50 hover:scale-110 ease-in-out hover:cursor-pointer animate-pulse`} disabled> launching... </button>
                     </div>
@@ -305,7 +300,7 @@ export default function LaunchForm() {
                 )}
             </form>
             <div className={`font-bold pt-4`}> 
-                launch price: {fee ? `${ethers.utils.formatEther(fee.toString())} ETH` : 'loading...'} 
+                launch price: {feeInfo ? `${ethers.formatEther(feeInfo.toString())} CULT` : 'loading...'} 
             </div>
         </div>
     )

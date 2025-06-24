@@ -7,47 +7,24 @@ import Account from './pages/Account.jsx'
 import Terms from './pages/Terms.jsx'
 import Paper from './pages/Paper.jsx'
 import DaoLanding from './pages/DaoLanding.jsx'
-import Proposal from './pages/Proposal.jsx'
+//import Proposal from './pages/Proposal.jsx'
 import Vote from './pages/Vote.jsx'
-import ProposalPage from './pages/ProposalPage.jsx'
+//import ProposalPage from './pages/ProposalPage.jsx'
 import Game from './pages/Game.jsx'
 import NotFound from './pages/NotFound.jsx'
 import './index.css'
-import { Mainnet, DAppProvider, Goerli } from '@usedapp/core'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from './pages/AppLayout.jsx'
 import Navbar from './components/nav/Navbar.jsx'
 import './index.css'
-import { WagmiProvider } from 'wagmi'
-import { createAppKit } from '@reown/appkit/react'
-import {projectId, metadata, networks, wagmiAdapter} from './helpers/config.jsx'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+import { AppKitProvider } from './helpers/config.jsx'
 
-const generalConfig = {
-  projectId,
-  networks,
-  metadata,
-  themeMode: 'dark' ,
-  themeVariables: {
-    '--w3m-accent': '#000000',
-  }
-}
 
-// Create modal
-createAppKit({
-  adapters: [wagmiAdapter],
-  ...generalConfig,
-  features: {
-    analytics: true // Optional - defaults to your Cloud configuration
-  }
-})
 
 const Main = () => {
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
+    <AppKitProvider>
         <BrowserRouter>
           <Routes>
             {/* Landing pages - no sidebar */}
@@ -63,9 +40,9 @@ const Main = () => {
               <Route path="launch" element={<LaunchPage />} />
               <Route path="me" element={<Account />} />
               <Route path="dao" element={<DaoLanding />} />
-              <Route path="dao/proposal" element={<Proposal />} />
+              {/*<Route path="dao/proposal" element={<Proposal />} />*/}
               <Route path="dao/vote" element={<Vote />} />
-              <Route path="dao/vote/:proposalId" element={<ProposalPage />} />
+              {/*<Route path="dao/vote/:proposalId" element={<ProposalPage />} />*/}
               <Route path="game" element={<Game />} />
             </Route>
 
@@ -73,8 +50,7 @@ const Main = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </QueryClientProvider>
-    </WagmiProvider>
+    </AppKitProvider>
   )
 }
 

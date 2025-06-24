@@ -1,20 +1,21 @@
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { mainnet, arbitrum, sepolia } from '@reown/appkit/networks'
+import { EthersAdapter } from '@reown/appkit-adapter-ethers'
+import { mainnet, arbitrum, sepolia, base, bscTestnet } from '@reown/appkit/networks'
 import { defineChain } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react'
-
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // Get projectId from https://cloud.reown.com
 export const projectId = import.meta.env.VITE_PROJECT_ID || "b56e18d47c72ab683b10814fe9495694" // this is a public projectId only to use on localhost
+
+const queryClient = new QueryClient()
 
 if (!projectId) {
   throw new Error('Project ID is not defined')
 }
 
 export const metadata = {
-    name: 'AppKit',
-    description: 'AppKit Example',
+    name: 'Kek',
+    description: 'Kek',
     url: window.location.origin, // origin must match your domain & subdomain
     icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
@@ -39,34 +40,37 @@ const modulus = defineChain({
     }
 })
 
-// for custom networks visit -> https://docs.reown.com/appkit/react/core/custom-networks
-export const networks = [modulus] 
+// Include standard networks that your Connect component expects
+export const networks = [mainnet, base, bscTestnet, modulus, sepolia] 
 
-export const wagmiAdapter = new WagmiAdapter({
+export const ethersAdapter = new EthersAdapter({
   projectId,
   networks
 })
 
 // Create AppKit instance
 export const appkit = createAppKit({
-  adapters: [wagmiAdapter],
+  adapters: [ethersAdapter],
   networks,
   projectId,
   metadata,
   features: {
     analytics: true,
-    email: false, // default to true
-    socials: [
-      
-    ],
+    email: false,
+    socials: [],
     emailShowWallets: false
   },
-  
+  enableWalletConnect: true,
+  enableInjected: true,
+  enableEIP6963: true,
+  enableCoinbase: true
 })
 
-
-
-//Set up the Wagmi Adapter (Config)
-
-
-export const config = wagmiAdapter.wagmiConfig
+// Provider component for AppKit
+export function AppKitProvider({ children }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  )
+} 

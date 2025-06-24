@@ -2,7 +2,6 @@ import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
 import { useState, useEffect } from 'react'
 import "/globals.css"
 import { ethers } from "ethers"
-import { useGetETHAmount, useSellToken } from "../../../helpers/tokenHooks.jsx"
 import SellModal from "./SellModal"
 import change from "../../../assets/change2.svg"
 

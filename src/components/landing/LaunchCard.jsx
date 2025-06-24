@@ -61,7 +61,7 @@ export default function LaunchCard ({tag, data}) {
         console.log("latest", latest)
         
         if(latest){
-            const soldTokens = (100000 - Number(ethers.utils.formatEther(latest.contractTokenBalance)))
+            const soldTokens = (100000 - Number(ethers.formatEther(latest.contractTokenBalance)))
             const percentage = soldTokens / 75000 * 100
             setPercentage(percentage)
         }
