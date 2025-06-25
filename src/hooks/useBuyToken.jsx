@@ -1,13 +1,13 @@
 import { ethers } from "ethers"
 import { useEffect, useState, useCallback } from "react"
-import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
 
 
 export default function useBuyToken(tokenAddress) {
 
     const { isConnected, address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
     const { walletProvider } = useAppKitProvider("eip155")
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -40,7 +40,8 @@ export default function useBuyToken(tokenAddress) {
 
         try {
             console.log('Getting signer...');
-            const provider = new ethers.BrowserProvider(walletProvider);
+            const provider = new ethers.BrowserProvider(walletProvider, chainId);
+            console.log("correctly initializedprovider", provider)
             const signer = await provider.getSigner();
             console.log('Signer obtained:', signer);
             
@@ -90,11 +91,22 @@ export default function useBuyToken(tokenAddress) {
 
             console.log("🔐 Calling contract.deployNewToken...");
 
-            const signer1 = await walletProvider.getSigner();
-            console.log("signer1", signer1)
+            const provider = new ethers.BrowserProvider(walletProvider, chainId);
+            console.log("correctly initializedprovider", provider)
+            const signer = await provider.getSigner();
+            console.log('Signer obtained:', signer);
+            
+            const contractAddress = tokenAddress;
+           
+            
+            const newContract = new ethers.Contract(
+                contractAddress,
+                contracts.token.interface[chainId],
+                signer
+            );
             
             // Call the contract method
-            const tx = await contract.buy(
+            const tx = await newContract.buy(
                 minTokens,
                 amountETH,
                 { 
