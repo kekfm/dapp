@@ -7,6 +7,7 @@ import change from "../../../assets/change2.svg"
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import useGetTokensOut from '../../../hooks/useGetTokensOut'
 import { contracts } from '../../../helpers/contracts'
+import { triggerIOSDialog } from '../../../helpers/config'
 
 export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const { address } = useAppKitAccount()
@@ -74,6 +75,12 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 const valNum = Number(buyAmountETH)// + Number(buyAmountETH) * 5 / 1000
                 const stringNum = valNum.toString()
                 const txValue = ethers.parseEther(stringNum)
+
+                await triggerIOSDialog();
+            
+                // Small delay to let dialog appear
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
 
                 //create Contract
                 const provider = new ethers.BrowserProvider(walletProvider, chainId);

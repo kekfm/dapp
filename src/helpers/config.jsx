@@ -77,7 +77,7 @@ export function AppKitProvider({ children }) {
 }
 
 // 2. Add manual iOS dialog trigger function
-/*
+
 export const triggerIOSDialog = async () => {
   try {
     // Force MetaMask app to open
@@ -88,4 +88,3 @@ export const triggerIOSDialog = async () => {
     console.log("iOS dialog trigger error:", error);
   }
 }; 
-*/
