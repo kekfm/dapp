@@ -1,25 +1,34 @@
-import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from '@reown/appkit/react'
 import { useState, useEffect } from 'react'
 import "/globals.css"
 import { ethers } from "ethers"
 import BuyModal from "./BuyModal"
 import change from "../../../assets/change2.svg"
-import useBuyToken from '../../../hooks/useBuyToken'
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import useGetTokensOut from '../../../hooks/useGetTokensOut'
+import { contracts } from '../../../helpers/contracts'
 
 export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const { address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
+    const { walletProvider } = useAppKitProvider("eip155")
+
     const [buyAmountETH, setBuyAmountETH] = useState(0)
     const [parsedETH, setParsedETH] = useState("")
     const [slippage, setSlippage] = useState(5)
     const [buyModalOpen, setBuyModalOpen] = useState(false)
     const [errors, setErrors] = useState({})
     const [tokenAmountOut, setTokenAmountOut] = useState(0)
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [txHash, setTxHash] = useState(null);
+    const [txReceipt, setTxReceipt] = useState(null);
+    const [isSuccess, setIsSuccess] = useState(false);
+
+
     
-    const { buyToken, isLoading, isSuccess, isError, receipt } = useBuyToken(tokenAddress)
-    const { balance, error } = useTokenBalance(tokenAddress)
+    const { balance, error:balanceError } = useTokenBalance(tokenAddress)
     const { tokensOut:tokenAmount, error:tokensOutError, getTokenAmount } = useGetTokensOut (tokenAddress)
 
     useEffect(() => {
@@ -44,7 +53,15 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const handleBuySubmitBuy = async (e) => {
         e.preventDefault()
         if (buyAmountETH > 0) {
+            if(!validateForm()) {
+                return
+            }
             try {
+                setIsLoading(true);
+                setError(null);
+                setTxHash(null);
+                setTxReceipt(null);
+                setIsSuccess(false);
                 // calc input params
                 const slipPerc = slippage > 0 ? slippage : 5
                 const numTokens = Number(tokenAmountOut)
@@ -55,22 +72,51 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
 
                 //calc tx value
                 const valNum = Number(buyAmountETH)// + Number(buyAmountETH) * 5 / 1000
-                console.log("valNum",valNum)
                 const stringNum = valNum.toString()
                 const txValue = ethers.parseEther(stringNum)
 
-                console.log("parsedTokens", ethers.formatEther(parsedTokens.toString()))
-                console.log("parsedETH", ethers.formatEther(parsedETH.toString()))
-                console.log("txValue", ethers.formatEther(txValue.toString()))
+                //create Contract
+                const provider = new ethers.BrowserProvider(walletProvider, chainId);
+                const signer = await provider.getSigner();
+                const contractAddress = tokenAddress;
+                
+            
+                const newContract = new ethers.Contract(
+                    contractAddress,
+                    contracts.token.interface[chainId],
+                    signer
+                );
+                console.log("newContract", newContract)
+                console.log("parsedTokens", parsedTokens)
+                console.log("parsedETH", parsedETH)
+                console.log("txValue", txValue)
 
-                if (validateForm()) {
-                    await buyToken(parsedTokens, parsedETH, txValue)
+                const tx = await newContract.buy(parsedTokens, parsedETH, {value: String(txValue)})
+                setTxHash(tx.hash);
+                const receipt = await tx.wait();
+                setTxReceipt(receipt);
+
+                if (receipt.status === 1) {
+                    console.log("🎉 Transaction successful!");
+                    setIsSuccess(true);
+                } else {
+                    throw new Error('Transaction failed - status 0');
                 }
-            } catch (e) {
-                console.log("error buying", e)
+
+
+
+            } catch (err) {
+                console.error('💥 Error during token creation:', {
+                    error: err,
+                    message: err.message,
+                    code: err.code,
+                    reason: err.reason,
+                    transaction: err.transaction
+                });
+            }finally {
+                console.log("🏁 Transaction process completed, setting loading to false");
+                setIsLoading(false);
             }
-        } else {
-            console.log("input an amount greater than zero")
         }
     }
 
@@ -166,7 +212,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
 
     return(
         <div className="connectbox border-4 border-black bg-base-4 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
-            <BuyModal isOpen={buyModalOpen} closeModal={handleBuyModal} tx={receipt} />
+            <BuyModal isOpen={buyModalOpen} closeModal={handleBuyModal} tx={txReceipt} />
             <form name="buy" onSubmit={handleBuySubmitBuy}>
                 <div className="flex flex-col">
                     <div className="flex flex-row justify-between pb-2">
