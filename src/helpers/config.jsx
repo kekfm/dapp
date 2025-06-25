@@ -41,7 +41,7 @@ const modulus = defineChain({
 })
 
 // Include standard networks that your Connect component expects
-export const networks = [mainnet, base, bscTestnet, modulus, sepolia] 
+export const networks = [modulus, mainnet, base, bscTestnet] 
 
 export const ethersAdapter = new EthersAdapter({
   projectId,
@@ -54,62 +54,17 @@ export const appkit = createAppKit({
   networks,
   projectId,
   metadata,
-  
-  // 🎯 KEY: Set default chain for mobile behavior
-  defaultChain: modulus, // or modulus - whatever your main chain is
-  
+  defaultChain: modulus,
   features: {
     analytics: true,
     email: false,
     socials: [],
     emailShowWallets: false
   },
-  
-  // 🎯 KEY: Mobile-specific settings
-  themeMode: 'light', // or 'dark'
   enableWalletConnect: true,
   enableInjected: true,
   enableEIP6963: true,
-  enableCoinbase: true,
-  
-  // 🔥 CRITICAL: Mobile wallet prioritization
-  mobileWallets: [
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      links: {
-        native: 'metamask://',
-        universal: 'https://metamask.app.link'
-      }
-    }
-  ],
-  
-  // 🔥 CRITICAL: Desktop wallet config
-  desktopWallets: [
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      links: {
-        native: 'metamask://',
-        universal: 'https://metamask.app.link'
-      }
-    }
-  ],
-  
-  // 🎯 KEY: Connection behavior
-  includeWalletIds: [
-    'metamask',
-    'walletConnect'
-  ],
-  
-  // 🔥 CRITICAL: Force WalletConnect for mobile
-  allowUnsupportedChain: false,
-  
-  // 🎯 Mobile-specific theming
-  themeVariables: {
-    '--w3m-font-family': 'IBM Plex Sans, sans-serif',
-    '--w3m-border-radius-master': '4px'
-  }
+  enableCoinbase: true
 })
 
 // Provider component for AppKit
@@ -119,4 +74,18 @@ export function AppKitProvider({ children }) {
       {children}
     </QueryClientProvider>
   )
-} 
+}
+
+// 2. Add manual iOS dialog trigger function
+/*
+export const triggerIOSDialog = async () => {
+  try {
+    // Force MetaMask app to open
+    window.location.href = 'metamask://';
+    // Alternative approach
+    window.open('metamask://', '_blank');
+  } catch (error) {
+    console.log("iOS dialog trigger error:", error);
+  }
+}; 
+*/
