@@ -54,16 +54,62 @@ export const appkit = createAppKit({
   networks,
   projectId,
   metadata,
+  
+  // 🎯 KEY: Set default chain for mobile behavior
+  defaultChain: modulus, // or modulus - whatever your main chain is
+  
   features: {
     analytics: true,
     email: false,
     socials: [],
     emailShowWallets: false
   },
+  
+  // 🎯 KEY: Mobile-specific settings
+  themeMode: 'light', // or 'dark'
   enableWalletConnect: true,
   enableInjected: true,
   enableEIP6963: true,
-  enableCoinbase: true
+  enableCoinbase: true,
+  
+  // 🔥 CRITICAL: Mobile wallet prioritization
+  mobileWallets: [
+    {
+      id: 'metamask',
+      name: 'MetaMask',
+      links: {
+        native: 'metamask://',
+        universal: 'https://metamask.app.link'
+      }
+    }
+  ],
+  
+  // 🔥 CRITICAL: Desktop wallet config
+  desktopWallets: [
+    {
+      id: 'metamask',
+      name: 'MetaMask',
+      links: {
+        native: 'metamask://',
+        universal: 'https://metamask.app.link'
+      }
+    }
+  ],
+  
+  // 🎯 KEY: Connection behavior
+  includeWalletIds: [
+    'metamask',
+    'walletConnect'
+  ],
+  
+  // 🔥 CRITICAL: Force WalletConnect for mobile
+  allowUnsupportedChain: false,
+  
+  // 🎯 Mobile-specific theming
+  themeVariables: {
+    '--w3m-font-family': 'IBM Plex Sans, sans-serif',
+    '--w3m-border-radius-master': '4px'
+  }
 })
 
 // Provider component for AppKit
