@@ -25,7 +25,7 @@ import { AppKitProvider } from './helpers/config.jsx'
 const App = () => (
     <AppKitProvider>
         <BrowserRouter>
-            <div className="min-h-screen bg-base-1 flex flex-col ">
+            <div className="min-h-screen bg-base-1 flex flex-col px-2 max-w-screen-lg mx-auto">
                 <Navbar />
                     <main className="flex-grow">
                         <Routes>

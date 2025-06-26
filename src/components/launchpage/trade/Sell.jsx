@@ -1,4 +1,4 @@
-import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from '@reown/appkit/react'
 import { useState, useEffect } from 'react'
 import "/globals.css"
 import { ethers } from "ethers"
@@ -7,19 +7,26 @@ import change from "../../../assets/change2.svg"
 import useSellToken from '../../../hooks/useSellToken'
 import useCultBalance from '../../../hooks/useCultBalance'
 import useGetCultOut from '../../../hooks/useGetCultOut'
+import WalletInstructionModal from "./WalletInstructionModal"
+import { getWalletName } from '../../../helpers/config'
 
 export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance, trading}) {
     const { address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
     const [sellAmountToken, setSellAmountToken] = useState(0)
     const [parsedToken, setParsedToken] = useState("0")
     const [slippage, setSlippage] = useState(5)
     const [sellModalOpen, setSellModalOpen] = useState(false)
     const [errors, setErrors] = useState({})
     const [calcCultOut, setCalcCultOut] = useState(0)
+    const [showWalletModal, setShowWalletModal] = useState(false);
+    const { walletProvider } = useAppKitProvider("eip155")
+    const [error, setError] = useState(null);
+
+
     
-    const { sellToken, isLoading, isSuccess, isError, receipt } = useSellToken(tokenAddress)
-    const { balance:ethBalance, error } = useCultBalance()
+    const { sellToken, isLoading:isSellLoading, isSuccess, isError, receipt } = useSellToken(tokenAddress)
+    const { balance:ethBalance } = useCultBalance()
     const { cultOut, error:cultOutError, getCultOut } = useGetCultOut(tokenAddress)
 
     useEffect(() => {
@@ -35,6 +42,28 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
         fetchCultOut()
     }, [sellAmountToken])
 
+    const handleCancelTransaction = () => {
+        setShowWalletModal(false);
+        setError("Transaction cancelled by user");
+    }
+
+    const isMobile = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Check for mobile user agents
+        const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        const isMobileUA = mobileRegex.test(userAgent);
+        
+        // Check for small screen size
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        // Check if it's a touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // Return true if any mobile indicator is found
+        return isMobileUA || (isSmallScreen && isTouchDevice);
+    };
+
     const handleSellSubmit = async (e) => {
         e.preventDefault()
         if (sellAmountToken > 0) {
@@ -44,9 +73,25 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                 const minETH = Number(calcCultOut) - (Number(calcCultOut) * slipPerc / 100)
                 const stringETH = minETH.toString()
 
-                if (validateForm()) {
-                    await sellToken(parsedToken, ethers.parseEther(stringETH))
+                if(!validateForm()) {
+                    return
                 }
+
+                // 🔥 SHOW WALLET INSTRUCTION MODAL ONLY ON MOBILE
+                const isOnMobile = isMobile();
+                if (isOnMobile) {
+                    setShowWalletModal(true);
+                    console.log("📱 Mobile detected - showing wallet instruction modal");
+                } else {
+                    console.log("🖥️ Desktop detected - wallet will open automatically");
+                }
+
+                    await sellToken(parsedToken, ethers.parseEther(stringETH))
+                    
+                    if (isOnMobile) {
+                        setShowWalletModal(false);
+                    }
+                
             } catch (e) {
                 console.log("error selling", e)
             }
@@ -146,9 +191,17 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
     return(
         <div className="connectbox border-4 border-black bg-base-4 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
             <SellModal isOpen={sellModalOpen} closeModal={handleSellModal} tx={receipt} />
+
+            {/* 🔥 WALLET INSTRUCTION MODAL */}
+            <WalletInstructionModal 
+                isOpen={showWalletModal} 
+                onClose={handleCancelTransaction}
+                walletName={getWalletName(walletProvider)}
+            />
+            
             <form name="sell" onSubmit={handleSellSubmit}>
                 <div className="flex flex-col">
-                    <div className="flex flex-row justify-between items-center pb-2">
+                    <div className="flex flex-row justify-between pb-2">
                         <div className="font-basic font-semibold">sell ${tokenTicker}</div>
                         <div className="flex flex-row items-center">
                             <div className="font-basic font-medium text-xs pr-2">
@@ -196,7 +249,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                         </div>
                     </div>
                 </div>
-                {!isLoading ? (
+                {!isSellLoading ? (
                     <button className="border-2 border-black connectbox bg-base-1 font-basic px-4 mt-2" type="submit">
                         sell
                     </button>

@@ -118,10 +118,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                     contracts.token.interface[chainId],
                     signer
                 );
-                console.log("newContract", newContract)
-                console.log("parsedTokens", parsedTokens)
-                console.log("parsedETH", parsedETH)
-                console.log("txValue", txValue)
+            
 
                 const tx = await newContract.buy(parsedTokens, parsedETH, {value: String(txValue)})
                 

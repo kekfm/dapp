@@ -1,6 +1,7 @@
 import '../../globals.css'
 import { useEffect, useState} from 'react'
-import { useAppKitAccount, useAppKitNetwork } from '@reown/appkit/react'
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from '@reown/appkit/react'
+import { useAppKitNetwork } from '@reown/appkit/react'
 import { useNavigate } from 'react-router-dom'
 import { ethers } from "ethers";
 import {contracts} from "../helpers/contracts"
@@ -16,14 +17,19 @@ import { supportedChainIds } from '../helpers/chains';
 import factoryAbi from '../abis/factoryABI.json'
 import useFeeInfo from '../hooks/useFeeInfo'
 import useCreateToken from '../hooks/useCreateToken'
+import WalletInstructionModal from "../components/launchpage/trade/WalletInstructionModal"
+import { getWalletName } from '../helpers/config'
+
+
 
 export default function LaunchForm() {
     const { isConnected, address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
+    const { switchNetwork } = useAppKitNetwork()
     const navigate = useNavigate()
 
     // Read fee directly from contract
-    const { feeInfo, error } = useFeeInfo()
+    const { feeInfo } = useFeeInfo()
 
     // Factory contract hook
     const { contract, isLoading: isCreateLoading, error: createError, txHash, txReceipt, isSuccess, createToken } = useCreateToken()
@@ -43,6 +49,11 @@ export default function LaunchForm() {
         buyAmount:''
     })
     const [errors, setErrors] = useState({})
+    const [showWalletModal, setShowWalletModal] = useState(false);
+    const { walletProvider } = useAppKitProvider("eip155")
+    const [error, setError] = useState(null);
+
+
 
     // Handle success modal - open when transaction succeeds
     useEffect(() => {
@@ -59,6 +70,27 @@ export default function LaunchForm() {
         // Clear error state when closing fail modal
         // This will be handled by the hook state
     }
+    const handleCancelTransaction = () => {
+        setShowWalletModal(false);
+        setError("Transaction cancelled by user");
+    }
+
+    const isMobile = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Check for mobile user agents
+        const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        const isMobileUA = mobileRegex.test(userAgent);
+        
+        // Check for small screen size
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        // Check if it's a touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // Return true if any mobile indicator is found
+        return isMobileUA || (isSmallScreen && isTouchDevice);
+    };
 
     const handleChange = (e) => {
         const {name, value} = e.target
@@ -117,7 +149,14 @@ export default function LaunchForm() {
 
         if(validateForm() && isConnected){
             try{
-                console.log("calling")
+                const isOnMobile = isMobile();
+                if (isOnMobile) {
+                    setShowWalletModal(true);
+                    console.log("📱 Mobile detected - showing wallet instruction modal");
+                } else {
+                    console.log("🖥️ Desktop detected - wallet will open automatically");
+                }
+
                 const contractAddresses = [contracts.eventhandler.addresses[chainId], contracts.WETH.addresses[chainId], contracts.sushiV2Factory.addresses[chainId], contracts.sushiV2Router.addresses[chainId]]
                 const tokenName = formData.name
                 const tokenSymbol = formData.ticker
@@ -131,12 +170,15 @@ export default function LaunchForm() {
 
                 const feeAddress = contracts.feeAddress[chainId]
                 const parsedBuyAmount = formData.buyAmount > 0 ? ethers.parseEther(formData.buyAmount.toString()) : 0n
-                console.log("parsedBuyAmount", parsedBuyAmount)
+                //console.log("parsedBuyAmount", parsedBuyAmount)
                 const totalValue = parsedBuyAmount > 0n ? (parsedBuyAmount + (parsedBuyAmount * 5n) / 1000n) + BigInt(feeInfo) : BigInt(feeInfo)
-                console.log("totalValue", totalValue)
+                //console.log("totalValue", totalValue)
 
-                console.log("calling writeContract")
+                //console.log("calling writeContract")
                 createToken(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, totalValue)
+                if (isOnMobile) {
+                    setShowWalletModal(false);
+                }
             }
             catch(error){
                 console.error("Error creating token:", error)
@@ -151,9 +193,9 @@ export default function LaunchForm() {
                     <img src={supported} alt="image"></img>
                 </div>
                 <div className="flex flex-row justify-center gap-4 p-4 ">
-                    <img onClick={() => switchNetwork(97)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="image"></img>
-                    <img onClick={() => switchNetwork(6666)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="image"></img>
-                    <img onClick={() => switchNetwork(8453)} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="image"></img>
+                    <img onClick={() => switchNetwork('eip155:97')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="Switch to BSC Testnet"></img>
+                    <img onClick={() => switchNetwork('eip155:6666')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="Switch to Modulus"></img>
+                    <img onClick={() => switchNetwork('eip155:8453')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="Switch to Base"></img>
                 </div>
             </div>
         )
@@ -176,6 +218,11 @@ export default function LaunchForm() {
                 isOpen={!!createError} 
                 closeModal={closeFailModal}
                 error={createError}
+            />
+            <WalletInstructionModal 
+                isOpen={showWalletModal} 
+                onClose={handleCancelTransaction}
+                walletName={getWalletName(walletProvider)}
             />
             
             <div className={`pb-8 pt-20`}>
