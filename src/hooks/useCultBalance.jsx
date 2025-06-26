@@ -2,6 +2,7 @@
 import { ethers } from "ethers"
 import { useEffect, useState } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
+import { supportedChainIds } from "../helpers/chains"
 
 export default function useCultBalance() {
     const { isConnected, address } = useAppKitAccount()
@@ -37,7 +38,7 @@ export default function useCultBalance() {
     }
 
     const fetchBalance = async () => {
-        if (!address || !chainId) {
+        if (!address || !chainId || !supportedChainIds.includes(chainId)) {
             console.log('Missing address or chainId for balance fetch')
             return
         }

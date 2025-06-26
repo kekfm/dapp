@@ -186,20 +186,7 @@ export default function LaunchForm() {
         }
     }
 
-    if (!supportedChainIds.includes(chainId)) {
-        return(
-            <div className="flex flex-col justify-center mt-10">
-                <div className="flex justify-center">
-                    <img src={supported} alt="image"></img>
-                </div>
-                <div className="flex flex-row justify-center gap-4 p-4 ">
-                    <img onClick={() => switchNetwork('eip155:97')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={bnb} alt="Switch to BSC Testnet"></img>
-                    <img onClick={() => switchNetwork('eip155:6666')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={modulus} alt="Switch to Modulus"></img>
-                    <img onClick={() => switchNetwork('eip155:8453')} className="w-[50px] hover:scale-110 hover:cursor-pointer" src={base} alt="Switch to Base"></img>
-                </div>
-            </div>
-        )
-    }
+    
 
     console.log("feeInfo", feeInfo)
 

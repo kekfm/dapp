@@ -2,6 +2,7 @@ import { ethers } from "ethers"
 import { useEffect, useState, useCallback } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
+import { supportedChainIds } from "../helpers/chains"
 
 export default function useGetCultOut(tokenAddress) {
     const { isConnected, address } = useAppKitAccount()
@@ -13,7 +14,7 @@ export default function useGetCultOut(tokenAddress) {
 
     useEffect(() => {
         // Try to initialize contract in multiple ways for Telegram mini app compatibility
-        if (tokenAddress &&isConnected && walletProvider && chainId) {
+        if (tokenAddress &&isConnected && walletProvider && chainId && supportedChainIds.includes(chainId)) {
             console.log("Wallet connected, using wallet provider...")
             setTimeout(() => initializeContract(), 100)
         } else if (tokenAddress && chainId && isConnected) {

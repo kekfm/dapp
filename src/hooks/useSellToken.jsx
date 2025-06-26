@@ -2,6 +2,7 @@ import { ethers } from "ethers"
 import { useEffect, useState, useCallback } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
+import { supportedChainIds } from "../helpers/chains"
 
 
 export default function useBuyToken(tokenAddress) {
@@ -22,7 +23,7 @@ export default function useBuyToken(tokenAddress) {
 
     useEffect(() => {
         // Add delay to ensure provider is ready
-        if (tokenAddress && isConnected && walletProvider && chainId) {
+        if (tokenAddress && isConnected && walletProvider && chainId && supportedChainIds.includes(chainId)) {
             console.log("All conditions met, initializing contract...")
             setTimeout(() => initializeContract(), 100)
         } else {

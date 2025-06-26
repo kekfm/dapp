@@ -2,6 +2,7 @@ import { ethers } from "ethers"
 import { useEffect, useState, useCallback } from "react"
 import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
+import { supportedChainIds } from "../helpers/chains"
 
 export default function useGetTokensOut(tokenAddress) {
     const { isConnected, address } = useAppKitAccount()
@@ -13,7 +14,7 @@ export default function useGetTokensOut(tokenAddress) {
 
     useEffect(() => {
         // Initialize contract when dependencies change
-        if (tokenAddress && chainId) {
+        if (tokenAddress && chainId && supportedChainIds.includes(chainId)) {
             if (isConnected && walletProvider) {
                 console.log("Wallet connected, using wallet provider...")
                 setTimeout(() => initializeContract(), 100)

@@ -1,11 +1,12 @@
 import { ethers } from "ethers"
 import { useEffect, useState } from "react"
-import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
+import { supportedChainIds } from "../helpers/chains"
 
 export default function useFeeInfo() {
     const { isConnected, address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
     const { walletProvider } = useAppKitProvider("eip155")
     const [feeInfo, setFeeInfo] = useState(null)
     const [error, setError] = useState(null)
@@ -13,7 +14,7 @@ export default function useFeeInfo() {
 
     useEffect(() => {
         // Try to initialize contract in multiple ways for Telegram mini app compatibility
-        if (isConnected && walletProvider && chainId) {
+        if (isConnected && walletProvider && chainId && supportedChainIds.includes(chainId)) {
             console.log("Wallet connected, using wallet provider...")
             setTimeout(() => initializeContract(), 100)
         } else if (chainId) {

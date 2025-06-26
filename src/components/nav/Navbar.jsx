@@ -37,7 +37,7 @@ export default function Navbar() {
     return (
         <div className="font-basic font-semibold flex flex-row justify-between pt-8 bg-base-1">
             <Link to="/">
-                <div className="text-4xl connectbox max-sm:ml-2 px-10 py-2 border-4 border-black bg-base-4 ">
+                <div className="text-4xl connectbox max-sm:ml-2 px-10 py-2 border-4 border-black bg-base-4 mb-2">
                     kek
                 </div>
             </Link>

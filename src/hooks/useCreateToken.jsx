@@ -1,13 +1,14 @@
 import { ethers } from "ethers"
 import { useEffect, useState, useCallback } from "react"
-import { useAppKitProvider, useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react"
+import { useAppKitProvider, useAppKitAccount, useAppKitNetworkCore } from "@reown/appkit/react"
 import { contracts } from "../helpers/contracts"
+import { supportedChainIds } from "../helpers/chains"
 
 
 export default function useCreateToken() {
 
     const { isConnected, address } = useAppKitAccount()
-    const { chainId } = useAppKitNetwork()
+    const { chainId } = useAppKitNetworkCore()
     const { walletProvider } = useAppKitProvider("eip155")
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function useCreateToken() {
 
     useEffect(() => {
         // Add delay to ensure provider is ready
-        if (isConnected && walletProvider && chainId) {
+        if (isConnected && walletProvider && chainId && supportedChainIds.includes(chainId)) {
             console.log("All conditions met, initializing contract...")
             setTimeout(() => initializeContract(), 100)
         } else {
