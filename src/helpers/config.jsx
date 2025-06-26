@@ -78,59 +78,43 @@ export function AppKitProvider({ children }) {
 
 // 2. Add manual iOS dialog trigger function
 
+// Replace your triggerConnectedWalletDialog with this:
 export const triggerConnectedWalletDialog = async (walletProvider) => {
   try {
-      console.log("🔍 Detecting connected wallet...");
+      console.log("🔍 Triggering wallet connection...");
       
-      // Method 1: Check provider properties (most reliable)
-      let walletName = 'unknown';
-      
-      if (walletProvider?.isMetaMask) {
-          walletName = 'metamask';
-      } else if (walletProvider?.isTrust) {
-          walletName = 'trust';
-      } else if (walletProvider?.isRainbow) {
-          walletName = 'rainbow';
-      } else if (walletProvider?.isCoinbaseWallet) {
-          walletName = 'coinbase';
-      } else if (walletProvider?.connector?.name) {
-          // Fallback to connector name
-          walletName = walletProvider.connector.name.toLowerCase();
+      // Method 1: Use AppKit's built-in mobile handling
+      if (window.appkit) {
+          console.log("🚀 Using AppKit modal...");
+          window.appkit.open({ view: 'Account' });
+          return;
       }
       
-      console.log("🎯 Detected wallet:", walletName);
-      
-      // Get the correct deep link
-      const deepLinks = {
-          'metamask': 'metamask://',
-          'trust': 'trust://',
-          'rainbow': 'rainbow://',
-          'coinbase': 'cbwallet://',
-          'imtoken': 'imtokenv2://',
-          'tokenpocket': 'tpoutside://',
-          'walletconnect': 'wc://'
-      };
-      
-      const deepLink = deepLinks[walletName];
-      
-      if (deepLink) {
-          console.log("🚀 Opening wallet with:", deepLink);
-          window.location.href = deepLink;
-      } else {
-          console.log("⚠️ No deep link found, using fallback");
-          // Fallback: try to trigger any wallet
-          if (walletProvider?.request) {
-              await walletProvider.request({ method: 'eth_requestAccounts' });
-          }
+      // Method 2: Force account request (most reliable)
+      if (walletProvider?.request) {
+          console.log("🚀 Using provider request...");
+          await walletProvider.request({ 
+              method: 'eth_requestAccounts' 
+          });
+          return;
       }
+      
+      // Method 3: Try window.ethereum
+      if (window.ethereum?.request) {
+          console.log("🚀 Using window.ethereum...");
+          await window.ethereum.request({ 
+              method: 'eth_requestAccounts' 
+          });
+          return;
+      }
+      
+      console.log("⚠️ No wallet trigger method available");
       
   } catch (error) {
       console.log("Wallet trigger error:", error);
-      // Final fallback
-      try {
-          await walletProvider?.request({ method: 'eth_requestAccounts' });
-      } catch (e) {
-          console.log("All wallet triggers failed");
-      }
+      
+      // Fallback: Don't trigger anything, let transaction proceed
+      // The transaction itself will trigger MetaMask
+      console.log("🔄 Letting transaction trigger wallet naturally...");
   }
 };
