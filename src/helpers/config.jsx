@@ -78,13 +78,59 @@ export function AppKitProvider({ children }) {
 
 // 2. Add manual iOS dialog trigger function
 
-export const triggerIOSDialog = async () => {
+export const triggerConnectedWalletDialog = async (walletProvider) => {
   try {
-    // Force MetaMask app to open
-    window.location.href = 'metamask://';
-    // Alternative approach
-    window.open('metamask://', '_blank');
+      console.log("🔍 Detecting connected wallet...");
+      
+      // Method 1: Check provider properties (most reliable)
+      let walletName = 'unknown';
+      
+      if (walletProvider?.isMetaMask) {
+          walletName = 'metamask';
+      } else if (walletProvider?.isTrust) {
+          walletName = 'trust';
+      } else if (walletProvider?.isRainbow) {
+          walletName = 'rainbow';
+      } else if (walletProvider?.isCoinbaseWallet) {
+          walletName = 'coinbase';
+      } else if (walletProvider?.connector?.name) {
+          // Fallback to connector name
+          walletName = walletProvider.connector.name.toLowerCase();
+      }
+      
+      console.log("🎯 Detected wallet:", walletName);
+      
+      // Get the correct deep link
+      const deepLinks = {
+          'metamask': 'metamask://',
+          'trust': 'trust://',
+          'rainbow': 'rainbow://',
+          'coinbase': 'cbwallet://',
+          'imtoken': 'imtokenv2://',
+          'tokenpocket': 'tpoutside://',
+          'walletconnect': 'wc://'
+      };
+      
+      const deepLink = deepLinks[walletName];
+      
+      if (deepLink) {
+          console.log("🚀 Opening wallet with:", deepLink);
+          window.location.href = deepLink;
+      } else {
+          console.log("⚠️ No deep link found, using fallback");
+          // Fallback: try to trigger any wallet
+          if (walletProvider?.request) {
+              await walletProvider.request({ method: 'eth_requestAccounts' });
+          }
+      }
+      
   } catch (error) {
-    console.log("iOS dialog trigger error:", error);
+      console.log("Wallet trigger error:", error);
+      // Final fallback
+      try {
+          await walletProvider?.request({ method: 'eth_requestAccounts' });
+      } catch (e) {
+          console.log("All wallet triggers failed");
+      }
   }
-}; 
+};
