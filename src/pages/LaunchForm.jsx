@@ -59,8 +59,19 @@ export default function LaunchForm() {
     useEffect(() => {
         if (isSuccess && txReceipt) {
             console.log("Token creation successful, opening success modal");
+            // Hide wallet instruction modal on success
+            setShowWalletModal(false);
         }
     }, [isSuccess, txReceipt])
+
+    // Handle transaction errors
+    useEffect(() => {
+        if (createError) {
+            console.log("Token creation failed:", createError);
+            // Hide wallet instruction modal on error
+            setShowWalletModal(false);
+        }
+    }, [createError])
 
     const closeModal = () => {
         navigate('/')
@@ -89,7 +100,18 @@ export default function LaunchForm() {
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         
         // Return true if any mobile indicator is found
-        return isMobileUA || (isSmallScreen && isTouchDevice);
+        const result = isMobileUA || (isSmallScreen && isTouchDevice);
+        
+        console.log("🔍 Mobile Detection:", {
+            userAgent: userAgent,
+            isMobileUA,
+            isSmallScreen,
+            isTouchDevice,
+            windowWidth: window.innerWidth,
+            finalResult: result
+        });
+        
+        return result;
     };
 
     const handleChange = (e) => {
@@ -176,20 +198,20 @@ export default function LaunchForm() {
 
                 //console.log("calling writeContract")
                 createToken(contractAddresses, tokenName, tokenSymbol, tokenInfo, feeAddress, parsedBuyAmount, totalValue)
-                if (isOnMobile) {
-                    setShowWalletModal(false);
-                }
+                
+                // Don't hide modal immediately - let it stay open until transaction completes
             }
             catch(error){
                 console.error("Error creating token:", error)
+                // Hide modal on error
+                if (isMobile()) {
+                    setShowWalletModal(false);
+                }
             }
         }
     }
 
     
-
-    console.log("feeInfo", feeInfo)
-
     return(
         <div className="flex flex-col font-basic font-medium items-center justify-center min-h-screen bg-base-1 pb-20 ">
             {/* Success Modal - controlled by hook state */}

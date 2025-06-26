@@ -159,7 +159,7 @@ export default function useCreateToken() {
                 transaction: err.transaction
             });
             
-            let errorMessage = 'Failed to create token: ' + err.message;
+            let errorMessage = 'Failed to create token';
             
             // Handle specific error types
             if (err.code === 'INSUFFICIENT_FUNDS') {
