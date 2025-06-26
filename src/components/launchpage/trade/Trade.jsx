@@ -30,9 +30,7 @@ export default function Trade ({tokenAddress, tokenTicker, tokenBalance, trading
 
     return(
         <div>
-            <div className="fomnt-basic text-lg font-bold">
-                trade
-            </div>
+       
             <div>
                 {isBuy &&
                     <Buy tokenAddress={tokenAddress} tokenTicker={tokenTicker} setIsBuy={setIsBuy} tokenBalance={tokenBalance} trading={trading} />

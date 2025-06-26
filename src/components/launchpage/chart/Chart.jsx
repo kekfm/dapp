@@ -7,6 +7,7 @@ export default function Chart({ data }) {
     const [seconds, setSeconds] = useState(300);
     const chartContainerRef = useRef();
     const candlestickSeriesRef = useRef();
+    const chartRef = useRef();
 
     const formatEtherValue = (value) => {
         return parseFloat(ethers.formatEther(value)).toFixed(18);
@@ -28,33 +29,61 @@ export default function Chart({ data }) {
         return intervals;
     };
 
+    // Resize handler
+    const handleResize = () => {
+        if (chartRef.current && chartContainerRef.current) {
+            const containerWidth = chartContainerRef.current.clientWidth;
+            const containerHeight = chartContainerRef.current.clientHeight;
+            chartRef.current.applyOptions({ 
+                width: containerWidth,
+                height: containerHeight 
+            });
+        }
+    };
+
     useEffect(() => {
         if (!chartContainerRef.current) return;
+
+        const containerWidth = chartContainerRef.current.clientWidth;
+        const containerHeight = chartContainerRef.current.clientHeight;
 
         const chartOptions = {
             layout: {
                 textColor: 'white',
-                background: { type: 'solid', color: '#00000' },
+                background: { type: 'solid', color: '#000000' },
             },
             timeScale: {
                 timeVisible: true,
                 secondsVisible: true,
-                rightOffset: 12, // Adds space on the right to zoom out a bit
-                barSpacing: 6,
+                rightOffset: 12,
+                barSpacing: Math.max(6, Math.floor(containerWidth / 100)), // Dynamic bar spacing
+                fixLeftEdge: false,
+                fixRightEdge: false,
             },
             priceScale: {
                 scaleMargins: {
-                    top: 0.000001,
-                    bottom: 0.000001,
+                    top: 0.1,
+                    bottom: 0.1,
                 },
                 borderVisible: true,
                 mode: 2, // Logarithmic scale
             },
+            crosshair: {
+                mode: 1, // Normal crosshair
+            },
+            grid: {
+                vertLines: {
+                    color: '#333333',
+                },
+                horzLines: {
+                    color: '#333333',
+                },
+            },
         };
 
         const chart = createChart(chartContainerRef.current, {
-            width: chartContainerRef.current.clientWidth,
-            height: 150,
+            width: containerWidth,
+            height: containerHeight,
             ...chartOptions
         });
             
@@ -73,9 +102,17 @@ export default function Chart({ data }) {
         });
 
         candlestickSeriesRef.current = candlestickSeries;
+        chartRef.current = chart;
+        
+        // Add resize listener
+        window.addEventListener('resize', handleResize);
+        
         chart.timeScale().fitContent();
 
-        return () => chart.remove();  // Cleanup on unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            chart.remove();
+        };
     }, []);
 
     useEffect(() => {
@@ -120,18 +157,20 @@ export default function Chart({ data }) {
         }
     
         candlestickSeriesRef.current.setData(candlestickData);
-        //console.log("candlestickData", candlestickData);
+        
+        // Auto-fit content after data update
+        if (chartRef.current) {
+            chartRef.current.timeScale().fitContent();
+        }
     
     }, [data, seconds]);
     
 
     return (
-        <div className="flex flex-col justify-start">
-            <div className="font-basic text-xl font-bold">chart</div>
-            <div className="flex connectbox border-4 border-black bg-white p-4 w-[400px] h-[200px]">
-                {/*<div ref={chartContainerRef} style={{ width: '700px', height: '300px' }}></div>*/}
-                <div ref={chartContainerRef} className="w-full h-full"></div>
-
+        <div className="flex flex-col w-full">
+            <div className="connectbox border-4 border-black bg-black w-full h-64 sm:h-80 lg:h-96 xl:h-[500px]">
+                <div ref={chartContainerRef} className="w-full h-full p-2">
+                </div>
             </div>
         </div>
     );

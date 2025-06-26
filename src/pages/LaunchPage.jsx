@@ -160,128 +160,184 @@ export default function LaunchPage () {
     }
 
     return(
-        <div className="flex flex-col items-center w-full pt-10">
-            <div className="flex justify-center pb-4">
-                <img src={tokenpage} className="max-w-[280px]"></img>
+        <div className="flex flex-col items-center w-full pt-10 pb-20 bg-base-1 min-h-screen">
+            {/* Header */}
+            <div className="flex justify-center pb-8">
+                <img src={tokenpage} className="max-w-[280px]" alt="Token Page" />
             </div>
-            {props && d &&
-            <div className="flex flex-col pt-10">
-                <div className="flex flex-row max-md:flex-col gap-20">
-                    <div className="flex flex-col">
-                        <div className="flex flex-col">
-                            <div className="flex flex-col lg:flex-row">
-                                <div className="max-w-[250px] lg:max-w-[300px] h-auto pt-2">
-                                    { d && d.logo && <img src={d.logo} alt="no image" className="aspect-square object-contain border-4 border-black bg-black connectbox"/>}
-                                    { d && !d.logo && <img src={noimage} alt="no image" className="aspect-square object-contain border-4 border-black bg-black connectbox"/>}
-                                </div>
-                                <div className="flex flex-col pl-2 pt-2 w-full ">
-                                    <div className={`font-basic font-bold text-md text-black`}>
-                                        {props.name} (${props.symbol})
+
+            {props && d && (
+                <div className="flex flex-col w-full max-w-6xl px-4 gap-8">
+                    {/* Main Content Row */}
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Left Column - Token Info Card */}
+                        <div className="flex-1">
+                            <div className="connectbox border-4 border-black bg-base-7 p-6">
+                                {/* Token Header */}
+                                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                                    <div className="w-32 h-32 flex-shrink-0">
+                                        {d && d.logo ? (
+                                            <img 
+                                                src={d.logo} 
+                                                alt={props.name} 
+                                                className="w-full h-full object-cover border-4 border-black connectbox bg-white"
+                                            />
+                                        ) : (
+                                            <img 
+                                                src={noimage} 
+                                                alt="No image" 
+                                                className="w-full h-full object-cover border-4 border-black connectbox bg-white"
+                                            />
+                                        )}
                                     </div>
-                                    <div className="flex flex-col items-start justify-start">
-                                        <div className={`font-basic flex text-xs text-black font-bold pt-2 items-center`}>
-                                            progress {percentage.toFixed(1)}%
-                                        </div>
-                                            <Progressbar percentage={percentage} />
-                                    </div>
-                                    <div className= "flex flex-row justify-start gap-2 pt-1">
-                                        {d && d.website &&
-                                            <div className="text-xs">
-                                                <Link to={d.website}>
-                                                  [web]
-                                                </Link>
-                                            </div>
-                                        }
-                                        {d && d.twitter &&
-                                            <div className="text-xs">
-                                                <Link to={d.twitter}>
-                                                    [x]
-                                                </Link>
-                                            </div>
-                                        }
-                                        {d && d.telegram &&
-                                            <div className="text-xs">
-                                                <Link to={d.telegram}>
-                                                    [telegram]
-                                                </Link>
-                                            </div>
-                                        }
+                                    
+                                    <div className="flex-1 min-w-0">
+                                        <h1 className="font-basic font-bold text-2xl text-black mb-2">
+                                            {props.name} (${props.symbol})
+                                        </h1>
                                         
-                                    </div>
-                                    <div className={`mt-2 text-xs text-black hover:cursor-pointer`} onClick={goToDev}>
-                                        created by <span className='text-base-2 font-semibold'>{props.owner.slice(0,4)}...{props.owner.slice(props.owner.length -4, props.owner.length)}</span>
-                                    </div>
-                                    <div className="flex flex-row gap-2 text-xs pt-2">
-                                        <div>
-                                            <span className="font-bold">buys:</span> <span className="text-base-2 font-bold">{uniqueBuys?.length}</span>
+                                        {/* Progress Section */}
+                                        <div className="mb-4">
+                                            <div className="font-basic text-sm font-bold text-black mb-1">
+                                                Progress: {percentage.toFixed(1)}%
+                                            </div>
+                                            <Progressbar percentage={percentage} />
                                         </div>
-                                        <div>
-                                            <span className="font-bold">sells:</span> <span className="text-base-2 font-bold">{uniqueSells?.length}</span>
+                                        
+                                        {/* Creator Info */}
+                                        <div className="font-basic text-sm text-black hover:cursor-pointer mb-2" onClick={goToDev}>
+                                            Created by <span className='text-base-2 font-semibold'>
+                                                {props.owner.slice(0,6)}...{props.owner.slice(-4)}
+                                            </span>
+                                        </div>
+                                        
+                                        {/* Chain Info */}
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="font-bold">Chain:</span>
+                                            {props.chainId == 97 && <img className="w-5 h-5" src={bnb} alt="BSC" />}
+                                            {props.chainId == 8453 && <img className="w-5 h-5" src={base} alt="Base" />}
+                                            {props.chainId == 6666 && <img className="w-5 h-5" src={modulus} alt="Modulus" />}
                                         </div>
                                     </div>
-                                    <div className="text-xs pt-2">
-                                        <span className="font-bold">dev jeeted?</span> {jeet}
+                                </div>
+
+                                {/* Stats Row */}
+                                <div className="grid grid-cols-3 gap-4 mb-6">
+                                    <div className="text-center p-3 bg-base-2 border-4 border-black connectbox">
+                                        <div className="font-bold text-lg text-black">{uniqueBuys?.length}</div>
+                                        <div className="text-xs font-bold">Buys</div>
                                     </div>
+                                    <div className="text-center p-3 bg-base-2 border-4 border-black connectbox">
+                                        <div className="font-bold text-lg text-black">{uniqueSells?.length}</div>
+                                        <div className="text-xs font-bold">Sells</div>
+                                    </div>
+                                    <div className="text-center p-3 bg-base-8 border-4 border-black connectbox">
+                                        <div className="font-bold text-lg text-white">{jeet}</div>
+                                        <div className="text-xs font-bold text-white">Dev Jeeted?</div>
+                                    </div>
+                                </div>
+
+                                {/* Description */}
+                                <div className="mb-6">
+                                    <h3 className="font-basic font-bold text-lg mb-2">Description</h3>
+                                    <div className='connectbox border-4 border-black bg-white p-4 text-sm max-h-32 overflow-auto'>
+                                        {d.des}
+                                    </div>
+                                </div>
+
+                                {/* Links */}
+                                {(d?.website || d?.twitter || d?.telegram) && (
                                     <div>
-                                        {props.chainId == 97 && 
-                                            <div className="flex flex-row gap-2 text-xs pt-2">
-                                                <span>chain:</span> <img className="w-4" src={bnb}></img>
-                                            </div>
-                                        }
-                                        {props.chainId == 8453 && 
-                                            <div className="flex flex-row gap-2 text-xs pt-2">
-                                                <span>chain:</span> <img className="w-4" src={base}></img>
-                                            </div>
-                                        }
-                                        {props.chainId == 6666 && 
-                                            <div className="flex flex-row gap-2 text-xs pt-2">
-                                                <span>chain:</span> <img className="w-4" src={modulus}></img>
-                                            </div>
-                                        }
+                                        <h3 className="font-basic font-bold text-lg mb-2">Links</h3>
+                                        <div className="flex flex-wrap gap-3">
+                                            {d?.website && (
+                                                <Link 
+                                                    to={d.website} 
+                                                    className="connectbox border-4 border-black bg-base-1 px-4 py-2 text-sm font-bold hover:bg-base-2 transition-colors"
+                                                >
+                                                    🌐 Website
+                                                </Link>
+                                            )}
+                                            {d?.twitter && (
+                                                <Link 
+                                                    to={d.twitter} 
+                                                    className="connectbox border-4 border-black bg-base-1 px-4 py-2 text-sm font-bold hover:bg-base-2 transition-colors"
+                                                >
+                                                    🐦 Twitter
+                                                </Link>
+                                            )}
+                                            {d?.telegram && (
+                                                <Link 
+                                                    to={d.telegram} 
+                                                    className="connectbox border-4 border-black bg-base-1 px-4 py-2 text-sm font-bold hover:bg-base-2 transition-colors"
+                                                >
+                                                    💬 Telegram
+                                                </Link>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div className='flex text-sm connectbox max-w-[300px] lg:max-w-[480px] h-28 border-2 border-black mt-6 px-1 mb-4 mr-2 bg-white  overflow-auto'>
-                                {d.des}
+                                )}
                             </div>
                         </div>
-                        <div className="flex pt-4 w-full justify-start w-full">
-                            <CommentSection tokenAddress={tokenAddr} props={comments} txns={latestTx}/>
-                        </div>
-                    </div>
-                    <div className="flex flex-col">
-                        <div className="flex flex-col justify-start">
-                        
-                                <div className="flex font-basic font-semibold text-xl text-start pr-4 mr-2 pb-4 w-full "> 
-                                    <Trade tokenAddress={props?.tokenAddress} tokenTicker={props?.symbol} tokenBalance={tokenBalance} trading={trading} chain={props?.chainId}/>
-                                </div>
-                            
-                            {tokenBalance ? 
-                                <div className="flex items-start justify-start">
-                                    <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-2 p-1 mr-2 max-sm:w-[250px] max-w-[300px]"> 
-                                        your balance: {tokenBalance ? ethers.formatEther(tokenBalance?.toString()) : '0'} ${props?.symbol}
-                                    </div>
+
+                        {/* Right Column - Trading Card */}
+                        <div className="lg:w-80">
+                            <div className="connectbox border-4 border-black bg-base-2 p-6">
+                                <h2 className="font-basic font-bold text-xl mb-4">Trade</h2>
+                                
+                                {/* Trading Component */}
+                                <div className="mb-4">
+                                    <Trade 
+                                        tokenAddress={props?.tokenAddress} 
+                                        tokenTicker={props?.symbol} 
+                                        tokenBalance={tokenBalance} 
+                                        trading={trading} 
+                                        chain={props?.chainId}
+                                    />
                                 </div>
                                 
-                                :
-                                <div className="flex justify-start">
-                                    <div className="flex text-sm border-4 border-black font-basic font-semibold connectbox bg-base-2 p-1 mr-2 max-sm:w-[250px] max-w-[300px]">
-                                        your balance: 0 ${props?.symbol}
+                                {/* Your Balance */}
+                                <div className="connectbox border-4 border-black bg-base-7 p-4">
+                                    <div className="font-basic font-semibold text-sm">
+                                        Your Balance
                                     </div>
-                                </div>   
-                            }
+                                    <div className="font-basic font-bold text-lg">
+                                        {tokenBalance ? ethers.formatEther(tokenBalance.toString()) : '0'} ${props?.symbol}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex justify-start pt-10">
-                            <Holders data={latestTx}/>
+                    </div>
+
+                    {/* Secondary Content Row */}
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* Holders Card */}
+                        <div className="lg:w-80">
+                            <div className="connectbox border-4 border-black bg-base-1 p-6">
+                                <h2 className="font-basic font-bold text-xl mb-4">Top Holders</h2>
+                                <Holders data={latestTx} />
+                            </div>
+                        </div>
+
+                        {/* Chart Card */}
+                        <div className="flex-1">
+                            <div className="connectbox border-4 border-black bg-white p-6">
+                                <h2 className="font-basic font-bold text-xl mb-4">Price Chart & Trades</h2>
+                                <ChartSection data={transactions} buys={uniqueBuys} sells={uniqueSells} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Comments Section */}
+                    <div className="w-full">
+                        <div className="connectbox border-4 border-black bg-base-4 p-6">
+                            <h2 className="font-basic font-bold text-xl mb-4">Comments</h2>
+                            <CommentSection tokenAddress={tokenAddr} props={comments} txns={latestTx} />
                         </div>
                     </div>
                 </div>
-                <div className="pt-10">
-                    <ChartSection data={transactions} buys={uniqueBuys} sells={uniqueSells}/>
-                </div>
-            </div>}
+            )}
         </div>
-
     )
 }
 
