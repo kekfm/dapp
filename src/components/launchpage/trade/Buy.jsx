@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react'
 import "/globals.css"
 import { ethers } from "ethers"
 import BuyModal from "./BuyModal"
+import WalletInstructionModal from "./WalletInstructionModal"
 import change from "../../../assets/change2.svg"
 import useTokenBalance from '../../../hooks/useTokenBalance'
 import useGetTokensOut from '../../../hooks/useGetTokensOut'
 import { contracts } from '../../../helpers/contracts'
-import { triggerConnectedWalletDialog } from '../../../helpers/config'
+import { getWalletName } from '../../../helpers/config'
 
 export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const { address } = useAppKitAccount()
@@ -26,11 +27,29 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     const [txHash, setTxHash] = useState(null);
     const [txReceipt, setTxReceipt] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
-
+    const [showWalletModal, setShowWalletModal] = useState(false);
 
     
     const { balance, error:balanceError } = useTokenBalance(tokenAddress)
     const { tokensOut:tokenAmount, error:tokensOutError, getTokenAmount } = useGetTokensOut (tokenAddress)
+
+    // Mobile detection function
+    const isMobile = () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Check for mobile user agents
+        const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+        const isMobileUA = mobileRegex.test(userAgent);
+        
+        // Check for small screen size
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        // Check if it's a touch device
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // Return true if any mobile indicator is found
+        return isMobileUA || (isSmallScreen && isTouchDevice);
+    };
 
     useEffect(() => {
         const fetchTokenAmount = async () => {
@@ -63,6 +82,16 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 setTxHash(null);
                 setTxReceipt(null);
                 setIsSuccess(false);
+                
+                // 🔥 SHOW WALLET INSTRUCTION MODAL ONLY ON MOBILE
+                const isOnMobile = isMobile();
+                if (isOnMobile) {
+                    setShowWalletModal(true);
+                    console.log("📱 Mobile detected - showing wallet instruction modal");
+                } else {
+                    console.log("🖥️ Desktop detected - wallet will open automatically");
+                }
+                
                 // calc input params
                 const slipPerc = slippage > 0 ? slippage : 5
                 const numTokens = Number(tokenAmountOut)
@@ -76,13 +105,8 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 const stringNum = valNum.toString()
                 const txValue = ethers.parseEther(stringNum)
 
-                console.log("🎯 Triggering wallet dialog...");
-                await triggerConnectedWalletDialog(walletProvider);
-            
-                // Small delay for wallet to open
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                console.log("🎯 Starting transaction - wallet will be triggered automatically...");
                 
-
                 //create Contract
                 const provider = new ethers.BrowserProvider(walletProvider, chainId);
                 const signer = await provider.getSigner();
@@ -100,7 +124,15 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 console.log("txValue", txValue)
 
                 const tx = await newContract.buy(parsedTokens, parsedETH, {value: String(txValue)})
+                
+                // 🔥 HIDE MODAL WHEN TRANSACTION IS SENT (only if mobile)
+                if (isOnMobile) {
+                    setShowWalletModal(false);
+                }
+                
                 setTxHash(tx.hash);
+                console.log("✅ Transaction sent! Hash:", tx.hash);
+                
                 const receipt = await tx.wait();
                 setTxReceipt(receipt);
 
@@ -111,18 +143,35 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                     throw new Error('Transaction failed - status 0');
                 }
 
-
-
             } catch (err) {
-                console.error('💥 Error during token creation:', {
+                // 🔥 HIDE MODAL ON ERROR (only if mobile)
+                if (isMobile()) {
+                    setShowWalletModal(false);
+                }
+                
+                console.error('💥 Transaction error:', {
                     error: err,
                     message: err.message,
                     code: err.code,
-                    reason: err.reason,
-                    transaction: err.transaction
+                    reason: err.reason
                 });
+                
+                // Set user-friendly error
+                let errorMessage = 'Transaction failed';
+                if (err.code === 'USER_REJECTED') {
+                    errorMessage = 'Transaction was rejected by user';
+                } else if (err.code === 'INSUFFICIENT_FUNDS') {
+                    errorMessage = 'Insufficient funds for transaction';
+                } else if (err.message?.includes('insufficient funds')) {
+                    errorMessage = 'Insufficient funds for transaction + gas fees';
+                } else if (err.message) {
+                    errorMessage = err.message;
+                }
+                
+                setError(errorMessage);
+                
             }finally {
-                console.log("🏁 Transaction process completed, setting loading to false");
+                console.log("🏁 Transaction completed");
                 setIsLoading(false);
             }
         }
@@ -130,6 +179,12 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
 
     const switchType = () => {
         setIsBuy(false)
+    }
+
+    const handleCancelTransaction = () => {
+        setShowWalletModal(false);
+        setIsLoading(false);
+        setError("Transaction cancelled by user");
     }
 
     const validateForm = () => {
@@ -221,17 +276,23 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
     return(
         <div className="connectbox border-4 border-black bg-base-4 max-w-[300px] max-sm:mx-1 max-sm:mb-4 max-sm:p-1 max-sm:py-4 sm:p-4">
             <BuyModal isOpen={buyModalOpen} closeModal={handleBuyModal} tx={txReceipt} />
+            
+            {/* 🔥 WALLET INSTRUCTION MODAL */}
+            <WalletInstructionModal 
+                isOpen={showWalletModal} 
+                onClose={handleCancelTransaction}
+                walletName={getWalletName(walletProvider)}
+            />
+            
             <form name="buy" onSubmit={handleBuySubmitBuy}>
                 <div className="flex flex-col">
                     <div className="flex flex-row justify-between pb-2">
                         <div className="font-basic font-semibold">buy ${tokenTicker}</div>
                         <div className="flex flex-row items-center">
-                            <div className="flex self-start">
-                                <label className="font-basic font-medium text-xs pr-2">slippage (%)</label>
+                            <div className="font-basic font-medium text-xs pr-2">
+                                slippage (%)
                             </div>
-                            <div className="flex flex-col self-start">
                                 <input
-                                    id="slippage"
                                     type="number"
                                     placeholder="5%"
                                     value={slippage}
@@ -241,7 +302,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                                 />
                                 {errors && errors.slippageUnderflow && <span className="text-xs font-basic text-base-8">{errors.slippageUnderflow}</span>}
                                 {errors && errors.slippageOverflow && <span className="text-xs font-basic text-base-8">{errors.slippageOverflow}</span>}
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

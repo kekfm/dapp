@@ -76,45 +76,12 @@ export function AppKitProvider({ children }) {
   )
 }
 
-// 2. Add manual iOS dialog trigger function
+// Helper function to detect wallet name
+export const getWalletName = (walletProvider) => {
+    if (walletProvider?.isMetaMask) return "MetaMask";
+    if (walletProvider?.isTrust) return "Trust Wallet";
+    if (walletProvider?.isRainbow) return "Rainbow";
+    if (walletProvider?.isCoinbaseWallet) return "Coinbase Wallet";
+    return "wallet";
+}
 
-// Replace your triggerConnectedWalletDialog with this:
-export const triggerConnectedWalletDialog = async (walletProvider) => {
-  try {
-      console.log("🔍 Triggering wallet connection...");
-      
-      // Method 1: Use AppKit's built-in mobile handling
-      if (window.appkit) {
-          console.log("🚀 Using AppKit modal...");
-          window.appkit.open({ view: 'Account' });
-          return;
-      }
-      
-      // Method 2: Force account request (most reliable)
-      if (walletProvider?.request) {
-          console.log("🚀 Using provider request...");
-          await walletProvider.request({ 
-              method: 'eth_requestAccounts' 
-          });
-          return;
-      }
-      
-      // Method 3: Try window.ethereum
-      if (window.ethereum?.request) {
-          console.log("🚀 Using window.ethereum...");
-          await window.ethereum.request({ 
-              method: 'eth_requestAccounts' 
-          });
-          return;
-      }
-      
-      console.log("⚠️ No wallet trigger method available");
-      
-  } catch (error) {
-      console.log("Wallet trigger error:", error);
-      
-      // Fallback: Don't trigger anything, let transaction proceed
-      // The transaction itself will trigger MetaMask
-      console.log("🔄 Letting transaction trigger wallet naturally...");
-  }
-};

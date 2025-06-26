@@ -148,17 +148,20 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
             <SellModal isOpen={sellModalOpen} closeModal={handleSellModal} tx={receipt} />
             <form name="sell" onSubmit={handleSellSubmit}>
                 <div className="flex flex-col">
-                    <div className="flex flex-row justify-between pb-2">
-                        <div className="font-basic font-semibold">sell</div>
-                        <div className="flex flex-row">
-                            <div className="font-basic text-sm pr-2">slippage</div>
+                    <div className="flex flex-row justify-between items-center pb-2">
+                        <div className="font-basic font-semibold">sell ${tokenTicker}</div>
+                        <div className="flex flex-row items-center">
+                            <div className="font-basic font-medium text-xs pr-2">
+                                slippage (%)
+                            </div>
                             <input
                                 type="number"
-                                className="w-[40px] text-sm font-basic pl-1"
+                                placeholder="5%"
                                 onChange={handleSlippage}
                                 value={slippage}
+                                className="flex font-basic font-medium text-xs border border-black w-10 pl-1"
+                                step="any"
                             />
-                            <div className="font-basic text-sm pl-1">%</div>
                         </div>
                     </div>
                 </div>
@@ -186,7 +189,7 @@ export default function Sell ({tokenAddress, tokenTicker, setIsBuy, tokenBalance
                             <img onClick={switchType} src={change} className="w-[30px]" alt="switch" />
                         </div>
                         <div className="flex flex-col font-basic font-medium text-sm">
-                            <div className="pl-1">you get</div>
+                            <div className="pl-1">you get </div>
                             <div className="border-2 border-black bg-base-1 p-2 b">
                                 {calcCultOut ? calcCultOut + " CULT" : "0 CULT"}
                             </div>
