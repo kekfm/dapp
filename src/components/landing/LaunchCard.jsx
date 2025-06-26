@@ -6,8 +6,25 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import dollar from "../../assets/dollar.png"
 
-
+// Falling Dollar Component
+const FallingDollar = ({ delay, duration }) => {
+    return (
+        <img 
+            src={dollar} 
+            className="absolute w-6 h-6 animate-fall-sway opacity-90"
+            style={{
+                left: `${10 + Math.random() * 80}%`, // Keep bills within card bounds
+                animationDelay: `${delay}ms`,
+                animationDuration: `${duration}ms`,
+                transform: `rotate(${Math.random() * 45}deg)`, // Initial random rotation
+                zIndex: 20
+            }}
+            alt="dollar"
+        />
+    );
+};
 
 export default function LaunchCard ({tag, data}) {
 
@@ -47,8 +64,6 @@ export default function LaunchCard ({tag, data}) {
     const handleImageError = () => {
         setLogoURL(noimage); // Fallback to placeholder if image fails to load
     };
-
-    
 
     useEffect(() => {
         const {buys, sells} = data
