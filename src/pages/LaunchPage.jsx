@@ -330,7 +330,7 @@ export default function LaunchPage () {
 
                     {/* Comments Section */}
                     <div className="w-full">
-                        <div className="connectbox border-4 border-black bg-base-4 p-6">
+                        <div className="connectbox border-4 border-black bg-base-4 p-6 flex flex-col justify-center items-center">
                             <h2 className="font-basic font-bold text-xl mb-4">Comments</h2>
                             <CommentSection tokenAddress={tokenAddr} props={comments} txns={latestTx} />
                         </div>

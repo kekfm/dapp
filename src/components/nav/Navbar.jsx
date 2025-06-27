@@ -55,10 +55,11 @@ export default function Navbar() {
                     <img src={burger} alt="Menu" />
                 </div>
                 {isOpen && (
-                    <div className="flex fixed inset-0 z-50 mt-20 h-80 max-w-80" ref={boxRef}>
-                        <div className="flex flex-col connectbox fixed inset-0 bg-base-2 mx-4 border-4 border-black p-10 mt-32 h-64 max-w-[300px]">
-                            <div className="font-basic font-bold pb-4 text-xl">navigate</div>
-                            <div className="flex flex-col z-100">
+                    <div className="fixed inset-0 z-50 flex justify-end" ref={boxRef}>
+                        <div className="bg-black bg-opacity-50 absolute inset-0" onClick={handleOpen}></div>
+                        <div className="flex flex-col connectbox bg-base-2 border-4 border-black p-4 sm:p-6 m-2 sm:m-4 mt-16 sm:mt-20 h-fit max-h-[80vh] w-full max-w-[280px] sm:max-w-[320px] relative">
+                            <div className="font-basic font-bold pb-4 text-lg sm:text-xl">navigate</div>
+                            <div className="flex flex-col gap-2">
                                 {address &&
                                     <NavAccount handleOpen={handleOpen} isOpen={isOpen} />
                                 }

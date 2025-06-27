@@ -241,7 +241,7 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                                     placeholder={"$"+`${tokenTicker}`}
                                     type="number"
                                     id="buyETH"
-                                    name="buyAmount (ETH)"
+                                    name="buyAmount (CULT)"
                                     onChange={handleChange}
                                     min="1"
                                     step="any"
@@ -305,13 +305,13 @@ export default function Buy ({tokenAddress, tokenTicker, setIsBuy, trading }) {
                 </div>
                 <div className="flex flex-col bg-base-4 border-2 border-black">
                     <div className="flex flex-col bg-white px-2 py-2">
-                        <label className="font-basic text-sm font-medium pl-1" htmlFor="buyETH">buy amount (ETH)</label>
+                        <label className="font-basic text-sm font-medium pl-1" htmlFor="buyETH">buy amount (CULT)</label>
                         <div className="border-2 border-black bg-white">
                             <input
                                 placeholder="ETH"
                                 type="number"
                                 id="buyETH"
-                                name="buyAmount (ETH)"
+                                name="buyAmount (CULT)"
                                 onChange={handleChange}
                                 value={buyAmountETH}
                                 min="0.0001"

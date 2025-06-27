@@ -18,8 +18,6 @@ export const Connect = ({handleOpen, isOpen}) => {
   const { chainId } = useAppKitNetworkCore();
     
 
-
-
     const handleBox = () =>{
         if (isConnected) {
             disconnect();

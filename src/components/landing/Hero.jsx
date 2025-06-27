@@ -15,6 +15,8 @@ import cult from "../../assets/cult.svg"
 import play from "../../assets/play.png"
 import "../../../globals.css"
 import { useNavigate } from "react-router-dom"
+import spin from "../../assets/spin.png"
+import spin2 from "../../assets/spin2.png"
 
 
 
@@ -56,6 +58,12 @@ export default function Hero () {
             </div>
             <div className="absolute w-[300px] -rotate-6 right-40 bottom-10 max-lg:hidden">
                 <img src={cult} className="w-[300px]"></img>
+            </div>
+            <div className="absolute w-[200px] rotate-6 right-60  max-lg:hidden ">
+                <img src={spin} className="w-[100px] animate-spin"></img>
+            </div>
+            <div className="absolute w-[200px] rotate-6 left-60  max-lg:hidden ">
+                <img src={spin2} className="w-[100px] animate-spin"></img>
             </div>
             <div className="xl:hidden z-10">
                 <Recent />

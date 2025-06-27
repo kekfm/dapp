@@ -15,6 +15,8 @@ import './index.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from './components/nav/Navbar.jsx'
 import Home from './components/landing/Home.jsx'
+import Home2 from './components/landing/Home2.jsx'
+
 import Footer from './components/landing/Footer.jsx'
 import './index.css'
 

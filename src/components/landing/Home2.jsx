@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Hero from './Hero.jsx'
-import LaunchTable from './LaunchTable.jsx'
+import LaunchTable3D from './LaunchTable3D.jsx'
 import Marquee from "../nav/Marquee.jsx"
 import { io } from "socket.io-client"
 import dollar from "../../assets/dollar.png"
@@ -93,7 +93,7 @@ const moneyAnimationStyles = `
   }
 `;
 
-function Home() {
+function Home2() {
   const [showMoneyFall, setShowMoneyFall] = useState(false);
   const [moneyFallCount, setMoneyFallCount] = useState(0);
   const [showMrORide, setShowMrORide] = useState(false);
@@ -172,10 +172,10 @@ function Home() {
         <Hero />
       </div>
       <div className="pt-20">
-        <LaunchTable />
+        <LaunchTable3D />
       </div>
     </div>
   )
 }
 
-export default Home
+export default Home2 

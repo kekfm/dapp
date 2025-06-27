@@ -26,7 +26,6 @@ export default function LastTrade () {
             //const response = await axios.get(`https://kek.fm/api/getOne/${event.tokenAddress}`, {withCredentials: true}) // old implementation using vps
             const response = await axios.get(`${import.meta.env.VITE_GET_ONE}${event.tokenAddress}`, {withCredentials: true}) // new implementation using render
             const props = response.data[0]
-            console.log("props", props)
             setName(props.name)
             setSymbol(props.symbol)
         }
@@ -85,7 +84,7 @@ export default function LastTrade () {
                <div>
                    <img src={lastsale} className="w-[50px]"></img>
                </div>
-               <div className="font-basic text-xs py-2 connectbox border-4 border-black w-[200px] bg-base-8  overflow-x-hidden hover:cursor-pointer" onClick={handleClick}>
+               <div className="font-basic text-xs py-2 connectbox border-4 border-black w-[200px] bg-base-8 overflow-x-hidden hover:cursor-pointer" onClick={handleClick}>
                    <div className="flex flex-row col-span-3 gap-2 px-2">
 
                        <div>
