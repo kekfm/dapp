@@ -240,38 +240,38 @@ export default function LaunchTable() {
                 </div>
                 
                 {/* Filter Controls */}
-            <div className="flex flex-col items-center sm:items-start gap-4 mb-6 sm:ml-10">
-                {/* Search Input */}
-                <div className="flex justify-center sm:justify-start">
-                                            <input
-                            type="text"
-                            placeholder="Search tokens..."
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                            className="px-3 py-1.5 border border-black connectbox focus:outline-none w-56 "
-                        />
+                <div className="flex flex-col items-center sm:items-start gap-2 sm:gap-4 mb-4 sm:mb-6 sm:ml-10">
+                    {/* Search Input */}
+                    <div className="flex justify-center sm:justify-start">
+                                                <input
+                                type="text"
+                                placeholder="Search tokens..."
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                                className="px-2 py-1 sm:px-3 sm:py-1.5 border border-black connectbox focus:outline-none w-48 sm:w-56 text-sm"
+                            />
+                    </div>
+                    
+                    {/* Chain Filter Buttons */}
+                    <div className="flex flex-row gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
+                        {chainOptions.map((option) => (
+                            <button
+                                key={option.id}
+                                onClick={() => handleChainFilter(option.id)}
+                                className={`flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 connectbox font-basic font-bold transition-all duration-200 text-xs sm:text-sm ${
+                                    selectedChainFilter === option.id
+                                        ? 'bg-base-12 text-white scale-105'
+                                        : 'bg-base-12 text-gray-700 hover:bg-base-12 hover:scale-105'
+                                }`}
+                            >
+                                {option.icon && (
+                                    <img src={option.icon} alt={option.name} className="w-3 h-3 sm:w-4 sm:h-4" />
+                                )}
+                                {option.name}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                
-                {/* Chain Filter Buttons */}
-                <div className="flex flex-row gap-2 flex-wrap justify-center sm:justify-start">
-                    {chainOptions.map((option) => (
-                        <button
-                            key={option.id}
-                            onClick={() => handleChainFilter(option.id)}
-                            className={`flex items-center gap-1 px-2 py-1 connectbox font-basic font-bold transition-all duration-200 ${
-                                selectedChainFilter === option.id
-                                    ? 'bg-base-12 text-white scale-105'
-                                    : 'bg-base-12 text-gray-700 hover:bg-base-12 hover:scale-105'
-                            }`}
-                        >
-                            {option.icon && (
-                                <img src={option.icon} alt={option.name} className="w-4 h-4" />
-                            )}
-                            {option.name}
-                        </button>
-                    ))}
-                </div>
-            </div>
 
                 <div className="flex flex-row justify-center">
                     <img src={empty} alt="empty"></img>
@@ -290,10 +290,8 @@ export default function LaunchTable() {
 
     return (
         <div className="flex flex-col justify-center w-full">
-            
-            
-                            {/* Filter Controls */}
-                <div className="flex flex-col items-center sm:items-start gap-4 mb-6 sm:ml-10">
+                {/* Filter Controls */}
+                <div className="flex flex-col items-center sm:items-start gap-2 sm:gap-4 mb-4 sm:mb-6 sm:ml-10">
                     {/* Search Input */}
                     <div className="flex justify-center sm:justify-start">
                         <input
@@ -301,24 +299,24 @@ export default function LaunchTable() {
                             placeholder="Search tokens..."
                             value={searchTerm}
                             onChange={handleSearchChange}
-                            className="px-3 py-1.5 border-2 border-black connectbox focus:outline-none w-56"
+                            className="px-2 py-1 sm:px-3 sm:py-1.5 border-2 border-black connectbox focus:outline-none w-48 sm:w-56 text-sm"
                         />
                     </div>
                     
                     {/* Chain Filter Buttons */}
-                    <div className="flex flex-row gap-2 flex-wrap justify-center sm:justify-start">
+                    <div className="flex flex-row gap-1 sm:gap-2 flex-wrap justify-center sm:justify-start">
                         {chainOptions.map((option) => (
                             <button
                                 key={option.id}
                                 onClick={() => handleChainFilter(option.id)}
-                                className={`flex items-center gap-1 px-2 py-1 border-2 border-black connectbox font-basic font-bold transition-all duration-200 ${
+                                className={`flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 border-2 border-black connectbox font-basic font-bold transition-all duration-200 text-xs sm:text-sm ${
                                 selectedChainFilter === option.id
                                     ? 'bg-base-16 text-white scale-105'
                                     : 'bg-base-11 text-gray-700 hover:bg-base-12 hover:scale-105'
                             }`}
                         >
                             {option.icon && (
-                                <img src={option.icon} alt={option.name} className="w-4 h-4" />
+                                <img src={option.icon} alt={option.name} className="w-3 h-3 sm:w-4 sm:h-4" />
                             )}
                                 {option.name}
                             </button>
