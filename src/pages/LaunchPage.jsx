@@ -53,7 +53,7 @@ export default function LaunchPage () {
                 //console.log("launch page data",data)
                 setProps(data)
                 setComments(data.comments)
-                console.log("launch page data", data)
+                //console.log("launch page data", data)
 
                 //get unique tx
                 const uBuys = data.buys.filter((buy, index, self) => index === self.findIndex((t) => (t.maker === buy.maker && t.timestamp === buy.timestamp)))
@@ -231,9 +231,9 @@ export default function LaunchPage () {
                                         <div className="font-bold text-lg text-black">{uniqueSells?.length}</div>
                                         <div className="text-xs font-bold">Sells</div>
                                     </div>
-                                    <div className="text-center p-3 bg-base-8 border-4 border-black connectbox">
-                                        <div className="font-bold text-lg text-white">{jeet}</div>
-                                        <div className="text-xs font-bold text-white">Dev Jeeted?</div>
+                                    <div className={`text-center p-3 border-4 border-black connectbox ${jeet == "no" ? "bg-base-12" : "bg-base-8"}`}>
+                                        <div className="font-bold text-lg text-black">{jeet}</div>
+                                        <div className="text-xs font-bold text-black">Dev Jeeted?</div>
                                     </div>
                                 </div>
 
