@@ -71,7 +71,7 @@ export default function Navbar() {
                         <div className="flex flex-col connectbox bg-base-2 border-4 border-black p-4 sm:p-6 m-2 sm:m-4 mt-16 sm:mt-20 h-fit max-h-[80vh] w-full max-w-[280px] sm:max-w-[320px] relative">
                             <div className="font-basic font-bold pb-4 text-lg sm:text-xl">navigate</div>
                             <div className="flex flex-col gap-2">
-                                <div className="flex justify-center py-2" onClick={handleGame}>
+                                <div className="flex justify-start py-2" onClick={handleGame}>
                                     <img src={play} className="w-[60px] hover:scale-110 hover:cursor-pointer -rotate-6" alt="game"></img>
                                 </div>
                                 {address &&
