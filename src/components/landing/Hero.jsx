@@ -49,7 +49,7 @@ export default function Hero () {
             <div className="xl:hidden z-10">
                 <Recent />
             </div>
-            <div className="flex justify-center pt-20 ">
+            <div className="flex justify-center sm:pt-20 ">
                 <Explainer handleExplainerModal={handleExplainerModal}/>
                 <ExplainerModal isOpen={isExplainerOpen} handleExplainerModal={handleExplainerModal}/>
             </div>
