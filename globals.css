@@ -258,3 +258,13 @@ html, body {
   background-color: #2FFF2F !important;
   transition: background-color 0.3s ease;
 }
+
+@keyframes glowingBackground {
+ 
+  0% {
+    background-color: rgb(238, 112, 245); /* Green */
+  }
+  100% {
+    background-color: rgb(242, 207, 7); /* Blue */
+  }
+}

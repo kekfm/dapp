@@ -87,7 +87,10 @@ export default function FeatureCard ({tag, data}) {
 
 
     return(
-    <div onClick={handleClick} name="box" className={`flex flex-col relative connectbox border-4 border-black w-[200px] h-[80px] bg-base-11 opacity-90 hover:opacity-100 hover:bg-base-5  hover:cursor-pointer`} >
+    <div onClick={handleClick} name="box" className={`flex flex-col relative connectbox border-4 border-black w-[200px] h-[80px] opacity-90 hover:opacity-100 hover:bg-base-5  hover:cursor-pointer`}
+        style={{ animation: "glowingBackground 2s infinite alternate" }}
+        >
+
         {/* Featured images left and right */}
         <img 
             src={right} 
