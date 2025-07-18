@@ -80,6 +80,9 @@ export default function useFeeInfo() {
                 case 97: // BSC Testnet
                     rpcUrl = 'https://data-seed-prebsc-1-s1.binance.org:8545';
                     break;
+                case 57054: // Sonic Testnet
+                    rpcUrl = 'https://rpc.blaze.soniclabs.com';
+                    break;
                 default:
                     console.error('Unsupported chainId for read-only:', chainId);
                     return;

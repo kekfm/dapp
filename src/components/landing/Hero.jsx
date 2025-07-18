@@ -17,6 +17,8 @@ import "../../../globals.css"
 import { useNavigate } from "react-router-dom"
 import spin from "../../assets/spin.png"
 import spin2 from "../../assets/spin2.png"
+import Featured from "./Featured"
+
 
 
 
@@ -44,27 +46,6 @@ export default function Hero () {
 
     return(
         <div className="relative flex flex-col gap-6">
-            <div className="absolute w-[300px] -rotate-6 top-40 max-lg:hidden">
-                <img src={modulus} className="w-[300px]"></img>
-            </div>
-            <div className="absolute w-[300px] rotate-6 right-10 top-60 max-lg:hidden">
-                <img src={time} className="w-[300px]"></img>
-            </div>
-            <div className="absolute w-[300px] -rotate-12 left-52 top-60 max-lg:hidden">
-                <img src={memes} className="w-[300px]"></img>
-            </div>
-            <div className="absolute w-[200px] rotate-6 left-40 bottom-10 max-lg:hidden">
-                <img src={many} className="w-[200px]"></img>
-            </div>
-            <div className="absolute w-[300px] -rotate-6 right-40 bottom-10 max-lg:hidden">
-                <img src={cult} className="w-[300px]"></img>
-            </div>
-            <div className="absolute w-[200px] rotate-6 right-60  max-lg:hidden ">
-                <img src={spin} className="w-[100px] animate-spin"></img>
-            </div>
-            <div className="absolute w-[200px] rotate-6 left-60  max-lg:hidden ">
-                <img src={spin2} className="w-[100px] animate-spin"></img>
-            </div>
             <div className="xl:hidden z-10">
                 <Recent />
             </div>
@@ -87,12 +68,21 @@ export default function Hero () {
                 </div>*/}
                 
             </div>
-            <div className="flex justify-center -rotate-6 pt-10">
-                <img onClick={() => handleGame()} src={play} className="w-[80px] hover:scale-110 hover:cursor-pointer"></img>
-            </div>
-            <div className="flex justify-center pt-10 pb-20 overflow-x-auto">
-                <TehShit />
-            </div>
+
+            {
+                <div className="flex justify-center pt-10 ">
+                    <Featured />
+                </div>
+            }
+            
+            {/*
+                <div className="flex justify-center pt-10 pb-20 overflow-x-auto">
+                    <TehShit />
+                </div>
+            */}
+
+            
+            
         </div>
 
     )

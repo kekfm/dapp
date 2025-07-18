@@ -1,5 +1,5 @@
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
-import { mainnet, arbitrum, sepolia, base, bscTestnet } from '@reown/appkit/networks'
+import { mainnet, arbitrum, sepolia, base, bscTestnet, sonicBlazeTestnet } from '@reown/appkit/networks'
 import { defineChain } from '@reown/appkit/networks';
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -41,7 +41,7 @@ const modulus = defineChain({
 })
 
 // Include standard networks that your Connect component expects
-export const networks = [modulus, mainnet, base, bscTestnet] 
+export const networks = [modulus, mainnet, base, bscTestnet, sonicBlazeTestnet] 
 
 export const ethersAdapter = new EthersAdapter({
   projectId,

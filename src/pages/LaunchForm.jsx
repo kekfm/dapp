@@ -10,9 +10,10 @@ import FailModal from "../components/launchform/FailModal"
 import bump from "../assets/sendit.svg"
 import launch from "../assets/launch.svg"
 import supported from "../assets/supported.svg"
-import bnb from "../assets/s_bnb.svg"
-import modulus from "../assets/s_modulus.svg"
-import base from "../assets/s_base.svg"
+import bnb from "../assets/bnb_.png"
+import modulus from "../assets/modulus_.png"
+import base from "../assets/base_.png"
+import sonic from "../assets/sonic_.png"
 import { supportedChainIds } from '../helpers/chains';
 import factoryAbi from '../abis/factoryABI.json'
 import useFeeInfo from '../hooks/useFeeInfo'
@@ -27,6 +28,18 @@ export default function LaunchForm() {
     const { chainId } = useAppKitNetworkCore()
     const { switchNetwork } = useAppKitNetwork()
     const navigate = useNavigate()
+
+    // Chain mapping for display
+    const getChainInfo = (chainId) => {
+        const chainMap = {
+            97: { name: 'BSC Testnet', icon: bnb },
+            56: { name: 'BSC Mainnet', icon: bnb },
+            6666: { name: 'Modulus', icon: modulus },
+            8453: { name: 'Base', icon: base },
+            57054: { name: 'Sonic', icon: sonic }
+        };
+        return chainMap[chainId] || { name: 'Unknown Chain', icon: null };
+    }
 
     // Read fee directly from contract
     const { feeInfo } = useFeeInfo()
@@ -237,10 +250,24 @@ export default function LaunchForm() {
             <div className={`pb-8 pt-20`}>
                 <img src={launch} alt="launch"></img>
             </div>
-            <form className={`connectbox border-4 border-black bg-base-4 py-2 pl-4 sm:pl-10 pr-4 sm:pr-20 h-auto content-center w-5/6 max-w-[700px] z-0`}
+            <form className={`relative connectbox border-4 border-black bg-base-4 py-2 pl-4 sm:pl-10 pr-4 sm:pr-20 h-auto content-center w-5/6 max-w-[700px] z-0`}
                 name="launch"
                 onSubmit={handleSubmit}
             >
+                {/* Chain Display - Top Right */}
+                {chainId && (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 border border-black connectbox bg-base-11 text-xs">
+                        {getChainInfo(chainId).icon && (
+                            <img 
+                                src={getChainInfo(chainId).icon} 
+                                alt={getChainInfo(chainId).name} 
+                                className="w-3 h-3" 
+                            />
+                        )}
+                        <span className="font-basic font-medium">{getChainInfo(chainId).name}</span>
+                    </div>
+                )}
+                
                 <div className={`font-bold pb-8 pt-2 text-xl`}>
                     input your token params
                 </div>

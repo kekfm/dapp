@@ -11,26 +11,12 @@ import sonicconnect from "../../assets/sonic_.png"
 import modulusconnect from "../../assets/modulus_.png"
 import baseconnect from "../../assets/base_.png"
 import bnbconnect from "../../assets/bnb_.png"
+import left from "../../assets/feat_left.png"
+import right from "../../assets/feat_right.png"
 
-// Falling Dollar Component
-const FallingDollar = ({ delay, duration }) => {
-    return (
-        <img 
-            src={dollar} 
-            className="absolute w-6 h-6 animate-fall-sway opacity-90"
-            style={{
-                left: `${10 + Math.random() * 80}%`, // Keep bills within card bounds
-                animationDelay: `${delay}ms`,
-                animationDuration: `${duration}ms`,
-                transform: `rotate(${Math.random() * 45}deg)`, // Initial random rotation
-                zIndex: 20
-            }}
-            alt="dollar"
-        />
-    );
-};
 
-export default function LaunchCard ({tag, data}) {
+
+export default function FeatureCard ({tag, data}) {
 
     const imgWidth = 30
     const imgHeight = 30
@@ -101,24 +87,36 @@ export default function LaunchCard ({tag, data}) {
 
 
     return(
-    <div onClick={handleClick} name="box" className={`flex flex-col relative connectbox border-4 border-black w-[280px] h-[170px] bg-base-19 opacity-90 hover:opacity-100 hover:bg-base-5 hover:cursor-pointer ${data.wiggle ? 'wiggle2' : ''} ${data.flashGreen ? 'flash-green' : ''}`} >
+    <div onClick={handleClick} name="box" className={`flex flex-col relative connectbox border-4 border-black w-[200px] h-[80px] bg-base-11 opacity-90 hover:opacity-100 hover:bg-base-5  hover:cursor-pointer`} >
+        {/* Featured images left and right */}
+        <img 
+            src={right} 
+            alt="feat left" 
+            className="absolute -left-8 top-1/2 transform -translate-y-1/2 w-10 h-auto"
+        />
+        <img 
+            src={left} 
+            alt="feat right" 
+            className="absolute -right-8 top-1/2 transform -translate-y-1/2 w-10 h-auto"
+        />
+        
         <div className="absolute -top-3 -right-3">
             {data.chainId == 6666 &&
-                <img src={modulusconnect} className="w-[25px]" alt="modulus"/>
+                <img src={modulusconnect} className="w-[20px]" alt="modulus"/>
             }
             {data.chainId == 57054 &&
-                <img src={sonicconnect} className="w-[23px]" alt="sonic"/>
+                <img src={sonicconnect} className="w-[20px]" alt="sonic"/>
             }
             {data.chainId == 8453 &&
-                <img src={baseconnect} className="w-[23px]" alt="base"/>
+                <img src={baseconnect} className="w-[20px]" alt="base"/>
             }
             {data.chainId == 97 &&
-                <img src={bnbconnect} className="w-[25px]" alt="bnb"/>
+                <img src={bnbconnect} className="w-[20px]" alt="bnb"/>
             }
         </div>
         <div className= "flex flex-row">
             <div className="flex flex-row justify-between">
-                <div className=" w-[100px] h-[100px] border-4 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
+                <div className=" w-[50px] h-[50px] border-2 rounded-full border-black mx-2 my-4 content-center overflow-hidden">
                     {data && data.description.logo &&
                         <img src={data.description.logo} layout="fill" className="w-full h-full object-cover rounded-full" alt="logo" onError={handleImageError}/>
                     }
@@ -135,30 +133,7 @@ export default function LaunchCard ({tag, data}) {
                         </div>
                         <Progressbar percentage={percentage} />
                     </div>
-                    <div className= "flex flex-row justify-start gap-2 pt-1">
-                        {data && data.description.website &&
-                            <div name="web" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.website)}>
-                                [web]
-                            </div>
-                        }
-                        {data && data.description.twitter &&
-                            <div name="twitter" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.twitter)}>
-                                [x]
-                            </div>
-                        }
-                        {data && data.description.telegram &&
-                            <div name="telegram" className="text-xs z-100" onClick={(e) => handleSocials(e, data.d.telegram)}>
-                                [telegram]
-                            </div>
-                        }
-                        
-                    </div>
-                    <div className={`mt-2 text-xs text-black`} name="dev" onClick={handleDev}>
-                        created by <span className='text-base-8 font-semibold'>{data.owner.slice(0,4)}...{data.owner.slice(data.owner.length -4, data.owner.length)}</span>
-                    </div>
-                    <div className={`mt-1 text-xs text-black`} name="tkn" onClick={handleToken}>
-                        address <span className='text-base-20 font-semibold'>{data.tokenAddress.slice(0,4)}...{data.tokenAddress.slice(data.tokenAddress.length -4, data.tokenAddress.length)}</span>
-                    </div>
+                    
 
                 </div>
                 

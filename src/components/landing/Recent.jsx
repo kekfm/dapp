@@ -55,6 +55,7 @@ export default function Recent () {
         }catch(e){console.log("e",e)}
        
     }
+    console.log("buysell", buySell)
     
     useEffect(()=> {
        //const socket = io('https://kek.fm', { // old implementation using vps
@@ -111,7 +112,7 @@ export default function Recent () {
                             <div className="font-basic text-xs font-semibold py-2 connectbox border-4 border-black w-[200px] overflow-x-hidden bg-base-12 hover:cursor-pointer" >
                                 <div className="flex flex-row gap-2 px-2">
                                     <div>
-                                    {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} bought {Number(ethers.formatEther(buySell.amountETH.toString())).toFixed(3)} ETH                     
+                                    {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} bought {Number(ethers.formatEther(buySell.amountETH.toString())).toFixed(0)} {buySell.chain == 97 ? "BNB" : buySell.chain == 8453 ? "ETH" : buySell.chain == 6666 ? "CULT" : buySell.chain == 57054 ? "Sonic" : "ETH"}                     
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +126,7 @@ export default function Recent () {
                             <div className="font-basic text-xs font-semibold py-2 connectbox border-4 border-black w-[200px] bg-base-8 overflow-x-hidden hover:cursor-pointer" >
                                 <div className="flex flex-row  gap-2 px-2">
                                     <div>
-                                        {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} sold {Number(ethers.formatEther(buySell.amountETH.toString())).toFixed(3)} ETH
+                                        {buySell.maker.slice(0,4)+"..."+buySell.maker.slice(buySell.maker.length -4, buySell.maker.length)} sold {Number(ethers.formatEther(buySell.amountETH.toString())).toFixed(0)} {buySell.chain == 97 ? "BNB" : buySell.chain == 8453 ? "ETH" : buySell.chain == 6666 ? "CULT" : buySell.chain == 57054 ? "Sonic" : "ETH"}
                                     </div>
                                 </div>
                             </div>

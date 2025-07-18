@@ -75,9 +75,8 @@ export default function MarqueeBanner() {
     return (
       <div className="border-t-4 border-b-4 border-black h-10 flex items-center bg-base-5 relative">
         {/* Dripping Tears Effect */}
-        {showTears && (
+        {/*showTears && (
             <>
-                {/* Generate exactly 3 dripping tears */}
                 {[...Array(3)].map((_, index) => (
                     <DrippingTear 
                         key={`${tearCount}-${index}`} // Unique key for each animation
@@ -87,7 +86,7 @@ export default function MarqueeBanner() {
                     />
                 ))}
             </>
-        )}
+        )*/}
 
         <div className=" marquee border-t-4 border-b-4 border-base-4">
           <div className="marquee-content font-basic text-sm text-black">

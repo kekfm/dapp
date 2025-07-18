@@ -5,6 +5,7 @@ import Marquee from "../nav/Marquee.jsx"
 import { io } from "socket.io-client"
 import dollar from "../../assets/dollar.png"
 import mroride from "../../assets/mroride.png"
+import Featured from "./Featured.jsx"
 
 // Falling Dollar Component for full screen
 const FallingDollar = ({ delay, duration }) => {
@@ -161,9 +162,9 @@ function Home() {
       )}
 
       {/* Mr. O Riding Across Screen */}
-      {showMrORide && (
+      {/*showMrORide && (
         <MrORide key={`mroride-${mrORideCount}`} />
-      )}
+      )*/}
 
       <div className="w-full pt-4">
         <Marquee />

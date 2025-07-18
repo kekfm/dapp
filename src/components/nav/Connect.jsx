@@ -3,6 +3,7 @@ import '../../../globals.css';
 import baseconnect from "../../assets/baseconnect.svg"
 import bnbconnect from "../../assets/bnbconnect.svg"
 import modulusconnect from "../../assets/modulusconnect.svg"
+import sonicconnect from "../../assets/sonicconnect.png"
 import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { useAppKitNetworkCore } from '@reown/appkit/react';
 
@@ -65,7 +66,13 @@ export const Connect = ({handleOpen, isOpen}) => {
                     <div>{`${address.slice(0,4)}...${address.slice(address.length -6, address.length)}`}</div>
                 </div>
             }
-            {address && (chainId != 97 && chainId != 8453 && chainId != 6666) &&
+            {address && chainId == 57054 &&
+                <div onClick= {handleBoxDeact} className={`flex flex-row connectbox border-4 border-black px-4 py-2 bg-base-7 gap-2 hover:scale-110 ease-in-out hover:cursor-pointer`}>
+                    <img className="w-[23px]" src={sonicconnect} alt="connect"></img>
+                    <div>{`${address.slice(0,4)}...${address.slice(address.length -6, address.length)}`}</div>
+                </div>
+            }
+            {address && (chainId != 97 && chainId != 8453 && chainId != 6666 && chainId != 57054) &&
                 <div onClick= {handleBoxDeact} className={`connectbox border-4 border-black px-8 py-2 bg-base-8 hover:scale-110 ease-in-out hover:cursor-pointer`}>
                     Wrong Chain
                 </div>

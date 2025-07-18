@@ -214,3 +214,47 @@ html, body {
   font-size: 1rem;
   cursor: pointer;
 }
+
+/* Colorful RGB glowing effect for cards */
+.card-glow {
+  animation: rgb-glow 4s ease-in-out infinite;
+}
+
+@keyframes rgb-glow {
+  0% {
+    box-shadow: 
+      0 0 20px rgba(255, 0, 0, 0.6),
+      0 0 40px rgba(255, 0, 0, 0.4),
+      0 0 60px rgba(255, 0, 0, 0.2);
+  }
+  25% {
+    box-shadow: 
+      0 0 20px rgba(255, 255, 0, 0.6),
+      0 0 40px rgba(255, 255, 0, 0.4),
+      0 0 60px rgba(255, 255, 0, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(0, 255, 0, 0.6),
+      0 0 40px rgba(0, 255, 0, 0.4),
+      0 0 60px rgba(0, 255, 0, 0.2);
+  }
+  75% {
+    box-shadow: 
+      0 0 20px rgba(0, 100, 255, 0.6),
+      0 0 40px rgba(0, 100, 255, 0.4),
+      0 0 60px rgba(0, 100, 255, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 0 20px rgba(255, 0, 0, 0.6),
+      0 0 40px rgba(255, 0, 0, 0.4),
+      0 0 60px rgba(255, 0, 0, 0.2);
+  }
+}
+
+/* Green flash effect for buy events */
+.flash-green {
+  background-color: #2FFF2F !important;
+  transition: background-color 0.3s ease;
+}
